@@ -17,6 +17,7 @@ import {
   BARBER_STYLE_STORAGE_KEY,
   BARBER_HAIRSTYLE_STORAGE_KEY,
   BARBER_BEARD_STORAGE_KEY,
+  BARBER_ANALYSIS_STORAGE_KEY,
 } from "@/lib/barber-session";
 import { GenerationLoadingOverlay } from "@/components/GenerationLoadingOverlay";
 
@@ -94,6 +95,108 @@ const MODEL_OPTIONS = [
   { label: "Flux Kontext Pro", value: "black-forest-labs/flux-kontext-pro" },
 ] as const;
 
+function getRoleStyles(role: number): {
+  border: string;
+  pill: string;
+  hoverBorder: string;
+} {
+  switch (role) {
+    case 0:
+      return {
+        border: "border-l-cyan-500",
+        pill: "bg-cyan-500/20 text-cyan-200 border border-cyan-500/50",
+        hoverBorder: "hover:border-cyan-400",
+      };
+    case 1:
+      return {
+        border: "border-l-violet-500",
+        pill: "bg-violet-500/20 text-violet-200 border border-violet-500/50",
+        hoverBorder: "hover:border-violet-400",
+      };
+    case 2:
+      return {
+        border: "border-l-amber-500",
+        pill: "bg-amber-500/20 text-amber-200 border border-amber-500/50",
+        hoverBorder: "hover:border-amber-400",
+      };
+    default:
+      return {
+        border: "border-l-zinc-500",
+        pill: "bg-zinc-500/20 text-zinc-200 border border-zinc-500/50",
+        hoverBorder: "hover:border-zinc-400",
+      };
+  }
+}
+
+function getRoleLabel(role: number): string {
+  switch (role) {
+    case 0:
+      return "ליבה";
+    case 1:
+      return "אופציונלי";
+    case 2:
+    default:
+      return "שדרוג";
+  }
+}
+
+function getProductEmoji(prod: ProductRecommendationView): string {
+  const name = prod.nameHe ?? "";
+  const id = prod.id ?? "";
+  if (/משחת|קרם|סטיילינג|פומייד/i.test(name) || /matte-paste|styling-cream|pomade/i.test(id))
+    return "🧴";
+  if (/פודר|טקסטורה|פודרת/i.test(name) || /powder|texture/i.test(id)) return "✂️";
+  if (/שמן|אויל/i.test(name) || /oil/i.test(id)) return "🧴";
+  if (/ג'ל|גל/i.test(name) || /gel/i.test(id)) return "💈";
+  if (/חימר|קלי|clay/i.test(name)) return "💈";
+  return prod.category === "hair" ? "💈" : "🧴";
+}
+
+function ProductCard({
+  prod,
+  roleStyles,
+}: {
+  prod: ProductRecommendationView;
+  roleStyles: { border: string; pill: string; hoverBorder: string };
+}) {
+  const isHair = prod.category === "hair";
+  const gradient =
+    isHair
+      ? "bg-gradient-to-br from-sky-900/25 via-[#0f0f1a] to-[#1a1a2e]"
+      : "bg-gradient-to-br from-amber-900/20 via-[#0f0f1a] to-[#1a1a2e]";
+  const glowHover = isHair
+    ? "hover:shadow-[0_0_18px_rgba(34,211,238,0.25)]"
+    : "hover:shadow-[0_0_18px_rgba(245,158,11,0.25)]";
+
+  return (
+    <div
+      className={`relative min-w-[9rem] max-w-[13rem] rounded-2xl border border-[#2A2A3A] px-4 py-4 flex flex-col gap-2.5 shadow-xl transition-all duration-200 hover:scale-[1.02] ${gradient} ${roleStyles.border} ${roleStyles.hoverBorder} ${glowHover}`}
+    >
+      {prod.role === 0 && (
+        <span className="absolute top-2 left-2 text-[10px] font-medium px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-500/40">
+          מומלץ
+        </span>
+      )}
+      <div className="flex justify-center text-3xl mb-0.5" aria-hidden>
+        {getProductEmoji(prod)}
+      </div>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-bold text-white leading-tight">
+          {prod.nameHe}
+        </span>
+        <span
+          className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 ${roleStyles.pill}`}
+        >
+          {getRoleLabel(prod.role)}
+        </span>
+      </div>
+      <p className="text-xs text-[#9CA3AF] leading-snug">
+        {prod.usageHe}
+      </p>
+    </div>
+  );
+}
+
 function ProductRecommendationsSection({
   products,
 }: {
@@ -101,41 +204,15 @@ function ProductRecommendationsSection({
 }) {
   if (!products.length) return null;
   return (
-    <div className="space-y-2 pt-4 border-t border-[#2A2A3A] text-right">
-      <p className="text-sm sm:text-[13px] font-medium text-[#6B7280] uppercase tracking-[0.2em]">
-        מה יעזור לך לשמור על הלוק
+    <div className="space-y-3 pt-4 border-t border-[#2A2A3A] text-right">
+      <p className="text-xs sm:text-sm text-[#A8A8B3] uppercase tracking-wide">
+        המלצות מוצרים לשמירה על הלוק 🧴
       </p>
-      <div className="flex flex-wrap gap-2 justify-center">
-        {products.map((prod) => (
-          <div
-            key={prod.id}
-            className="min-w-[9rem] max-w-[13rem] rounded-2xl border border-[#1F2933] bg-[#05050a] px-3 py-2.5 flex flex-col gap-1"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[13px] font-medium text-[#E5E7EB]">
-                {prod.nameHe}
-              </span>
-              <span
-                className={`text-xs px-2 py-0.5 rounded-full border ${
-                  prod.role === 0
-                    ? "border-emerald-500/50 text-emerald-200"
-                    : prod.role === 1
-                    ? "border-[#4B5563] text-[#D1D5DB]"
-                    : "border-[#4B5563] text-[#D1D5DB]"
-                }`}
-              >
-                {prod.role === 0
-                  ? "ליבה"
-                  : prod.role === 1
-                  ? "אופציונלי"
-                  : "שדרוג"}
-              </span>
-            </div>
-            <p className="text-sm text-[#9CA3AF] leading-snug">
-              {prod.usageHe}
-            </p>
-          </div>
-        ))}
+      <div className="flex flex-wrap gap-3 justify-center">
+        {products.map((prod) => {
+          const roleStyles = getRoleStyles(prod.role);
+          return <ProductCard key={prod.id} prod={prod} roleStyles={roleStyles} />;
+        })}
       </div>
     </div>
   );
@@ -161,6 +238,47 @@ export default function BarberPreviewPage() {
     "google/nano-banana-pro",
   );
   const [changeIntensity, setChangeIntensity] = useState(100);
+  const [aiAdvice, setAiAdvice] = useState<string | null>(null);
+  const [isLoadingAdvice, setIsLoadingAdvice] = useState(false);
+
+  const fetchAdvice = async (barberModeOverride?: boolean) => {
+    const useBarberMode = barberModeOverride ?? isBarberMode;
+    const hairstyleName =
+      getDisplayName(hairstylePreset) || selectedHairstyle || "";
+    const beardName = getDisplayName(beardPreset) || selectedBeard || "";
+    let analysisText = "";
+    try {
+      analysisText =
+        sessionStorage.getItem(BARBER_ANALYSIS_STORAGE_KEY) ?? "";
+    } catch {
+      // ignore
+    }
+    setIsLoadingAdvice(true);
+    setAiAdvice(null);
+    try {
+      const res = await fetch("/api/barber/advise", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hairstyleName,
+          beardName,
+          mode: mode ?? "",
+          analysisText,
+          isBarberMode: useBarberMode,
+        }),
+      });
+      const data = (await res.json().catch(() => null)) as
+        | { advice?: string; error?: string }
+        | null;
+      if (res.ok && data?.advice) {
+        setAiAdvice(data.advice);
+      }
+    } catch {
+      // leave aiAdvice null
+    } finally {
+      setIsLoadingAdvice(false);
+    }
+  };
 
   const handleDownloadImage = async () => {
     if (!generatedUrl) return;
@@ -364,6 +482,7 @@ export default function BarberPreviewPage() {
 
       setGeneratedUrl(data.imageUrl);
       setHasGenerated(true);
+      void fetchAdvice();
     } catch (err) {
       const message =
         err instanceof Error
@@ -648,7 +767,10 @@ export default function BarberPreviewPage() {
                 <div className="flex rounded-full border border-[#2A2A3A] bg-[#0a0a12] p-0.5 w-full sm:w-auto" role="group" aria-label="מצב תצוגה">
                   <button
                     type="button"
-                    onClick={() => setIsBarberMode(false)}
+                    onClick={() => {
+                      setIsBarberMode(false);
+                      void fetchAdvice(false);
+                    }}
                     className={`flex-1 sm:flex-none sm:px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                       !isBarberMode
                         ? "bg-cyan-500/10 text-white border border-cyan-500/30"
@@ -659,7 +781,10 @@ export default function BarberPreviewPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsBarberMode(true)}
+                    onClick={() => {
+                      setIsBarberMode(true);
+                      void fetchAdvice(true);
+                    }}
                     className={`flex-1 sm:flex-none sm:px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                       isBarberMode
                         ? "bg-cyan-500/10 text-white border border-cyan-500/30"
@@ -776,38 +901,21 @@ export default function BarberPreviewPage() {
                         </div>
 
                         {productRecommendations.length > 0 && (
-                          <div className="space-y-2 pt-4 border-t border-[#2A2A3A] text-right">
-                            <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
-                              מה יעזור לך לשמור על הלוק
+                          <div className="space-y-3 pt-4 border-t border-[#2A2A3A] text-right">
+                            <p className="text-xs sm:text-sm text-[#A8A8B3] uppercase tracking-wide">
+                              המלצות מוצרים לשמירה על הלוק 🧴
                             </p>
-                            <div className="flex flex-wrap gap-2 justify-center">
-                              {productRecommendations.map((prod) => (
-                                <div
-                                  key={prod.id}
-                                  className="min-w-[9rem] max-w-[13rem] rounded-2xl border border-[#2A2A3A] bg-[#06060d] px-3 py-2.5 flex flex-col gap-1"
-                                >
-                                  <div className="flex items-center justify-between gap-2">
-                                    <span className="text-[13px] font-medium text-white">
-                                      {prod.nameHe}
-                                    </span>
-                                    <span
-                                      className={`text-[10px] px-2 py-0.5 rounded-full border ${
-                                        prod.role === 0
-                                          ? "border-emerald-500/50 text-emerald-200"
-                                          : prod.role === 1
-                                          ? "border-[#4B5563] text-[#D1D5DB]"
-                                          : "border-[#4B5563] text-[#D1D5DB]"
-                                      }`}
-                                    >
-                                      {prod.role === 0
-                                        ? "ליבה"
-                                        : prod.role === 1
-                                        ? "אופציונלי"
-                                        : "שדרוג"}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
+                            <div className="flex flex-wrap gap-3 justify-center">
+                              {productRecommendations.map((prod) => {
+                                const roleStyles = getRoleStyles(prod.role);
+                                return (
+                                  <ProductCard
+                                    key={prod.id}
+                                    prod={prod}
+                                    roleStyles={roleStyles}
+                                  />
+                                );
+                              })}
                             </div>
                           </div>
                         )}
@@ -849,6 +957,22 @@ export default function BarberPreviewPage() {
                   </div>
                 );
               })()}
+
+              <div className="mt-5 pt-5 border-t border-[#2A2A3A] space-y-2 text-right">
+                <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
+                  ייעוץ אישי AI ✨
+                </p>
+                {isLoadingAdvice && (
+                  <p className="text-sm text-[#A8A8B3] animate-pulse">
+                    Claude מנתח...
+                  </p>
+                )}
+                {aiAdvice && !isLoadingAdvice && (
+                  <div className="rounded-xl border-l-4 border-cyan-500 bg-[#0a0a12] px-4 py-3 text-[13px] sm:text-sm text-[#E5E7EB] leading-relaxed text-right">
+                    {aiAdvice}
+                  </div>
+                )}
+              </div>
             </section>
           ) : (
             <section className="rounded-2xl border border-[#2A2A3A] bg-[#050509] p-5 sm:p-6 flex flex-col">

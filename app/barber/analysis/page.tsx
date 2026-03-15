@@ -21,6 +21,7 @@ import {
   BARBER_COMBO_STORAGE_KEY,
   BARBER_DEFAULT_HERO_IMAGE,
   BARBER_ANALYSIS_ENGINE_STORAGE_KEY,
+  BARBER_ANALYSIS_STORAGE_KEY,
 } from "@/lib/barber-session";
 
 // Combo preset id → { hairstyleId, beardId } using only real ids from lib/barber-presets.ts
@@ -668,6 +669,17 @@ export default function BarberAnalysisPage() {
         sessionStorage.setItem(BARBER_BEARD_STORAGE_KEY, selectedBeard);
       }
       updateStyleCompatibility(selectedHairstyle, selectedBeard);
+      if (realAnalysis) {
+        const parts = [
+          realAnalysis.personalSummaryHe,
+          realAnalysis.styleReasonHe,
+          realAnalysis.maintenanceDirectionHe,
+        ].filter(Boolean);
+        sessionStorage.setItem(
+          BARBER_ANALYSIS_STORAGE_KEY,
+          parts.join(" "),
+        );
+      }
     } catch {
       // ignore storage errors
     }
