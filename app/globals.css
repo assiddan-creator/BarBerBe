@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Safe BarberAI animation keyframes — all tied to React state / class toggles */
+@keyframes barber-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes barber-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes barber-scan-line {
+  from {
+    top: 0;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+@keyframes barber-pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.12);
+  }
+}
+
+@keyframes barber-result-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-barber-fade-in {
+  animation: barber-fade-in 0.4s ease-out forwards;
+}
+
+.animate-barber-scale-in {
+  animation: barber-scale-in 0.35s ease-out forwards;
+}
+
+.animate-barber-scan-line {
+  animation: barber-scan-line 2.2s ease-in-out infinite;
+}
+
+.animate-barber-pulse-glow {
+  animation: barber-pulse-glow 1.8s ease-in-out infinite;
+}
+
+.animate-barber-result-reveal {
+  animation: barber-result-reveal 0.5s ease-out forwards;
+}
+
+/* Educational loading overlay entrance */
+@keyframes loading-overlay-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-loading-overlay-in {
+  animation: loading-overlay-in 0.7s ease-out forwards;
+}

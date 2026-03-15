@@ -1,17 +1,24 @@
 {
-  "name": "assi-fast-booth",
+  "name": "barberbe",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3456",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@fal-ai/client": "^1.9.4",
+    "@fal-ai/server-proxy": "^1.2.1",
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.98.0",
+    "cloudinary": "^2.9.0",
     "next": "16.1.6",
+    "qrcode.react": "^4.2.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "replicate": "^1.4.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
