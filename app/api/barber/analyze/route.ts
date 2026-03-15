@@ -65,6 +65,11 @@ function buildLocalPersonalSummaryHe(analysis: {
 const ANALYSIS_SCHEMA = {
   type: SchemaType.OBJECT,
   properties: {
+    gender: {
+      type: SchemaType.STRING,
+      description: "Detected gender of the person in the photo from facial/visual cues.",
+      enum: ["male", "female"],
+    },
     beardCompatibility: {
       type: SchemaType.STRING,
       description: 'Overall beard compatibility: "low" | "medium" | "high"',
@@ -92,6 +97,11 @@ const ANALYSIS_SCHEMA = {
       description: 'Overall confidence: "low" | "medium" | "high"',
       enum: ["low", "medium", "high"],
     },
+    hairType: {
+      type: SchemaType.STRING,
+      description: "Hair texture / type: straight, wavy, or curly.",
+      enum: ["straight", "wavy", "curly"],
+    },
     personalSummaryHe: {
       type: SchemaType.STRING,
       description:
@@ -109,6 +119,8 @@ const ANALYSIS_SCHEMA = {
     },
   },
   required: [
+    "gender",
+    "hairType",
     "beardCompatibility",
     "beardCompatibilityHe",
     "topRecommendedHairstyles",
@@ -202,6 +214,8 @@ ${beardIds}
 
 על בסיס התמונה וההנחיות, הפק ניתוח אחד מסודר שממלא את השדות הבאים:
 
+- gender: "male" | "female" — זהה את המין של האדם בתמונה (גבר או אישה) על פי המראה והמאפיינים הויזואליים.
+- hairType: "straight" | "wavy" | "curly" — טקסטורת השיער (חלק, גלי, מתולתל).
 - beardCompatibility: "low" | "medium" | "high"
 - beardCompatibilityHe: תיאור קצר בעברית של התאמת הזקן למראה הכללי.
 - topRecommendedHairstyles: מערך של 2 עד 4 מזהי פריסטים לשיער מתוך הרשימה בלבד, בסדר עדיפות.

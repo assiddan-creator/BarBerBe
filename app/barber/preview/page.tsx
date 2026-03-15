@@ -18,6 +18,7 @@ import {
   BARBER_HAIRSTYLE_STORAGE_KEY,
   BARBER_BEARD_STORAGE_KEY,
   BARBER_ANALYSIS_STORAGE_KEY,
+  BARBER_HAIR_TYPE_STORAGE_KEY,
 } from "@/lib/barber-session";
 import { GenerationLoadingOverlay } from "@/components/GenerationLoadingOverlay";
 
@@ -247,9 +248,12 @@ export default function BarberPreviewPage() {
       getDisplayName(hairstylePreset) || selectedHairstyle || "";
     const beardName = getDisplayName(beardPreset) || selectedBeard || "";
     let analysisText = "";
+    let hairType = "";
     try {
       analysisText =
         sessionStorage.getItem(BARBER_ANALYSIS_STORAGE_KEY) ?? "";
+      hairType =
+        sessionStorage.getItem(BARBER_HAIR_TYPE_STORAGE_KEY) ?? "";
     } catch {
       // ignore
     }
@@ -263,6 +267,7 @@ export default function BarberPreviewPage() {
           hairstyleName,
           beardName,
           mode: mode ?? "",
+          hairType,
           analysisText,
           isBarberMode: useBarberMode,
         }),

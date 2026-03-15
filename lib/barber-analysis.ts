@@ -18,6 +18,8 @@ const PERSONAL_SUMMARY_MAX_LENGTH = 400;
  * This intentionally omits any biometric / facial-shape fields.
  */
 export interface BarberAnalysisResult {
+  gender?: "male" | "female";
+  hairType?: "straight" | "wavy" | "curly";
   beardCompatibility: BeardCompatibilityAnalysis;
   beardCompatibilityHe: string;
   topRecommendedHairstyles: string[];
@@ -42,6 +44,12 @@ export function normalizeAnalysisOutput(
   if (!raw || typeof raw !== "object") return null;
   const o = raw as Record<string, unknown>;
 
+  const gender =
+    o.gender === "male" || o.gender === "female" ? o.gender : undefined;
+  const hairType =
+    o.hairType === "straight" || o.hairType === "wavy" || o.hairType === "curly"
+      ? o.hairType
+      : undefined;
   const beardCompatibility = VALID_BEARD_COMPATIBILITY.includes(
     o.beardCompatibility as BeardCompatibilityAnalysis
   )
@@ -52,6 +60,8 @@ export function normalizeAnalysisOutput(
     : "medium";
 
   const result: BarberAnalysisResult = {
+    ...(gender && { gender }),
+    ...(hairType && { hairType }),
     beardCompatibility,
     beardCompatibilityHe:
       typeof o.beardCompatibilityHe === "string" ? o.beardCompatibilityHe : "",

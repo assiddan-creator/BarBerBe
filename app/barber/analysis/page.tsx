@@ -22,6 +22,8 @@ import {
   BARBER_DEFAULT_HERO_IMAGE,
   BARBER_ANALYSIS_ENGINE_STORAGE_KEY,
   BARBER_ANALYSIS_STORAGE_KEY,
+  BARBER_HAIR_TYPE_STORAGE_KEY,
+  BARBER_FLOW_STORAGE_KEY,
 } from "@/lib/barber-session";
 
 // Combo preset id → { hairstyleId, beardId } using only real ids from lib/barber-presets.ts
@@ -373,6 +375,8 @@ export default function BarberAnalysisPage() {
   );
   const [selectedBeard, setSelectedBeard] = useState<string | null>(null);
   const [selectedComboId, setSelectedComboId] = useState<string | null>(null);
+  const [flowFromStorage, setFlowFromStorage] = useState<"men" | "women" | null>(null);
+  const hideBeardSections = flowFromStorage === "women";
   const [hydrated, setHydrated] = useState(false);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
@@ -532,6 +536,10 @@ export default function BarberAnalysisPage() {
 
   useEffect(() => {
     try {
+      const storedFlow = sessionStorage.getItem(BARBER_FLOW_STORAGE_KEY);
+      if (storedFlow === "men" || storedFlow === "women") {
+        setFlowFromStorage(storedFlow);
+      }
       const storedSelfie = sessionStorage.getItem(BARBER_SELFIE_STORAGE_KEY);
       const storedHairstyle = sessionStorage.getItem(
         BARBER_HAIRSTYLE_STORAGE_KEY,
@@ -679,6 +687,9 @@ export default function BarberAnalysisPage() {
           BARBER_ANALYSIS_STORAGE_KEY,
           parts.join(" "),
         );
+        if (realAnalysis.hairType) {
+          sessionStorage.setItem(BARBER_HAIR_TYPE_STORAGE_KEY, realAnalysis.hairType);
+        }
       }
     } catch {
       // ignore storage errors
@@ -840,12 +851,14 @@ export default function BarberAnalysisPage() {
                   </div>
                 )}
 
-                <div className="mt-1 space-y-3 text-sm rounded-2xl border border-[#00FFD1]/25 bg-[#080810] px-4 py-3 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-[#00FFD1]/80">התאמה לזקן</span>
-                    <span className="text-[#00FFD1]">{analysisLabels.beardCompatibilityLabel}</span>
+                {!hideBeardSections && (
+                  <div className="mt-1 space-y-3 text-sm rounded-2xl border border-[#00FFD1]/25 bg-[#080810] px-4 py-3 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-[#00FFD1]/80">התאמה לזקן</span>
+                      <span className="text-[#00FFD1]">{analysisLabels.beardCompatibilityLabel}</span>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#080810] px-4 py-3 space-y-2.5 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
                   <p className="text-xs tracking-[0.12em] uppercase text-[#00FFD1]/70 mb-1.5 text-center">
@@ -856,10 +869,12 @@ export default function BarberAnalysisPage() {
                       <dt className="text-[#00FFD1]/70 shrink-0">אווירה סגנונית</dt>
                       <dd className="text-white/95">{diagnostic.hairTextureHe}</dd>
                     </div>
-                    <div className="flex justify-between gap-3 sm:block">
-                      <dt className="text-[#00FFD1]/70 shrink-0">נוכחות זקן</dt>
-                      <dd className="text-white/95">{diagnostic.beardPresenceHe}</dd>
-                    </div>
+                    {!hideBeardSections && (
+                      <div className="flex justify-between gap-3 sm:block">
+                        <dt className="text-[#00FFD1]/70 shrink-0">נוכחות זקן</dt>
+                        <dd className="text-white/95">{diagnostic.beardPresenceHe}</dd>
+                      </div>
+                    )}
                     <div className="flex justify-between gap-3 sm:block">
                       <dt className="text-[#00FFD1]/70 shrink-0">כיוון תחזוקה</dt>
                       <dd className="text-white/95">{diagnostic.maintenanceDirectionHe}</dd>
@@ -961,104 +976,108 @@ export default function BarberAnalysisPage() {
                 </div>
               </div>
 
-              {/* Recommended beards (top 3) */}
-              <div className="space-y-2 flex flex-col items-center">
-                <h3 className="text-sm font-medium text-[#00FFD1]">
-                  סגנונות הזקן המומלצים עבורך
-                </h3>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {recommendedBeards.map((preset) => {
-                    const isActive = selectedBeard === preset.id;
-                    return (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => handleSelectBeard(preset.id)}
-                        className={`rounded-xl px-3 py-2 text-sm border transition-all ${
-                          isActive
-                            ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
-                            : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
-                        }`}
-                      >
-                        <span className="inline-flex flex-col items-center text-center">
-                          <span>{getPresetDisplayLabel(preset)}</span>
-                          {preset.displayNameHe && (
-                            <span className="text-xs text-[#00FFD1]/70 mt-0.5">
-                              {preset.nameHe}
+              {!hideBeardSections && (
+                <>
+                  {/* Recommended beards (top 3) */}
+                  <div className="space-y-2 flex flex-col items-center">
+                    <h3 className="text-sm font-medium text-[#00FFD1]">
+                      סגנונות הזקן המומלצים עבורך
+                    </h3>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {recommendedBeards.map((preset) => {
+                        const isActive = selectedBeard === preset.id;
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            onClick={() => handleSelectBeard(preset.id)}
+                            className={`rounded-xl px-3 py-2 text-sm border transition-all ${
+                              isActive
+                                ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                                : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
+                            }`}
+                          >
+                            <span className="inline-flex flex-col items-center text-center">
+                              <span>{getPresetDisplayLabel(preset)}</span>
+                              {preset.displayNameHe && (
+                                <span className="text-xs text-[#00FFD1]/70 mt-0.5">
+                                  {preset.nameHe}
+                                </span>
+                              )}
                             </span>
-                          )}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-              {/* All beards */}
-              <div className="space-y-2 flex flex-col items-center">
-                <h3 className="text-xs font-medium text-[#00FFD1]/80">
-                  כל סגנונות הזקן
-                </h3>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {BEARD_PRESETS.map((preset) => {
-                    const isActive = selectedBeard === preset.id;
-                    return (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => handleSelectBeard(preset.id)}
-                        className={`rounded-xl px-3 py-2 text-xs sm:text-sm border transition-all ${
-                          isActive
-                            ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
-                            : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
-                        }`}
-                      >
-                        <span className="inline-flex flex-col items-center text-center">
-                          <span>{getPresetDisplayLabel(preset)}</span>
-                          {preset.displayNameHe && (
-                            <span className="text-[10px] text-[#00FFD1]/70 mt-0.5">
-                              {preset.nameHe}
+                  {/* All beards */}
+                  <div className="space-y-2 flex flex-col items-center">
+                    <h3 className="text-xs font-medium text-[#00FFD1]/80">
+                      כל סגנונות הזקן
+                    </h3>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {BEARD_PRESETS.map((preset) => {
+                        const isActive = selectedBeard === preset.id;
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            onClick={() => handleSelectBeard(preset.id)}
+                            className={`rounded-xl px-3 py-2 text-xs sm:text-sm border transition-all ${
+                              isActive
+                                ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                                : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
+                            }`}
+                          >
+                            <span className="inline-flex flex-col items-center text-center">
+                              <span>{getPresetDisplayLabel(preset)}</span>
+                              {preset.displayNameHe && (
+                                <span className="text-[10px] text-[#00FFD1]/70 mt-0.5">
+                                  {preset.nameHe}
+                                </span>
+                              )}
                             </span>
-                          )}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-              {/* Recommended full-look combos (top 3) */}
-              <div className="space-y-2 pt-2 border-t border-[#00FFD1]/25 flex flex-col items-center">
-                <h3 className="text-sm font-medium text-[#00FFD1]">
-                  הלוקים המלאים המומלצים עבורך
-                </h3>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {recommendedCombos.map((preset) => {
-                    const isActive = selectedComboId === preset.id;
-                    return (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => handleSelectCombo(preset.id)}
-                        className={`rounded-xl px-3 py-2 text-sm border transition-all ${
-                          isActive
-                            ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
-                            : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
-                        }`}
-                      >
-                        <span className="inline-flex flex-col items-center text-center">
-                          <span>{getPresetDisplayLabel(preset)}</span>
-                          {preset.displayNameHe && (
-                            <span className="text-xs text-[#00FFD1]/70 mt-0.5">
-                              {preset.nameHe}
+                  {/* Recommended full-look combos (top 3) */}
+                  <div className="space-y-2 pt-2 border-t border-[#00FFD1]/25 flex flex-col items-center">
+                    <h3 className="text-sm font-medium text-[#00FFD1]">
+                      הלוקים המלאים המומלצים עבורך
+                    </h3>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {recommendedCombos.map((preset) => {
+                        const isActive = selectedComboId === preset.id;
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            onClick={() => handleSelectCombo(preset.id)}
+                            className={`rounded-xl px-3 py-2 text-sm border transition-all ${
+                              isActive
+                                ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                                : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
+                            }`}
+                          >
+                            <span className="inline-flex flex-col items-center text-center">
+                              <span>{getPresetDisplayLabel(preset)}</span>
+                              {preset.displayNameHe && (
+                                <span className="text-xs text-[#00FFD1]/70 mt-0.5">
+                                  {preset.nameHe}
+                                </span>
+                              )}
                             </span>
-                          )}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
               </>
             )}

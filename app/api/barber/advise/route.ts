@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     hairstyleName?: string;
     beardName?: string;
     mode?: string;
+    hairType?: string;
     analysisText?: string;
     isBarberMode?: boolean;
   };
@@ -28,17 +29,21 @@ export async function POST(request: NextRequest) {
     hairstyleName = "",
     beardName = "",
     mode = "",
+    hairType = "",
     analysisText = "",
     isBarberMode = false,
   } = body;
+
+  const analysisContext =
+    (hairType ? `סוג שיער: ${hairType}. ` : "") + (analysisText || "");
 
   const systemPrompt = isBarberMode
     ? "אתה מומחה תספורות מקצועי בישראל. אתה מדבר לספר בשפה מקצועית וטכנית. תמיד בעברית. תמיד קצר — 4 נקודות בלבד בפורמט: • טכניקה • אורכים • כלים • טיפ מקצועי."
     : "אתה יועץ סגנון אישי ברמה הגבוהה ביותר בישראל. אתה מדבר ישירות ללקוח בשפה חמה, אישית ומעודדת. תמיד בעברית. תמיד קצר — 3 משפטים בלבד.";
 
   const userPrompt = isBarberMode
-    ? `הלקוח בחר: ${hairstyleName}${beardName ? " עם זקן " + beardName : ""}. ניתוח AI: ${analysisText}. כתוב הוראות מקצועיות קצרות לספר.`
-    : `הלקוח בחר: ${hairstyleName}${beardName ? " עם זקן " + beardName : ""}. ניתוח AI: ${analysisText}. כתוב 3 משפטים אישיים שמסבירים למה הלוק הזה מתאים לו, מה הוא יקרין, ואיך ירגיש עם הלוק הזה.`;
+    ? `הלקוח בחר: ${hairstyleName}${beardName ? " עם זקן " + beardName : ""}. ${analysisContext}. כתוב הוראות מקצועיות קצרות לספר.`
+    : `הלקוח בחר: ${hairstyleName}${beardName ? " עם זקן " + beardName : ""}. ${analysisContext}. כתוב 3 משפטים אישיים שמסבירים למה הלוק הזה מתאים לו, מה הוא יקרין, ואיך ירגיש עם הלוק הזה.`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {

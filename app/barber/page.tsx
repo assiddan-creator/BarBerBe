@@ -67,6 +67,34 @@ export default function BarberPage() {
       } catch {
         // ignore storage errors
       }
+      // Auto-detect gender and set flow so user doesn't need to select
+      fetch("/api/barber/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl: data.url }),
+      })
+        .then((r) => r.json())
+        .then((payload: { analysis?: { gender?: string } }) => {
+          const gender = payload?.analysis?.gender;
+          if (gender === "female") {
+            try {
+              sessionStorage.setItem(BARBER_FLOW_STORAGE_KEY, "women");
+              setSelectedFlow("women");
+              router.push("/barber/women/analysis");
+            } catch {
+              // ignore
+            }
+          } else if (gender === "male") {
+            try {
+              sessionStorage.setItem(BARBER_FLOW_STORAGE_KEY, "men");
+              setSelectedFlow("men");
+              router.push("/barber/analysis");
+            } catch {
+              // ignore
+            }
+          }
+        })
+        .catch(() => {});
     } catch {
       setUploadError("לא הצלחנו להעלות את התמונה. נסה שוב בעוד רגע.");
       setHostedSelfieUrl(null);
