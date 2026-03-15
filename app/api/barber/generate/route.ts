@@ -72,20 +72,27 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: { imageUrl?: string; prompt?: string; type?: BarberType };
+  let body: {
+    imageUrl?: string;
+    prompt?: string;
+    type?: BarberType;
+    model?: string;
+  };
   try {
     body = (await request.json()) as typeof body;
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { imageUrl, prompt, type } = body;
+  const { imageUrl, prompt, type, model: modelOverride } = body;
   if (!imageUrl || !prompt || !type) {
     return NextResponse.json(
       { error: "Missing imageUrl, prompt, or type" },
       { status: 400 },
     );
   }
+
+  const model = modelOverride ?? "google/nano-banana-pro";
 
   const replicate = new Replicate({
     auth: token,
@@ -107,7 +114,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const output = (await replicate.run("google/nano-banana-pro", {
+    const output = (await replicate.run(model, {
       input: {
         prompt: finalPrompt,
         image_input: [imageUrl],

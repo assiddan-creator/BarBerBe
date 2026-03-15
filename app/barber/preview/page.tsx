@@ -87,6 +87,13 @@ function getDisplayName(preset: BarberPreset | null): string {
   return preset.displayNameHe ?? preset.nameHe;
 }
 
+const MODEL_OPTIONS = [
+  { label: "Nano Banana Pro", value: "google/nano-banana-pro" },
+  { label: "Nano Banana 2", value: "google/nano-banana-2" },
+  { label: "Flux 2 Pro", value: "black-forest-labs/flux-2-pro" },
+  { label: "Flux Kontext Pro", value: "black-forest-labs/flux-kontext-pro" },
+] as const;
+
 function ProductRecommendationsSection({
   products,
 }: {
@@ -150,6 +157,10 @@ export default function BarberPreviewPage() {
   const [isBarberMode, setIsBarberMode] = useState(false);
   type ComparisonView = "after" | "before" | "compare";
   const [comparisonView, setComparisonView] = useState<ComparisonView>("after");
+  const [selectedModel, setSelectedModel] = useState<string>(
+    "google/nano-banana-pro",
+  );
+  const [changeIntensity, setChangeIntensity] = useState(100);
 
   const handleDownloadImage = async () => {
     if (!generatedUrl) return;
@@ -336,6 +347,7 @@ export default function BarberPreviewPage() {
           imageUrl: selfieUrl,
           prompt,
           type: mode,
+          model: selectedModel,
         }),
       });
 
@@ -476,11 +488,20 @@ export default function BarberPreviewPage() {
                 {hasGenerated && generatedUrl && selfieUrl && !isGenerating && (
                   <>
                     {comparisonView === "after" && (
-                      <img
-                        src={generatedUrl}
-                        alt="תוצאת ה-AI של BarBerBe"
-                        className="absolute inset-0 w-full h-full object-contain"
-                      />
+                      <>
+                        <img
+                          src={selfieUrl}
+                          alt="הסלפי המקורי"
+                          className="absolute inset-0 w-full h-full object-contain"
+                          aria-hidden
+                        />
+                        <img
+                          src={generatedUrl}
+                          alt="תוצאת ה-AI של BarBerBe"
+                          className="absolute inset-0 w-full h-full object-contain transition-opacity duration-150"
+                          style={{ opacity: changeIntensity / 100 }}
+                        />
+                      </>
                     )}
                     {comparisonView === "before" && (
                       <img
@@ -519,27 +540,46 @@ export default function BarberPreviewPage() {
               </div>
 
               {hasGenerated && generatedUrl && selfieUrl && (
-                <div className="px-4 py-3 border-t border-[#2A2A3A] flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">
-                  <p className="text-sm text-[#A8A8B3] text-right leading-relaxed order-2 sm:order-1">
-                    {comparisonView === "after" &&
-                      "תוצאת ההדמיה שלך — הדמיה בלבד לפני חיבור למנוע התמונות הסופי"}
-                    {comparisonView === "before" && "הסלפי המקורי שהועלה"}
-                    {comparisonView === "compare" &&
-                      "השוואה: לפני ואחרי — תוצאת ההדמיה"}
-                  </p>
-                  {(comparisonView === "after" ||
-                    comparisonView === "compare") && (
-                    <div className="flex justify-center w-full sm:w-auto order-1 sm:order-2">
-                      <button
-                        type="button"
-                        onClick={handleDownloadImage}
-                        className="rounded-xl border border-[#374151] bg-[#101018] px-4 py-2 text-sm font-medium text-white hover:bg-[#181826] hover:border-[#4B5563] transition-colors"
-                      >
-                        הורד תמונה
-                      </button>
+                <>
+                  {comparisonView === "after" && (
+                    <div className="px-4 py-3 border-t border-[#2A2A3A] space-y-2">
+                      <label className="block text-sm text-[#A8A8B3] text-right">
+                        עוצמת השינוי: {changeIntensity}%
+                      </label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={changeIntensity}
+                        onChange={(e) =>
+                          setChangeIntensity(Number(e.target.value))
+                        }
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-[#1F2937] accent-cyan-500"
+                      />
                     </div>
                   )}
-                </div>
+                  <div className="px-4 py-3 border-t border-[#2A2A3A] flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">
+                    <p className="text-sm text-[#A8A8B3] text-right leading-relaxed order-2 sm:order-1">
+                      {comparisonView === "after" &&
+                        "תוצאת ההדמיה שלך — הדמיה בלבד לפני חיבור למנוע התמונות הסופי"}
+                      {comparisonView === "before" && "הסלפי המקורי שהועלה"}
+                      {comparisonView === "compare" &&
+                        "השוואה: לפני ואחרי — תוצאת ההדמיה"}
+                    </p>
+                    {(comparisonView === "after" ||
+                      comparisonView === "compare") && (
+                      <div className="flex justify-center w-full sm:w-auto order-1 sm:order-2">
+                        <button
+                          type="button"
+                          onClick={handleDownloadImage}
+                          className="rounded-xl border border-[#374151] bg-[#101018] px-4 py-2 text-sm font-medium text-white hover:bg-[#181826] hover:border-[#4B5563] transition-colors"
+                        >
+                          הורד תמונה
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </section>
 
@@ -828,6 +868,28 @@ export default function BarberPreviewPage() {
         )}
 
         <section className="pt-1 space-y-3">
+          <div className="space-y-3">
+            <p className="text-xs sm:text-sm font-medium text-[#A8A8B3] text-center">
+              בחר מודל AI
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {MODEL_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setSelectedModel(opt.value)}
+                  disabled={isGenerating}
+                  className={`rounded-xl px-3 py-2 text-sm border transition-all duration-200 ${
+                    selectedModel === opt.value
+                      ? "border-cyan-500/40 bg-cyan-500/10 text-white"
+                      : "border-[#2A2A3A] bg-[#101018] text-white hover:bg-[#181826] hover:border-[#374151]"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="space-y-1 text-center">
             <button
               type="button"
