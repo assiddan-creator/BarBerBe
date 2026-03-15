@@ -50,15 +50,15 @@ function roleLabel(role: WomenProductRecommendationView["recommendationRole"]): 
 function WomenProductsSection({ products }: { products: WomenProductRecommendationView[] }) {
   if (!products.length) return null;
   return (
-    <div className="space-y-2 pt-4 border-t border-[#2A2A3A] w-full flex flex-col items-center">
-      <p className="text-xs font-medium text-[#6B7280] uppercase tracking-[0.15em] text-center">
+    <div className="space-y-2 pt-4 border-t border-[#00FFD1]/20 w-full flex flex-col items-center">
+      <p className="text-xs font-medium text-[#00FFD1] uppercase tracking-widest text-center">
         מה יעזור לך לשמור על הלוק
       </p>
       <div className="flex flex-wrap gap-2 justify-center w-full">
         {products.map((prod) => (
           <div
             key={prod.id}
-            className="min-w-[10rem] max-w-[14rem] rounded-xl border border-[#1F2933] bg-[#08080f] px-3 py-2.5 flex flex-col gap-1.5 text-center"
+            className="min-w-[10rem] max-w-[14rem] rounded-xl border border-[#00FFD1]/30 bg-[#0f0f18] px-3 py-2.5 flex flex-col gap-1.5 text-center shadow-[0_0_8px_rgba(0,255,209,0.15)]"
           >
             <div className="flex items-center justify-center gap-2 flex-wrap">
               <span className="text-[13px] font-medium text-[#E5E7EB]">
@@ -67,10 +67,10 @@ function WomenProductsSection({ products }: { products: WomenProductRecommendati
               <span
                 className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ${
                   prod.recommendationRole === "core"
-                    ? "border-emerald-500/40 text-emerald-200/90"
+                    ? "border-[#00FFD1]/50 text-[#00FFD1]"
                     : prod.recommendationRole === "optional"
-                    ? "border-[#4B5563] text-[#D1D5DB]"
-                    : "border-[#4B5563] text-[#9CA3AF]"
+                    ? "border-[#00FFD1]/30 text-[#00FFD1]/80"
+                    : "border-[#00FFD1]/20 text-[#9CA3AF]"
                 }`}
               >
                 {roleLabel(prod.recommendationRole)}
@@ -154,20 +154,20 @@ export default function WomenPreviewPage() {
 
   if (hasSelfie && !hasStyle) {
     return (
-      <main className="min-h-screen bg-[#050509] text-white flex flex-col" dir="rtl">
+      <main className="min-h-screen bg-[#040406] text-white flex flex-col" dir="rtl">
         <div className="mx-auto w-full max-w-2xl px-4 sm:px-6 lg:px-8 py-10 space-y-6 text-center">
-          <h1 className="text-xl font-semibold">כרטיס ייעוץ שיער</h1>
-          <p className="text-sm text-[#A8A8B3]">
+          <h1 className="text-xl font-semibold text-[#00FFD1] tracking-widest">כרטיס ייעוץ שיער</h1>
+          <p className="text-sm text-[#00FFD1]/80">
             יש תמונה, אבל עדיין לא נבחר כיוון עיצוב.
           </p>
-          <p className="text-sm text-[#A8A8B3]">
+          <p className="text-sm text-[#00FFD1]/70">
             חזרי למסך הניתוח כדי לבחור כיוון ולהמשיך להדמיה.
           </p>
           <div className="flex justify-center mt-2">
             <button
               type="button"
               onClick={() => router.push("/barber/women/analysis")}
-              className="rounded-xl border border-[#2A2A3A] bg-[#101018] px-4 py-2.5 text-sm text-white hover:bg-[#181826] hover:border-[#374151] transition-colors"
+              className="rounded-xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-4 py-2.5 text-sm text-[#00FFD1] transition-all shadow-[0_0_8px_rgba(0,255,209,0.2)] hover:shadow-[0_0_12px_rgba(0,255,209,0.35)]"
             >
               חזרה למסך הניתוח
             </button>
@@ -179,24 +179,24 @@ export default function WomenPreviewPage() {
 
   if (!hasSelfie && !hasStyle) {
     return (
-      <main className="min-h-screen bg-[#050509] text-white flex flex-col" dir="rtl">
+      <main className="min-h-screen bg-[#040406] text-white flex flex-col" dir="rtl">
         <div className="mx-auto w-full max-w-2xl px-4 sm:px-6 lg:px-8 py-10 space-y-6 text-center">
-          <h1 className="text-xl font-semibold">כרטיס ייעוץ שיער</h1>
-          <p className="text-sm text-[#A8A8B3]">
+          <h1 className="text-xl font-semibold text-[#00FFD1] tracking-widest">כרטיס ייעוץ שיער</h1>
+          <p className="text-sm text-[#00FFD1]/80">
             לא נמצאה תמונה או כיוון עיצוב שמור. חזרי לניתוח או למסך ההעלאה.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               type="button"
               onClick={() => router.push("/barber/women/analysis")}
-              className="rounded-xl border border-[#2A2A3A] bg-[#101018] px-4 py-2.5 text-sm text-white hover:bg-[#181826] hover:border-[#374151] transition-colors"
+              className="rounded-xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-4 py-2.5 text-sm text-[#00FFD1] transition-all shadow-[0_0_8px_rgba(0,255,209,0.2)] hover:shadow-[0_0_12px_rgba(0,255,209,0.35)]"
             >
               חזרה לניתוח
             </button>
             <button
               type="button"
               onClick={() => router.push("/barber")}
-              className="rounded-xl border border-transparent bg-transparent px-4 py-2.5 text-sm text-[#A8A8B3] hover:text-white transition-colors"
+              className="rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-4 py-2.5 text-sm text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
             >
               חזרה למסך ההעלאה
             </button>
@@ -207,12 +207,12 @@ export default function WomenPreviewPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#050509] text-white px-4 py-6 sm:py-10" dir="rtl">
-      <section className="w-full max-w-6xl mx-auto rounded-3xl border border-[#2A2A3A] bg-gradient-to-b from-[#11111a] via-[#080808] to-[#050509] shadow-[0_24px_80px_rgba(0,0,0,0.75)] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-8">
+    <main className="min-h-screen bg-[#040406] text-white px-4 py-6 sm:py-10" dir="rtl">
+      <section className="w-full max-w-6xl mx-auto rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-8 shadow-[0_0_8px_rgba(0,255,209,0.3)]">
         <div className="relative">
           <Link
             href="/barber"
-            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#2A2A3A] bg-[#08080f] px-3 py-2 text-sm text-[#A8A8B3] hover:text-white hover:border-[#374151] transition-colors z-10"
+            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-3 py-2 text-sm text-[#00FFD1] transition-all z-10 hover:shadow-[0_0_12px_rgba(0,255,209,0.4)]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -222,13 +222,13 @@ export default function WomenPreviewPage() {
           </Link>
         </div>
         <header className="space-y-1 flex flex-col items-center justify-center text-center">
-          <p className="text-xs tracking-[0.22em] text-[#6B7280]">
+          <p className="text-xs tracking-widest text-[#00FFD1]">
             BarBerBe WOMEN / PREVIEW
           </p>
-          <h1 className="text-2xl sm:text-3xl font-semibold">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-[#00FFD1] tracking-widest">
             כרטיס ייעוץ – כיוון נבחר
           </h1>
-          <p className="text-base text-[#A8A8B3] max-w-xl mx-auto leading-relaxed">
+          <p className="text-base text-[#00FFD1]/80 max-w-xl mx-auto leading-relaxed">
             סיכום הייעוץ לפי הכיוון שנבחר. צרי הדמיה כדי לראות את הלוק.
           </p>
         </header>
@@ -238,23 +238,23 @@ export default function WomenPreviewPage() {
           {/* Left column: image container (result or selfie) — centered on mobile */}
           <div className="space-y-5 flex flex-col items-center justify-center w-full">
             <section
-              className="rounded-2xl border border-[#2A2A3A] bg-[#050509] overflow-hidden w-full max-w-full mx-auto"
+              className="rounded-2xl border border-[#00FFD1]/30 bg-[#0f0f18] overflow-hidden w-full max-w-full mx-auto shadow-[0_0_8px_rgba(0,255,209,0.2)]"
               aria-label="תוצאת ההדמיה"
             >
               {generatedUrl && hasSelfie && (
-                <div className="flex items-center justify-center gap-0 px-2 py-2 border-b border-[#2A2A3A]">
+                <div className="flex items-center justify-center gap-0 px-2 py-2 border-b border-[#00FFD1]/20">
                   <div
-                    className="flex rounded-full border border-[#2A2A3A] bg-[#0a0a12] p-0.5"
+                    className="flex rounded-full border border-[#00FFD1]/40 bg-[#080810] p-0.5 shadow-[0_0_6px_rgba(0,255,209,0.15)]"
                     role="group"
                     aria-label="תצוגת לפני/אחרי"
                   >
                     <button
                       type="button"
                       onClick={() => setImageView("after")}
-                      className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                      className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
                         imageView === "after"
-                          ? "bg-cyan-500/10 text-white border border-cyan-500/30"
-                          : "text-[#A8A8B3] hover:text-white"
+                          ? "bg-[#00FFD1]/15 text-[#00FFD1] border border-[#00FFD1]/50 shadow-[0_0_6px_rgba(0,255,209,0.2)]"
+                          : "text-[#9CA3AF] hover:text-[#00FFD1]"
                       }`}
                     >
                       אחרי
@@ -262,10 +262,10 @@ export default function WomenPreviewPage() {
                     <button
                       type="button"
                       onClick={() => setImageView("before")}
-                      className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                      className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
                         imageView === "before"
-                          ? "bg-cyan-500/10 text-white border border-cyan-500/30"
-                          : "text-[#A8A8B3] hover:text-white"
+                          ? "bg-[#00FFD1]/15 text-[#00FFD1] border border-[#00FFD1]/50 shadow-[0_0_6px_rgba(0,255,209,0.2)]"
+                          : "text-[#9CA3AF] hover:text-[#00FFD1]"
                       }`}
                     >
                       לפני
@@ -274,8 +274,7 @@ export default function WomenPreviewPage() {
                 </div>
               )}
 
-              {/* Strict wrapper: never changes size */}
-              <div className="relative w-full aspect-[3/4] max-h-[55vh] md:max-h-[600px] bg-[#050509] rounded-xl overflow-hidden border border-white/10">
+              <div className="relative w-full aspect-[3/4] max-h-[55vh] md:max-h-[600px] bg-[#080808] rounded-xl overflow-hidden border border-[#00FFD1]/25 shadow-[0_0_8px_rgba(0,255,209,0.15)]">
                 {selfieUrl && !generatedUrl && (
                   <>
                     <img
@@ -310,7 +309,7 @@ export default function WomenPreviewPage() {
               </div>
 
               {generatedUrl && hasSelfie && (
-                <p className="text-sm text-[#6B7280] text-center py-2 px-2 border-t border-[#2A2A3A]">
+                <p className="text-sm text-[#00FFD1]/70 text-center py-2 px-2 border-t border-[#00FFD1]/20">
                   {imageView === "before"
                     ? "לפני – התמונה שהועלתה"
                     : "אחרי – תוצאת ההדמיה לפי הכיוון שנבחר"}
@@ -320,11 +319,11 @@ export default function WomenPreviewPage() {
 
             {/* Original selfie below (when no generated result yet) */}
             {!generatedUrl && hasSelfie && (
-              <section className="rounded-2xl border border-[#2A2A3A] bg-[#0f0f18] p-4 sm:p-5 flex flex-col gap-3 items-center w-full max-w-full mx-auto">
-                <h2 className="text-sm font-medium text-[#A8A8B3] text-center">
+              <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0f0f18] p-4 sm:p-5 flex flex-col gap-3 items-center w-full max-w-full mx-auto shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+                <h2 className="text-sm font-medium text-[#00FFD1] tracking-widest text-center">
                   התמונה שהועלתה
                 </h2>
-                <div className="border border-[#2A2A3A] rounded-2xl overflow-hidden bg-[#050509] aspect-[4/3] lg:max-h-[600px] flex items-center justify-center">
+                <div className="border border-[#00FFD1]/25 rounded-2xl overflow-hidden bg-[#080808] aspect-[4/3] lg:max-h-[600px] flex items-center justify-center shadow-[0_0_6px_rgba(0,255,209,0.15)]">
                   <img
                     src={selfieUrl!}
                     alt="הסלפי שהועלה"
@@ -337,25 +336,25 @@ export default function WomenPreviewPage() {
 
           {/* Right column: Consultation Card + Stylist Guidance + products + actions */}
           <div className="space-y-5 lg:sticky lg:top-8 flex flex-col items-center sm:items-stretch">
-            <section className="rounded-2xl border border-[#2A2A3A] bg-[#050509] p-5 sm:p-6 flex flex-col gap-4 w-full max-w-full text-center">
-              <h2 className="text-base font-semibold text-white">
+            <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0f0f18] p-5 sm:p-6 flex flex-col gap-4 w-full max-w-full text-center shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+              <h2 className="text-base font-semibold text-[#00FFD1] tracking-widest">
                 כרטיס ייעוץ אישי
               </h2>
 
               {preset ? (
                 <>
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-[#6B7280] uppercase tracking-wide">
+                    <p className="text-sm font-medium text-[#00FFD1]/80 uppercase tracking-widest">
                       כיוון נבחר
                     </p>
                     <p className="text-lg sm:text-xl font-semibold text-white">
                       {preset.displayNameHe}
                     </p>
                     <div className="flex flex-wrap gap-2 justify-center">
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-[#374151] bg-[#0f0f18] px-2.5 py-1 text-xs text-[#D1D5DB]">
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-[#00FFD1]/30 bg-[#080808] px-2.5 py-1 text-xs text-[#00FFD1]/90">
                         {maintenanceLabel(preset.maintenanceLevel)}
                       </span>
-                      <span className="inline-flex items-center rounded-full border border-[#374151] bg-[#0f0f18] px-2.5 py-1 text-xs text-[#D1D5DB]">
+                      <span className="inline-flex items-center rounded-full border border-[#00FFD1]/30 bg-[#080808] px-2.5 py-1 text-xs text-[#00FFD1]/90">
                         {preset.vibe.join(" · ")}
                       </span>
                     </div>
@@ -365,9 +364,9 @@ export default function WomenPreviewPage() {
                     {preset.description}
                   </p>
 
-                  <div className="pt-2 border-t border-[#2A2A3A] space-y-3 text-center">
+                  <div className="pt-2 border-t border-[#00FFD1]/20 space-y-3 text-center">
                     <div>
-                      <p className="text-sm font-medium text-[#6B7280] uppercase tracking-wide mb-1">
+                      <p className="text-sm font-medium text-[#00FFD1]/80 uppercase tracking-widest mb-1">
                         למה זה יכול להתאים
                       </p>
                       <p className="text-base text-[#E5E7EB] leading-relaxed">
@@ -378,39 +377,39 @@ export default function WomenPreviewPage() {
 
                   {/* Generate button inside Consultation Card (pre-generation) */}
                   {canGenerate && !generatedUrl && (
-                    <div className="pt-3 border-t border-[#2A2A3A] space-y-2">
+                    <div className="pt-3 border-t border-[#00FFD1]/20 space-y-2">
                       <button
                         type="button"
                         onClick={handleGenerate}
                         disabled={isGenerating}
-                        className="w-full rounded-xl bg-gradient-to-l from-cyan-400 via-cyan-500 to-blue-500 text-black font-semibold px-5 py-3 text-sm shadow-[0_0_20px_rgba(34,211,238,0.12)] hover:brightness-[1.03] hover:shadow-[0_0_24px_rgba(34,211,238,0.16)] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full rounded-xl border border-[#00FFD1] bg-[#0a0a0f] text-[#00FFD1] font-semibold px-5 py-3 text-sm shadow-[0_0_8px_rgba(0,255,209,0.3)] hover:shadow-[0_0_16px_rgba(0,255,209,0.45)] hover:bg-[#00FFD1]/10 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         צור הדמיית לוק
                       </button>
-                      <p className="text-[11px] text-[#6B7280] text-center">
+                      <p className="text-[11px] text-[#00FFD1]/70 text-center">
                         ההדמיה תופיע בעמודה השמאלית
                       </p>
                     </div>
                   )}
 
                   {generatedUrl && (
-                    <div className="mt-2 rounded-xl border border-[#2A2A3A] bg-[#08080f] px-4 py-3 text-center">
-                      <p className="text-sm text-[#6B7280] leading-relaxed">
+                    <div className="mt-2 rounded-xl border border-[#00FFD1]/25 bg-[#080808] px-4 py-3 text-center shadow-[0_0_6px_rgba(0,255,209,0.15)]">
+                      <p className="text-sm text-[#00FFD1]/80 leading-relaxed">
                         ההדמיה הופקה לפי הכיוון שנבחר.
                       </p>
                     </div>
                   )}
                 </>
               ) : (
-                <p className="text-sm text-[#A8A8B3] text-center">
+                <p className="text-sm text-[#00FFD1]/70 text-center">
                   בחרי כיוון במסך הניתוח כדי לראות כאן את סיכום הייעוץ.
                 </p>
               )}
             </section>
 
             {preset && (preset.resultStylistSummary || preset.resultTechnicalNotes) && (
-              <section className="rounded-2xl border border-[#2A2A3A] bg-[#050509] p-5 sm:p-6 space-y-3 w-full max-w-full text-center">
-                <h2 className="text-sm sm:text-base font-semibold text-white">
+              <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0f0f18] p-5 sm:p-6 space-y-3 w-full max-w-full text-center shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+                <h2 className="text-sm sm:text-base font-semibold text-[#00FFD1] tracking-widest">
                   הכוונה למעצב/ת השיער
                 </h2>
                 {preset.resultStylistSummary && (
@@ -436,14 +435,14 @@ export default function WomenPreviewPage() {
               <button
                 type="button"
                 onClick={() => router.push("/barber/women/analysis")}
-                className="rounded-xl border border-[#2A2A3A] bg-[#101018] px-4 py-2.5 text-sm text-white hover:bg-[#181826] hover:border-[#374151] transition-colors"
+                className="rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-4 py-2.5 text-sm text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
               >
                 חזרה לניתוח
               </button>
               <button
                 type="button"
                 onClick={() => router.push("/barber")}
-                className="rounded-xl border border-transparent bg-transparent px-4 py-2.5 text-sm text-[#A8A8B3] hover:text-white transition-colors"
+                className="rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-4 py-2.5 text-sm text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
               >
                 חזרה למסך ההעלאה
               </button>
@@ -452,7 +451,7 @@ export default function WomenPreviewPage() {
         </div>
 
         {generateError && (
-          <div className="rounded-xl border border-[#374151] bg-[#0f0f18] px-4 py-3 text-right">
+          <div className="rounded-xl border border-[#00FFD1]/30 bg-[#0f0f18] px-4 py-3 text-right shadow-[0_0_6px_rgba(0,255,209,0.2)]">
             <p className="text-sm text-[#E5E7EB]">{generateError}</p>
           </div>
         )}

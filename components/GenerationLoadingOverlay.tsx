@@ -13,10 +13,10 @@ export function GenerationLoadingOverlay() {
     >
       <div className="flex flex-col items-center justify-center gap-3">
         <div
-          className="h-10 w-10 rounded-full border-2 border-[#2A2A3A] border-t-cyan-400/80 animate-spin"
+          className="h-10 w-10 rounded-full border-2 border-[#00FFD1]/30 border-t-[#00FFD1] animate-spin"
           aria-hidden
         />
-        <p className="text-sm text-[#A8A8B3]">מכין את התוצאה…</p>
+        <p className="text-sm text-[#00FFD1]">מכין את התוצאה…</p>
       </div>
     </div>
   );

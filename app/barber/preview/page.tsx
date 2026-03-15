@@ -514,10 +514,10 @@ export default function BarberPreviewPage() {
         </div>
         <header className="space-y-3 text-center">
           <div className="flex items-baseline justify-center gap-3">
-            <p className="text-[10px] sm:text-xs tracking-[0.18em] text-[#00FFD1]/80">
+            <p className="text-xs tracking-widest text-[#00FFD1]">
               BarBerBe
             </p>
-            <p className="text-[10px] sm:text-xs tracking-[0.18em] uppercase text-[#00FFD1]/70 whitespace-nowrap">
+            <p className="text-xs tracking-widest uppercase text-[#00FFD1]/80 whitespace-nowrap">
               YOUR PERSONAL STYLE ADVISOR
             </p>
           </div>

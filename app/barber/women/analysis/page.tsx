@@ -218,12 +218,12 @@ export default function WomenAnalysisPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050509] text-white flex flex-col" dir="rtl">
+    <main className="min-h-screen bg-[#040406] text-white flex flex-col" dir="rtl">
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
         <header className="flex items-start justify-between gap-4">
           <Link
             href="/barber"
-            className="inline-flex items-center gap-2 rounded-xl border border-[#2A2A3A] bg-[#08080f] px-3 py-2 text-sm text-[#A8A8B3] hover:text-white hover:border-[#374151] transition-colors shrink-0"
+            className="inline-flex items-center gap-2 rounded-xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-3 py-2 text-sm text-[#00FFD1] transition-all shrink-0 shadow-[0_0_8px_rgba(0,255,209,0.2)] hover:shadow-[0_0_12px_rgba(0,255,209,0.35)]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -232,17 +232,17 @@ export default function WomenAnalysisPage() {
             <span>ראשי</span>
           </Link>
           <div className="flex-1 flex flex-col items-center justify-center text-center min-w-0">
-            <p className="text-xs tracking-[0.22em] text-[#6B7280] mb-1">
+            <p className="text-xs tracking-widest text-[#00FFD1] mb-1">
               BarBerBe WOMEN / ANALYSIS
             </p>
-            <h1 className="text-2xl sm:text-3xl font-semibold">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-[#00FFD1] tracking-widest">
               ניתוח שיער חכם למסלול הנשים
             </h1>
-            <p className="mt-1 text-base sm:text-base text-[#A8A8B3] max-w-xl leading-relaxed">
+            <p className="mt-1 text-base text-[#00FFD1]/80 max-w-xl leading-relaxed">
               זהו שכבת הבסיס לניתוח השיער לנשים: המערכת קוראת את התמונה, משערת את הטקסטורה ורמת
               התחזוקה הרצויה, ומציעה כיווני עיצוב מעשיים שנוכל להעמיק בהם בהמשך.
             </p>
-            <p className="mt-1 text-[11px] sm:text-xs text-[#6B7280] text-center">
+            <p className="mt-1 text-[11px] sm:text-xs text-[#00FFD1]/70 text-center">
               מנוע ניתוח: {engineDisplayLabel}
             </p>
           </div>
@@ -250,19 +250,19 @@ export default function WomenAnalysisPage() {
         </header>
 
         <section className="grid gap-6 grid-cols-1 lg:grid-cols-2 items-start">
-          <div className="rounded-3xl border border-[#111827] bg-gradient-to-b from-[#050814] to-[#020308] p-4 sm:p-5 space-y-4">
+          <div className="rounded-3xl border border-[#00FFD1]/30 bg-[#0f0f18] p-4 sm:p-5 space-y-4 shadow-[0_0_8px_rgba(0,255,209,0.2)]">
             <div className="flex flex-col items-center justify-center text-center">
-              <p className="text-xs tracking-[0.22em] text-[#6B7280] mb-1">
+              <p className="text-xs tracking-widest text-[#00FFD1] mb-1">
                 VISUAL INPUT / SELFIE
               </p>
-              <h2 className="text-base sm:text-lg font-medium">
+              <h2 className="text-base sm:text-lg font-medium text-[#00FFD1] tracking-widest">
                 הסלפי שלך למסלול השיער לנשים
               </h2>
-              <p className="mt-1 text-sm sm:text-sm text-[#9CA3AF]">
+              <p className="mt-1 text-sm text-[#00FFD1]/70">
                 אנחנו לא שומרים את התמונה לצורכי זיהוי – רק מנתחים את מבנה השיער והטקסטורה לצורך המלצות.
               </p>
             </div>
-            <div className="relative aspect-[3/4] w-full max-w-sm mx-auto overflow-hidden rounded-2xl border border-[#2A2A3A] flex items-center justify-center bg-[#050509] lg:max-h-[600px]">
+            <div className="relative aspect-[3/4] w-full max-w-sm mx-auto overflow-hidden rounded-2xl border border-[#00FFD1]/30 flex items-center justify-center bg-[#080808] lg:max-h-[600px] shadow-[0_0_8px_rgba(0,255,209,0.2)]">
               {hasSelfie ? (
                 <img
                   src={previewUrl ?? ""}
@@ -284,36 +284,36 @@ export default function WomenAnalysisPage() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-[#1F2933] bg-[#03040a] p-4 sm:p-5 space-y-4 lg:sticky lg:top-8">
+          <div className="rounded-3xl border border-[#00FFD1]/30 bg-[#0f0f18] p-4 sm:p-5 space-y-4 lg:sticky lg:top-8 shadow-[0_0_8px_rgba(0,255,209,0.2)]">
             <div className="flex flex-col items-center justify-center text-center">
-              <p className="text-xs tracking-[0.22em] text-[#6B7280] mb-1">
+              <p className="text-xs tracking-widest text-[#00FFD1] mb-1">
                 PROFILE SNAPSHOT
               </p>
-              <h2 className="text-base sm:text-lg font-semibold">
+              <h2 className="text-base sm:text-lg font-semibold text-[#00FFD1] tracking-widest">
                 סיכום ראשוני של השיער
               </h2>
             </div>
 
             {analysisLoading ? (
-              <div className="mt-2 flex flex-col items-center justify-center rounded-2xl border border-[#111827] bg-[#050814] px-4 py-10 text-center space-y-3">
-                <div className="h-10 w-10 rounded-full border border-[#2A2A3A] border-t-cyan-400/80 animate-spin" />
-                <p className="text-base text-[#E5E7EB]">
+              <div className="mt-2 flex flex-col items-center justify-center rounded-2xl border border-[#00FFD1]/30 bg-[#080808] px-4 py-10 text-center space-y-3 shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+                <div className="h-10 w-10 rounded-full border border-[#00FFD1]/40 border-t-[#00FFD1] animate-spin" />
+                <p className="text-base text-[#00FFD1]">
                   המערכת מנתחת את מבנה השיער שלך…
                 </p>
-                <p className="text-sm text-[#9CA3AF]">
+                <p className="text-sm text-[#00FFD1]/70">
                   זה לוקח כמה שניות, ואז נציג כאן את סיכום הניתוח הראשוני.
                 </p>
               </div>
             ) : (
               <>
                 {effectiveAnalysis.personalSummaryHe && (
-                  <div className="rounded-2xl bg-[#050814] border border-[#111827] p-3 text-sm sm:text-sm text-right text-[#D1D5DB] leading-relaxed">
+                  <div className="rounded-2xl bg-[#080808] border border-[#00FFD1]/25 p-3 text-sm text-right text-[#D1D5DB] leading-relaxed shadow-[0_0_6px_rgba(0,255,209,0.15)]">
                     {effectiveAnalysis.personalSummaryHe}
                   </div>
                 )}
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-right text-sm sm:text-sm">
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-right text-sm">
                   <div>
-                    <dt className="text-[#6B7280] mb-0.5">טקסטורת שיער מוערכת</dt>
+                    <dt className="text-[#00FFD1]/80 mb-0.5">טקסטורת שיער מוערכת</dt>
                     <dd className="text-[#E5E7EB]">
                       {effectiveAnalysis.hairTexture === "straight" && "חלק"}
                       {effectiveAnalysis.hairTexture === "wavy" && "גלי קל"}
@@ -323,7 +323,7 @@ export default function WomenAnalysisPage() {
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[#6B7280] mb-0.5">נטייה לפריז</dt>
+                    <dt className="text-[#00FFD1]/80 mb-0.5">נטייה לפריז</dt>
                     <dd className="text-[#E5E7EB]">
                       {effectiveAnalysis.frizzLevel === "low" && "נמוכה"}
                       {effectiveAnalysis.frizzLevel === "medium" && "בינונית"}
@@ -331,7 +331,7 @@ export default function WomenAnalysisPage() {
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[#6B7280] mb-0.5">נפח כללי</dt>
+                    <dt className="text-[#00FFD1]/80 mb-0.5">נפח כללי</dt>
                     <dd className="text-[#E5E7EB]">
                       {effectiveAnalysis.volumeLevel === "low" && "עדין"}
                       {effectiveAnalysis.volumeLevel === "medium" && "מאוזן"}
@@ -339,7 +339,7 @@ export default function WomenAnalysisPage() {
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[#6B7280] mb-0.5">תחושת יובש</dt>
+                    <dt className="text-[#00FFD1]/80 mb-0.5">תחושת יובש</dt>
                     <dd className="text-[#E5E7EB]">
                       {effectiveAnalysis.drynessLevel === "low" && "נמוכה"}
                       {effectiveAnalysis.drynessLevel === "medium" && "בינונית"}
@@ -347,7 +347,7 @@ export default function WomenAnalysisPage() {
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[#6B7280] mb-0.5">התאמה לעיצוב בחום</dt>
+                    <dt className="text-[#00FFD1]/80 mb-0.5">התאמה לעיצוב בחום</dt>
                     <dd className="text-[#E5E7EB]">
                       {effectiveAnalysis.heatStylingFit === "low" && "מומלץ לשמור על חום מינימלי"}
                       {effectiveAnalysis.heatStylingFit === "medium" && "מתאים לשימוש מבוקר בחום"}
@@ -355,7 +355,7 @@ export default function WomenAnalysisPage() {
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[#6B7280] mb-0.5">התאמת תחזוקה יומיומית</dt>
+                    <dt className="text-[#00FFD1]/80 mb-0.5">התאמת תחזוקה יומיומית</dt>
                     <dd className="text-[#E5E7EB]">
                       {effectiveAnalysis.maintenanceFit === "low" && "עדיפות לפתרונות כמעט ללא השקעה יומיומית"}
                       {effectiveAnalysis.maintenanceFit === "medium" && "איזון בין מראה מסודר לזמן סביר"}
@@ -365,7 +365,7 @@ export default function WomenAnalysisPage() {
                 </dl>
 
                 {apiFallbackNote && (
-                  <p className="mt-2 text-sm text-[#6B7280] text-right">
+                  <p className="mt-2 text-sm text-[#00FFD1]/70 text-right">
                     {apiFallbackNote}
                   </p>
                 )}
@@ -376,25 +376,25 @@ export default function WomenAnalysisPage() {
 
         <section className="space-y-5">
           <div className="flex flex-col items-center justify-center text-center">
-            <p className="text-xs tracking-[0.22em] text-[#6B7280] mb-1">
+            <p className="text-xs tracking-widest text-[#00FFD1] mb-1">
               PRIMARY STYLE DIRECTIONS
             </p>
-            <h2 className="text-lg sm:text-xl font-semibold">
+            <h2 className="text-lg sm:text-xl font-semibold text-[#00FFD1] tracking-widest">
               כיווני העיצוב המומלצים לשיער שלך
             </h2>
-            <p className="mt-1 text-sm sm:text-sm text-[#9CA3AF] max-w-2xl leading-relaxed">
+            <p className="mt-1 text-sm text-[#00FFD1]/70 max-w-2xl leading-relaxed">
               אלו כיוונים מעשיים שאפשר לפתח בהמשך להדמיות, שגרת מוצרים והסברים טכניים – כבר עכשיו הם
               נותנים שפה משותפת בינך לבין הספר/ית.
             </p>
           </div>
 
           {analysisLoading ? (
-            <div className="rounded-3xl border border-[#111827] bg-[#050814] px-4 py-10 text-center flex flex-col items-center justify-center space-y-3">
-              <div className="h-9 w-9 rounded-full border border-[#2A2A3A] border-t-cyan-400/80 animate-spin" />
-              <p className="text-base text-[#E5E7EB]">
+            <div className="rounded-3xl border border-[#00FFD1]/30 bg-[#080808] px-4 py-10 text-center flex flex-col items-center justify-center space-y-3 shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+              <div className="h-9 w-9 rounded-full border border-[#00FFD1]/40 border-t-[#00FFD1] animate-spin" />
+              <p className="text-base text-[#00FFD1]">
                 מכינה עבורך כיווני עיצוב ראשוניים לפי התמונה.
               </p>
-              <p className="text-sm text-[#9CA3AF]">
+              <p className="text-sm text-[#00FFD1]/70">
                 אחרי הסריקה יוצגו כאן הכיוונים המומלצים לשיער שלך.
               </p>
             </div>
@@ -407,10 +407,10 @@ export default function WomenAnalysisPage() {
                     key={preset.id}
                     type="button"
                     onClick={() => handleSelectStyle(preset.id)}
-                    className={`w-full max-w-sm rounded-3xl border p-4 flex flex-col justify-between text-center transition-colors ${
+                    className={`w-full max-w-sm rounded-3xl border p-4 flex flex-col justify-between text-center transition-all shadow-[0_0_8px_rgba(0,255,209,0.15)] ${
                       isSelected
-                        ? "border-cyan-500/40 bg-cyan-500/5"
-                        : "border-[#1F2933] bg-[#050814] hover:border-[#4B5563]"
+                        ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_12px_rgba(0,255,209,0.35)]"
+                        : "border-[#00FFD1]/30 bg-[#0f0f18] hover:border-[#00FFD1]/50 hover:shadow-[0_0_10px_rgba(0,255,209,0.25)]"
                     }`}
                   >
                     <div className="space-y-2">
@@ -432,7 +432,7 @@ export default function WomenAnalysisPage() {
                         {preset.description}
                       </p>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-[#111827]">
+                    <div className="mt-3 pt-3 border-t border-[#00FFD1]/20">
                       <p className="text-sm text-[#9CA3AF] leading-relaxed">
                         {preset.resultUserText}
                       </p>
@@ -446,10 +446,10 @@ export default function WomenAnalysisPage() {
 
         <section className="space-y-3">
           <div className="flex flex-col items-center justify-center text-center">
-            <p className="text-xs tracking-[0.22em] text-[#4B5563] mb-1">
+            <p className="text-xs tracking-widest text-[#00FFD1] mb-1">
               כיווני עיצוב
             </p>
-            <h2 className="text-sm sm:text-base font-medium text-[#E5E7EB]">
+            <h2 className="text-sm sm:text-base font-medium text-[#00FFD1] tracking-widest">
               כל כיווני העיצוב
             </h2>
           </div>
@@ -461,10 +461,10 @@ export default function WomenAnalysisPage() {
                   key={preset.id}
                   type="button"
                   onClick={() => handleSelectStyle(preset.id)}
-                  className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs sm:text-sm transition-colors ${
+                  className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs sm:text-sm transition-all ${
                     isSelected
-                      ? "border-cyan-500/40 bg-cyan-500/10 text-white"
-                      : "border-[#1F2933] bg-[#050814] text-[#D1D5DB] hover:border-[#4B5563]"
+                      ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                      : "border-[#00FFD1]/30 bg-[#0f0f18] text-[#D1D5DB] hover:border-[#00FFD1]/50 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
                   }`}
                 >
                   {preset.displayNameHe}
@@ -478,14 +478,14 @@ export default function WomenAnalysisPage() {
           <button
             type="button"
             onClick={() => router.push("/barber")}
-            className="inline-flex items-center justify-center rounded-xl border border-transparent bg-transparent px-4 py-2.5 text-sm text-[#A8A8B3] hover:text-white transition-colors"
+            className="inline-flex items-center justify-center rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-4 py-2.5 text-sm text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
           >
             חזרה למסך ההעלאה
           </button>
           <button
             type="button"
             onClick={handleContinueToPreview}
-            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-l from-cyan-400 via-cyan-500 to-blue-500 text-black font-semibold px-4 py-2.5 text-sm shadow-[0_0_20px_rgba(34,211,238,0.12)] hover:brightness-[1.03] hover:shadow-[0_0_24px_rgba(34,211,238,0.16)] transition-all duration-200"
+            className="inline-flex items-center justify-center rounded-xl border border-[#00FFD1] bg-[#0a0a0f] text-[#00FFD1] font-semibold px-4 py-2.5 text-sm shadow-[0_0_8px_rgba(0,255,209,0.3)] hover:shadow-[0_0_16px_rgba(0,255,209,0.45)] hover:bg-[#00FFD1]/10 transition-all"
           >
             המשך למסך התוצאה
           </button>

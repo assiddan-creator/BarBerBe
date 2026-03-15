@@ -750,10 +750,10 @@ export default function BarberAnalysisPage() {
         </div>
         <header className="space-y-3 text-center">
           <div className="flex items-baseline justify-center gap-3">
-            <p className="text-xs sm:text-xs tracking-[0.18em] text-[#A8A8B3]">
+            <p className="text-xs tracking-widest text-[#00FFD1]">
               BarBerBe
             </p>
-            <p className="text-xs sm:text-xs tracking-[0.18em] uppercase text-[#A8A8B3] whitespace-nowrap">
+            <p className="text-xs tracking-widest uppercase text-[#00FFD1]/80 whitespace-nowrap">
               YOUR PERSONAL STYLE ADVISOR
             </p>
           </div>
@@ -761,10 +761,10 @@ export default function BarberAnalysisPage() {
             <h1 className="text-xl sm:text-2xl font-semibold">
               ניתוח פנים AI
             </h1>
-            <p className="text-sm sm:text-sm text-[#A8A8B3]">
+            <p className="text-sm text-[#00FFD1]/80">
               בחר תספורת, זקן או לוק מלא לפי ניתוח הפנים שלך
             </p>
-            <p className="text-[11px] sm:text-xs text-[#6B7280] mt-1">
+            <p className="text-[11px] sm:text-xs text-[#00FFD1]/70 mt-1">
               מנוע ניתוח: {engineLabel}
             </p>
           </div>
@@ -917,7 +917,7 @@ export default function BarberAnalysisPage() {
                         <span className="inline-flex flex-col items-center text-center">
                           <span>{getPresetDisplayLabel(preset)}</span>
                           {preset.displayNameHe && (
-                            <span className="text-xs text-[#A8A8B3] mt-0.5">
+                            <span className="text-xs text-[#00FFD1]/70 mt-0.5">
                               {preset.nameHe}
                             </span>
                           )}
@@ -950,7 +950,7 @@ export default function BarberAnalysisPage() {
                         <span className="inline-flex flex-col items-center text-center">
                           <span>{getPresetDisplayLabel(preset)}</span>
                           {preset.displayNameHe && (
-                            <span className="text-xs text-[#A8A8B3] mt-0.5">
+                            <span className="text-xs text-[#00FFD1]/70 mt-0.5">
                               {preset.nameHe}
                             </span>
                           )}
@@ -983,7 +983,7 @@ export default function BarberAnalysisPage() {
                         <span className="inline-flex flex-col items-center text-center">
                           <span>{getPresetDisplayLabel(preset)}</span>
                           {preset.displayNameHe && (
-                            <span className="text-xs text-[#A8A8B3] mt-0.5">
+                            <span className="text-xs text-[#00FFD1]/70 mt-0.5">
                               {preset.nameHe}
                             </span>
                           )}
@@ -1016,7 +1016,7 @@ export default function BarberAnalysisPage() {
                         <span className="inline-flex flex-col items-center text-center">
                           <span>{getPresetDisplayLabel(preset)}</span>
                           {preset.displayNameHe && (
-                            <span className="text-[10px] text-[#A8A8B3] mt-0.5">
+                            <span className="text-[10px] text-[#00FFD1]/70 mt-0.5">
                               {preset.nameHe}
                             </span>
                           )}
@@ -1049,7 +1049,7 @@ export default function BarberAnalysisPage() {
                         <span className="inline-flex flex-col items-center text-center">
                           <span>{getPresetDisplayLabel(preset)}</span>
                           {preset.displayNameHe && (
-                            <span className="text-xs text-[#A8A8B3] mt-0.5">
+                            <span className="text-xs text-[#00FFD1]/70 mt-0.5">
                               {preset.nameHe}
                             </span>
                           )}
