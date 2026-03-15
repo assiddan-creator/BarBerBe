@@ -1,7 +1,41 @@
 @import "tailwindcss";
 
+:root {
+  --barber-bg: #040406;
+  --barber-accent: #00FFD1;
+  --barber-accent-secondary: #0066FF;
+  --barber-glow: 0 0 8px rgba(0, 255, 209, 0.3);
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--barber-bg);
+  position: relative;
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 2px,
+    rgba(0, 255, 209, 0.03) 2px,
+    rgba(0, 255, 209, 0.03) 3px
+  );
+  opacity: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: 0.1em;
+}
+
+.border-cyber {
+  box-shadow: var(--barber-glow);
 }
 
 /* Safe BarberAI animation keyframes — all tied to React state / class toggles */
@@ -32,6 +66,12 @@ body {
   to {
     top: 100%;
   }
+}
+
+@keyframes scanning-dots {
+  0%, 20% { content: "."; }
+  40% { content: ".."; }
+  60%, 100% { content: "..."; }
 }
 
 @keyframes barber-pulse-glow {

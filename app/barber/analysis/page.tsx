@@ -691,9 +691,9 @@ export default function BarberAnalysisPage() {
     return (
       <main
         dir="rtl"
-        className="min-h-screen bg-[#080808] text-white flex items-center justify-center px-4 py-6 sm:py-10"
+        className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
       >
-        <p className="text-sm text-[#A8A8B3]">טוען מסך הניתוח של BarBerBe…</p>
+        <p className="text-sm text-[#00FFD1]/80">טוען מסך הניתוח של BarBerBe…</p>
       </main>
     );
   }
@@ -702,26 +702,26 @@ export default function BarberAnalysisPage() {
     return (
       <main
         dir="rtl"
-        className="min-h-screen bg-[#080808] text-white flex items-center justify-center px-4 py-6 sm:py-10"
+        className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
       >
-        <section className="w-full max-w-lg rounded-3xl border border-[#2A2A3A] bg-[#050509] px-6 py-8 space-y-4 text-center shadow-[0_24px_80px_rgba(0,0,0,0.75)] overflow-hidden">
-          <div className="relative aspect-[4/3] w-full max-w-sm mx-auto rounded-2xl overflow-hidden border border-[#2A2A3A] bg-black">
+        <section className="w-full max-w-lg rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-6 py-8 space-y-4 text-center shadow-[0_0_8px_rgba(0,255,209,0.3)] overflow-hidden">
+          <div className="relative aspect-[4/3] w-full max-w-sm mx-auto rounded-2xl overflow-hidden border border-[#00FFD1]/40 bg-black">
             <img
               src={BARBER_DEFAULT_HERO_IMAGE}
               alt=""
               className="h-full w-full object-cover"
             />
           </div>
-          <h1 className="text-lg sm:text-xl font-semibold mb-1">
+          <h1 className="text-lg sm:text-xl font-semibold mb-1 text-[#00FFD1]">
             ניתוח פנים AI
           </h1>
-          <p className="text-sm text-[#A8A8B3]">
+          <p className="text-sm text-[#9CA3AF]">
             לא נמצאה תמונה לניתוח. חזור למסך ההעלאה והעלה סלפי חדש.
           </p>
           <button
             type="button"
             onClick={handleGoBack}
-            className="mt-4 inline-flex items-center justify-center rounded-xl border border-[#2A2A3A] bg-[#101018] px-5 py-2.5 text-sm text-white hover:bg-[#181826] hover:border-[#374151] transition-colors"
+            className="mt-4 inline-flex items-center justify-center rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-5 py-2.5 text-sm text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
           >
             חזור למסך ההעלאה
           </button>
@@ -733,13 +733,13 @@ export default function BarberAnalysisPage() {
   return (
     <main
       dir="rtl"
-      className="min-h-screen bg-[#080808] text-white flex items-center justify-center px-4 py-6 sm:py-10"
+      className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
     >
-      <section className="w-full max-w-5xl rounded-3xl border border-[#2A2A3A] bg-gradient-to-b from-[#11111a] via-[#080808] to-[#050509] shadow-[0_24px_80px_rgba(0,0,0,0.75)] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-8">
+      <section className="w-full max-w-5xl rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-8 shadow-[0_0_8px_rgba(0,255,209,0.3)]">
         <div className="relative">
           <Link
             href="/barber"
-            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#2A2A3A] bg-[#08080f] px-3 py-2 text-sm text-[#A8A8B3] hover:text-white hover:border-[#374151] transition-colors z-10"
+            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-3 py-2 text-sm text-[#00FFD1] transition-all z-10 hover:shadow-[0_0_12px_rgba(0,255,209,0.4)]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -771,14 +771,14 @@ export default function BarberAnalysisPage() {
         </header>
 
         <div className="space-y-6 lg:space-y-7">
-          {/* Uploaded selfie — scan overlay only when analysisLoading, contained here */}
-          <section className="rounded-2xl border border-[#2A2A3A] bg-[#0f0f18] p-4 sm:p-5 flex flex-col gap-3 animate-barber-fade-in">
+          {/* Uploaded selfie — cyan scan line when analysis loading */}
+          <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0f0f18] p-4 sm:p-5 flex flex-col gap-3 animate-barber-fade-in shadow-[0_0_8px_rgba(0,255,209,0.2)]">
             <div className="flex flex-col items-center justify-center gap-1 text-center">
-              <p className="text-xs sm:text-xs tracking-[0.22em] text-[#6B7280] uppercase">
+              <p className="text-xs tracking-[0.22em] text-[#00FFD1]/70 uppercase">
                 VISUAL ANALYSIS
               </p>
             </div>
-            <div className="relative border border-[#2A2A3A] rounded-2xl overflow-hidden bg-[#050509] aspect-[4/3] lg:max-h-[600px]">
+            <div className="relative border border-[#00FFD1]/25 rounded-2xl overflow-hidden bg-[#050509] aspect-[4/3] lg:max-h-[600px]">
               <img
                 src={selfieUrl}
                 alt="הסלפי שהועלה"
@@ -786,51 +786,48 @@ export default function BarberAnalysisPage() {
               />
               {analysisLoading && (
                 <>
-                  {/* HUD frame — subtle, contained */}
-                  <div className="absolute inset-0 pointer-events-none border border-cyan-400/15 rounded-2xl" aria-hidden />
-                  <div className="absolute top-2 right-2 left-2 h-px bg-gradient-to-l from-transparent via-cyan-400/25 to-transparent opacity-50" aria-hidden />
-                  <div className="absolute bottom-2 right-2 left-2 h-px bg-gradient-to-l from-transparent via-cyan-400/25 to-transparent opacity-50" aria-hidden />
-                  <div className="absolute top-2 bottom-2 right-2 w-px bg-gradient-to-b from-transparent via-cyan-400/25 to-transparent opacity-50" aria-hidden />
-                  <div className="absolute top-2 bottom-2 left-2 w-px bg-gradient-to-b from-transparent via-cyan-400/25 to-transparent opacity-50" aria-hidden />
-                  {/* Very subtle landmark points — few only */}
+                  <div className="absolute inset-0 pointer-events-none border border-[#00FFD1]/20 rounded-2xl" aria-hidden />
+                  <div className="absolute top-2 right-2 left-2 h-px bg-gradient-to-l from-transparent via-[#00FFD1]/40 to-transparent" aria-hidden />
+                  <div className="absolute bottom-2 right-2 left-2 h-px bg-gradient-to-l from-transparent via-[#00FFD1]/40 to-transparent" aria-hidden />
+                  <div className="absolute top-2 bottom-2 right-2 w-px bg-gradient-to-b from-transparent via-[#00FFD1]/40 to-transparent" aria-hidden />
+                  <div className="absolute top-2 bottom-2 left-2 w-px bg-gradient-to-b from-transparent via-[#00FFD1]/40 to-transparent" aria-hidden />
                   <div className="absolute inset-0 pointer-events-none rounded-2xl" aria-hidden>
-                    <span className="absolute w-1 h-1 rounded-full bg-cyan-400/20 top-[20%] left-1/2 -translate-x-1/2" />
-                    <span className="absolute w-1 h-1 rounded-full bg-cyan-400/15 top-[50%] left-1/2 -translate-x-1/2" />
-                    <span className="absolute w-1 h-1 rounded-full bg-cyan-400/15 bottom-[30%] left-1/2 -translate-x-1/2" />
+                    <span className="absolute w-1 h-1 rounded-full bg-[#00FFD1]/30 top-[20%] left-1/2 -translate-x-1/2" />
+                    <span className="absolute w-1 h-1 rounded-full bg-[#00FFD1]/25 top-[50%] left-1/2 -translate-x-1/2" />
+                    <span className="absolute w-1 h-1 rounded-full bg-[#00FFD1]/25 bottom-[30%] left-1/2 -translate-x-1/2" />
                   </div>
-                  {/* Scan line — restrained */}
                   <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none" aria-hidden>
-                    <div className="absolute left-0 right-0 top-0 h-[1px] bg-gradient-to-l from-transparent via-cyan-400/40 to-transparent animate-barber-scan-line shadow-[0_0_4px_rgba(34,211,238,0.25)]" />
+                    <div className="absolute left-0 right-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#00FFD1] to-transparent animate-barber-scan-line shadow-[0_0_10px_rgba(0,255,209,0.5)]" style={{ animationDuration: "2s" }} />
                   </div>
                 </>
               )}
             </div>
           </section>
 
-          {/* Analysis and recommendations */}
-          <section className="rounded-2xl border border-[#2A2A3A] bg-[#050509] p-5 sm:p-6 flex flex-col gap-5 min-h-[320px] animate-barber-scale-in">
+          {/* Analysis and recommendations — biometric readout panel */}
+          <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col gap-5 min-h-[320px] animate-barber-scale-in shadow-[0_0_8px_rgba(0,255,209,0.2)]">
             {analysisLoading ? (
-              <div className="flex flex-1 flex-col items-center justify-center py-14 px-4 text-center rounded-2xl border border-[#2A2A3A] bg-[#080810] animate-barber-pulse-glow">
-                <div className="h-12 w-12 rounded-full border border-[#2A2A3A] border-t-cyan-400/80 animate-spin mb-5" />
-                <p className="text-base font-medium text-white">
+              <div className="flex flex-1 flex-col items-center justify-center py-14 px-4 text-center rounded-2xl border border-[#00FFD1]/30 bg-[#080810] shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+                <div className="h-12 w-12 rounded-full border border-[#00FFD1]/40 border-t-[#00FFD1] animate-spin mb-5" />
+                <p className="text-base font-medium text-[#00FFD1]">
                   BarBerBe מנתח את מבנה הפנים שלך…
                 </p>
-                <p className="text-sm text-[#A8A8B3] mt-2">
+                <p className="text-sm text-[#9CA3AF] mt-2">
                   זה לוקח כמה שניות
                 </p>
                 <div className="mt-4 flex gap-1.5" aria-hidden>
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#4B5563] animate-pulse" style={{ animationDelay: "0s" }} />
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#4B5563] animate-pulse" style={{ animationDelay: "0.2s" }} />
-                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400/40 animate-pulse" style={{ animationDelay: "0.4s" }} />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#00FFD1]/30 animate-pulse" style={{ animationDelay: "0s" }} />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#00FFD1]/50 animate-pulse" style={{ animationDelay: "0.2s" }} />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#00FFD1] animate-pulse" style={{ animationDelay: "0.4s" }} />
                 </div>
               </div>
             ) : (
               <>
                 <div className="text-center space-y-2">
-                  <h2 className="text-sm font-semibold text-white">
-                    פרופיל BarBerBe
+                  <h2 className="text-sm font-semibold text-[#00FFD1]">
+                    פרופיל BarBerBe — BIOMETRIC READOUT
                   </h2>
-                  <p className="text-sm text-[#A8A8B3]">
+                  <p className="text-sm text-[#9CA3AF]">
                     {realAnalysis
                       ? "סיכום מבני קצר לפני בחירת הלוק"
                       : "לאחר הסריקה נציג כאן סיכום מבני קצר והמלצות ראשוניות"}
@@ -838,49 +835,49 @@ export default function BarberAnalysisPage() {
                 </div>
 
                 {analysisError && (
-                  <div className="rounded-2xl border border-[#374151] bg-[#0f0f18] px-4 py-3 text-right">
+                  <div className="rounded-2xl border border-[#00FFD1]/20 bg-[#0f0f18] px-4 py-3 text-right">
                     <p className="text-sm text-[#E5E7EB]">{analysisError}</p>
                   </div>
                 )}
 
-                <div className="mt-1 space-y-3 text-sm rounded-2xl border border-[#2A2A3A] bg-[#08080f] px-4 py-3">
+                <div className="mt-1 space-y-3 text-sm rounded-2xl border border-[#00FFD1]/25 bg-[#080810] px-4 py-3 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-[#A8A8B3]">התאמה לזקן</span>
-                    <span>{analysisLabels.beardCompatibilityLabel}</span>
+                    <span className="text-[#00FFD1]/80">התאמה לזקן</span>
+                    <span className="text-[#00FFD1]">{analysisLabels.beardCompatibilityLabel}</span>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-[#2A2A3A] bg-[#08080f] px-4 py-3 space-y-2.5">
-                  <p className="text-xs tracking-[0.12em] uppercase text-[#6B7280] mb-1.5 text-center">
+                <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#080810] px-4 py-3 space-y-2.5 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
+                  <p className="text-xs tracking-[0.12em] uppercase text-[#00FFD1]/70 mb-1.5 text-center">
                     פלט סריקה
                   </p>
                   <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm text-right">
                     <div className="flex justify-between gap-3 sm:block">
-                      <dt className="text-[#A8A8B3] shrink-0">אווירה סגנונית</dt>
+                      <dt className="text-[#00FFD1]/70 shrink-0">אווירה סגנונית</dt>
                       <dd className="text-white/95">{diagnostic.hairTextureHe}</dd>
                     </div>
                     <div className="flex justify-between gap-3 sm:block">
-                      <dt className="text-[#A8A8B3] shrink-0">נוכחות זקן</dt>
+                      <dt className="text-[#00FFD1]/70 shrink-0">נוכחות זקן</dt>
                       <dd className="text-white/95">{diagnostic.beardPresenceHe}</dd>
                     </div>
                     <div className="flex justify-between gap-3 sm:block">
-                      <dt className="text-[#A8A8B3] shrink-0">כיוון תחזוקה</dt>
+                      <dt className="text-[#00FFD1]/70 shrink-0">כיוון תחזוקה</dt>
                       <dd className="text-white/95">{diagnostic.maintenanceDirectionHe}</dd>
                     </div>
                     <div className="flex justify-between gap-3 sm:block">
-                      <dt className="text-[#A8A8B3] shrink-0">כיוון סגנוני</dt>
+                      <dt className="text-[#00FFD1]/70 shrink-0">כיוון סגנוני</dt>
                       <dd className="text-white/95">{diagnostic.styleDirectionHe}</dd>
                     </div>
                     <div className="flex justify-between gap-3 sm:block sm:col-span-2">
-                      <dt className="text-[#A8A8B3] shrink-0">התאמת עיצוב</dt>
+                      <dt className="text-[#00FFD1]/70 shrink-0">התאמת עיצוב</dt>
                       <dd className="text-white/95">{diagnostic.stylingFitHe}</dd>
                     </div>
                   </dl>
                 </div>
 
                 {realAnalysis?.personalSummaryHe && (
-                  <div className="rounded-2xl border border-[#2A2A3A] bg-[#0a0a12] px-4 py-3 text-center space-y-1.5">
-                    <p className="text-sm font-medium text-[#A8A8B3]">
+                  <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#0a0a12] px-4 py-3 text-center space-y-1.5 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
+                    <p className="text-sm font-medium text-[#00FFD1]/80">
                       סיכום אישי
                     </p>
                     <p className="text-sm text-white/95 leading-relaxed">
@@ -898,9 +895,9 @@ export default function BarberAnalysisPage() {
                 )}
 
                 <div className="pt-1 space-y-5 text-center">
-              {/* Recommended hairstyles (top 3) */}
+              {/* Recommended hairstyles (top 3) — preset buttons with cyan glow */}
               <div className="space-y-2 flex flex-col items-center">
-                <h3 className="text-sm font-medium text-[#E5E7EB]">
+                <h3 className="text-sm font-medium text-[#00FFD1]">
                   התספורות המומלצות עבורך
                 </h3>
                 <div className="flex flex-wrap gap-2 justify-center">
@@ -911,10 +908,10 @@ export default function BarberAnalysisPage() {
                         key={preset.id}
                         type="button"
                         onClick={() => handleSelectHairstyle(preset.id)}
-                        className={`rounded-xl px-3 py-2 text-sm sm:text-sm border transition-all duration-200 ${
+                        className={`rounded-xl px-3 py-2 text-sm border transition-all ${
                           isActive
-                            ? "border-cyan-500/40 bg-cyan-500/10 text-white"
-                            : "border-[#2A2A3A] bg-[#101018] text-white hover:bg-[#181826] hover:border-[#374151]"
+                            ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                            : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
                         }`}
                       >
                         <span className="inline-flex flex-col items-center text-center">
@@ -933,9 +930,9 @@ export default function BarberAnalysisPage() {
 
               {/* All hairstyles */}
               <div className="space-y-2 flex flex-col items-center">
-                <h3 className="text-sm font-medium text-[#A8A8B3]">
-                  כל התספורות
-                </h3>
+<h3 className="text-sm font-medium text-[#00FFD1]/80">
+                כל התספורות
+              </h3>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {HAIRSTYLE_PRESETS.map((preset) => {
                     const isActive = selectedHairstyle === preset.id;
@@ -944,10 +941,10 @@ export default function BarberAnalysisPage() {
                         key={preset.id}
                         type="button"
                         onClick={() => handleSelectHairstyle(preset.id)}
-                        className={`rounded-xl px-3 py-2 text-sm sm:text-sm border transition-all duration-200 ${
+                        className={`rounded-xl px-3 py-2 text-sm border transition-all ${
                           isActive
-                            ? "border-cyan-500/40 bg-cyan-500/10 text-white"
-                            : "border-[#2A2A3A] bg-[#101018] text-white hover:bg-[#181826] hover:border-[#374151]"
+                            ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                            : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
                         }`}
                       >
                         <span className="inline-flex flex-col items-center text-center">
@@ -966,7 +963,7 @@ export default function BarberAnalysisPage() {
 
               {/* Recommended beards (top 3) */}
               <div className="space-y-2 flex flex-col items-center">
-                <h3 className="text-sm font-medium text-[#E5E7EB]">
+                <h3 className="text-sm font-medium text-[#00FFD1]">
                   סגנונות הזקן המומלצים עבורך
                 </h3>
                 <div className="flex flex-wrap gap-2 justify-center">
@@ -977,10 +974,10 @@ export default function BarberAnalysisPage() {
                         key={preset.id}
                         type="button"
                         onClick={() => handleSelectBeard(preset.id)}
-                        className={`rounded-xl px-3 py-2 text-sm sm:text-sm border transition-all duration-200 ${
+                        className={`rounded-xl px-3 py-2 text-sm border transition-all ${
                           isActive
-                            ? "border-cyan-500/40 bg-cyan-500/10 text-white"
-                            : "border-[#2A2A3A] bg-[#101018] text-white hover:bg-[#181826] hover:border-[#374151]"
+                            ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                            : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
                         }`}
                       >
                         <span className="inline-flex flex-col items-center text-center">
@@ -999,7 +996,7 @@ export default function BarberAnalysisPage() {
 
               {/* All beards */}
               <div className="space-y-2 flex flex-col items-center">
-                <h3 className="text-xs font-medium text-[#A8A8B3]">
+                <h3 className="text-xs font-medium text-[#00FFD1]/80">
                   כל סגנונות הזקן
                 </h3>
                 <div className="flex flex-wrap gap-2 justify-center">
@@ -1010,10 +1007,10 @@ export default function BarberAnalysisPage() {
                         key={preset.id}
                         type="button"
                         onClick={() => handleSelectBeard(preset.id)}
-                        className={`rounded-xl px-3 py-2 text-xs sm:text-sm border transition-all duration-200 ${
+                        className={`rounded-xl px-3 py-2 text-xs sm:text-sm border transition-all ${
                           isActive
-                            ? "border-cyan-500/40 bg-cyan-500/10 text-white"
-                            : "border-[#2A2A3A] bg-[#101018] text-white hover:bg-[#181826] hover:border-[#374151]"
+                            ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                            : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
                         }`}
                       >
                         <span className="inline-flex flex-col items-center text-center">
@@ -1031,8 +1028,8 @@ export default function BarberAnalysisPage() {
               </div>
 
               {/* Recommended full-look combos (top 3) */}
-              <div className="space-y-2 pt-2 border-t border-[#2A2A3A] flex flex-col items-center">
-                <h3 className="text-sm font-medium text-[#E5E7EB]">
+              <div className="space-y-2 pt-2 border-t border-[#00FFD1]/25 flex flex-col items-center">
+                <h3 className="text-sm font-medium text-[#00FFD1]">
                   הלוקים המלאים המומלצים עבורך
                 </h3>
                 <div className="flex flex-wrap gap-2 justify-center">
@@ -1043,10 +1040,10 @@ export default function BarberAnalysisPage() {
                         key={preset.id}
                         type="button"
                         onClick={() => handleSelectCombo(preset.id)}
-                        className={`rounded-xl px-3 py-2 text-sm sm:text-sm border transition-all duration-200 ${
+                        className={`rounded-xl px-3 py-2 text-sm border transition-all ${
                           isActive
-                            ? "border-cyan-500/40 bg-cyan-500/10 text-white"
-                            : "border-[#2A2A3A] bg-[#101018] text-white hover:bg-[#181826] hover:border-[#374151]"
+                            ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                            : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
                         }`}
                       >
                         <span className="inline-flex flex-col items-center text-center">
@@ -1091,10 +1088,10 @@ export default function BarberAnalysisPage() {
                 type="button"
                 onClick={disabled ? undefined : handleContinue}
                 disabled={disabled}
-                className={`w-full rounded-xl py-3.5 text-sm sm:text-base transition-all duration-200 ${
+                className={`w-full rounded-xl py-3.5 text-sm sm:text-base transition-all border ${
                   disabled
-                    ? "bg-[#181818] text-[#666677] cursor-not-allowed border border-[#2A2A3A]"
-                    : "bg-gradient-to-l from-cyan-400 via-cyan-500 to-blue-500 text-black font-semibold shadow-[0_0_20px_rgba(34,211,238,0.12)] hover:brightness-[1.03] hover:shadow-[0_0_24px_rgba(34,211,238,0.16)]"
+                    ? "bg-[#0a0a0f] text-[#666677] cursor-not-allowed border-[#00FFD1]/20"
+                    : "border-[#00FFD1] bg-[#0a0a0f] text-[#00FFD1] font-semibold shadow-[0_0_8px_rgba(0,255,209,0.3)] hover:shadow-[0_0_16px_rgba(0,255,209,0.45)] hover:bg-[#00FFD1]/10"
                 }`}
               >
                 {label}
@@ -1102,7 +1099,7 @@ export default function BarberAnalysisPage() {
             );
           })()}
 
-          <p className="text-sm text-[#A8A8B3]">
+          <p className="text-sm text-[#9CA3AF]">
             המסך הבא יציג הדמיית תוצאה מבוססת AI (עדיין תצוגת דמה)
           </p>
         </section>

@@ -2,6 +2,15 @@
 
 import Link from "next/link";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+
+function ScanningDots() {
+  const [dots, setDots] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setDots((d) => (d + 1) % 4), 400);
+    return () => clearInterval(id);
+  }, []);
+  return <span className="inline-block min-w-[1.2em] text-left">{".".repeat(dots)}</span>;
+}
 import { useRouter } from "next/navigation";
 import {
   BARBER_SELFIE_STORAGE_KEY,
@@ -143,13 +152,13 @@ export default function BarberPage() {
   return (
     <main
       dir="rtl"
-      className="min-h-screen bg-[#080808] text-white flex items-center justify-center px-4 py-6 sm:py-10"
+      className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
     >
-      <section className="w-full max-w-5xl rounded-3xl border border-[#2A2A3A] bg-gradient-to-b from-[#11111a] via-[#080808] to-[#050509] shadow-[0_24px_80px_rgba(0,0,0,0.75)] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-10 animate-barber-fade-in">
+      <section className="w-full max-w-5xl rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-10 animate-barber-fade-in shadow-[0_0_8px_rgba(0,255,209,0.3)]">
         <div className="relative">
           <Link
             href="/barber"
-            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#2A2A3A] bg-[#08080f] px-3 py-2 text-sm text-[#A8A8B3] hover:text-white hover:border-[#374151] transition-colors z-10"
+            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-3 py-2 text-sm text-[#00FFD1] transition-all z-10 hover:shadow-[0_0_12px_rgba(0,255,209,0.4)] hover:border-[#00FFD1]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -163,20 +172,20 @@ export default function BarberPage() {
           <div className="flex flex-col items-center justify-center gap-4">
             <div className="space-y-2">
               <div className="flex items-center justify-center">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#2A2A3A] bg-[#050509] px-3 py-1 text-xs sm:text-xs tracking-[0.18em] text-[#A8A8B3]">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#00FFD1]/40 bg-[#0a0a0f] px-3 py-1 text-xs tracking-[0.18em] text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#00FFD1] animate-pulse" />
                   AI HAIR SIMULATOR
                 </span>
               </div>
               <div className="flex flex-col items-center justify-center gap-1">
-                <h1 className="text-2xl sm:text-3xl tracking-[0.25em] font-semibold">
+                <h1 className="text-2xl sm:text-3xl tracking-[0.25em] font-semibold text-white">
                   BarBerBe
                 </h1>
-                <p className="text-[10px] sm:text-xs tracking-[0.22em] uppercase text-[#A8A8B3] whitespace-nowrap">
+                <p className="text-[10px] sm:text-xs tracking-[0.22em] uppercase text-[#00FFD1]/80 whitespace-nowrap">
                   YOUR PERSONAL STYLE ADVISOR
                 </p>
               </div>
-              <p className="text-sm sm:text-base leading-relaxed text-[#A8A8B3]">
+              <p className="text-sm sm:text-base leading-relaxed text-[#9CA3AF]">
                 העלה סלפי אחד וקבל המלצות מותאמות לתספורת וזקן
               </p>
             </div>
@@ -193,13 +202,13 @@ export default function BarberPage() {
 
         {/* Main content grid */}
         <div className="grid gap-6 lg:gap-8 lg:grid-cols-3">
-          {/* Upload card */}
-          <section className="lg:col-span-2 rounded-2xl border border-[#2A2A3A] bg-[#050509] p-5 sm:p-6 flex flex-col gap-4 animate-barber-scale-in transition-all duration-300 hover:border-[#374151]" style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}>
+          {/* Upload card — hero bg + scan line */}
+          <section className="lg:col-span-2 rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col gap-4 animate-barber-scale-in transition-all duration-300 shadow-[0_0_8px_rgba(0,255,209,0.2)] hover:shadow-[0_0_12px_rgba(0,255,209,0.3)]" style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}>
             <div className="space-y-2 text-center">
-              <h2 className="text-sm font-medium text-[#A8A8B3]">
+              <h2 className="text-sm font-medium text-[#00FFD1]">
                 העלאת סלפי
               </h2>
-              <p className="text-sm text-[#A8A8B3]">
+              <p className="text-sm text-[#9CA3AF]">
                 תמונה חדה עם תאורה קדמית תשפר את ניתוח ה-AI
               </p>
             </div>
@@ -207,40 +216,59 @@ export default function BarberPage() {
             <div className="mt-1 flex-1 space-y-4">
               <div
                 onClick={handleOpenFilePicker}
-                className="group border border-dashed border-[#2A2A3A] rounded-2xl bg-black aspect-[4/3] flex items-center justify-center text-center cursor-pointer overflow-hidden transition-all duration-300 hover:border-[#374151] relative"
+                className="group border border-[#00FFD1]/40 rounded-2xl aspect-[4/3] flex items-center justify-center text-center cursor-pointer overflow-hidden relative shadow-[0_0_8px_rgba(0,255,209,0.25)] hover:shadow-[0_0_14px_rgba(0,255,209,0.4)] transition-all duration-300"
               >
+                {/* Hero background when no preview */}
+                {!hasPreview && (
+                  <>
+                    <div
+                      className="absolute inset-0 bg-cover bg-center rounded-2xl pointer-events-none"
+                      style={{ backgroundImage: "url(/images/scan-bg-1.png)" }}
+                    />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[#040406] via-[#040406]/70 to-[#040406]/50 pointer-events-none" />
+                  </>
+                )}
                 {!hasPreview ? (
                   <>
-                    <img
-                      src={BARBER_DEFAULT_HERO_IMAGE}
-                      alt=""
-                      className="absolute inset-0 h-full w-full object-cover rounded-2xl pointer-events-none"
-                    />
-                    <div className="absolute inset-0 rounded-2xl bg-black/40 pointer-events-none" />
+                    {/* Animated scan line — always visible on upload area */}
+                    <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none" aria-hidden>
+                      <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00FFD1] to-transparent animate-barber-scan-line shadow-[0_0_10px_rgba(0,255,209,0.6)]" style={{ animationDuration: "2s" }} />
+                    </div>
                     <div className="relative z-10 flex flex-col items-center justify-center gap-3 px-4">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#101018]/90 border border-[#2A2A3A] shadow-[0_10px_30px_rgba(0,0,0,0.7)] group-hover:border-[#374151]">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0a0a0f]/90 border border-[#00FFD1]/50 shadow-[0_0_12px_rgba(0,255,209,0.2)] group-hover:border-[#00FFD1]">
                         <span className="text-lg">📸</span>
                       </div>
                       <div className="space-y-1">
                         <p className="text-base sm:text-lg font-medium text-white">
                           העלה סלפי פרונטלי
                         </p>
-                        <p className="text-xs sm:text-sm text-[#E5E7EB]/90">
+                        <p className="text-xs sm:text-sm text-[#00FFD1]/90">
                           תמונה חדה עם תאורה קדמית תשפר את ניתוח ה-AI
                         </p>
                       </div>
                     </div>
                   </>
                 ) : (
-                  <div className="relative h-full w-full">
+                  <div className="relative h-full w-full bg-[#040406]">
                     <img
                       src={previewUrl ?? undefined}
                       alt="תצוגה מקדימה של הסלפי שהועלה"
-                      className="h-full w-full object-contain object-center rounded-2xl bg-black"
+                      className="h-full w-full object-contain object-center rounded-2xl"
                     />
-                    <div className="absolute right-3 top-3 rounded-full bg-black/70 border border-emerald-400/70 px-3 py-1 text-xs text-emerald-300 flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                      התמונה נטענה
+                    {uploading && (
+                      <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+                        <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00FFD1] to-transparent animate-barber-scan-line shadow-[0_0_10px_rgba(0,255,209,0.6)]" style={{ animationDuration: "2s" }} />
+                      </div>
+                    )}
+                    <div className="absolute right-3 top-3 rounded-full bg-black/80 border border-[#00FFD1]/60 px-3 py-1 text-xs text-[#00FFD1] flex items-center gap-1 shadow-[0_0_6px_rgba(0,255,209,0.3)]">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#00FFD1]" />
+                      {uploading ? (
+                        <span className="inline-flex items-center">
+                          SCANNING<ScanningDots />
+                        </span>
+                      ) : (
+                        "התמונה נטענה"
+                      )}
                     </div>
                   </div>
                 )}
@@ -252,12 +280,12 @@ export default function BarberPage() {
                     <button
                       type="button"
                       onClick={handleOpenFilePicker}
-                      className="inline-flex items-center justify-center rounded-xl border border-transparent bg-transparent px-4 py-2 text-sm sm:text-sm text-[#A8A8B3] hover:text-white transition-colors"
+                      className="inline-flex items-center justify-center rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-4 py-2 text-sm text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
                     >
                       החלף תמונה
                     </button>
                   </div>
-                  <p className="text-sm text-[#A8A8B3] text-center">
+                  <p className="text-sm text-[#9CA3AF] text-center">
                     {uploading
                       ? "מעלה את התמונה לאחסון מאובטח..."
                       : hasHostedImage
@@ -269,33 +297,33 @@ export default function BarberPage() {
             </div>
           </section>
 
-          {/* Analysis summary card */}
-          <section className="rounded-2xl border border-[#2A2A3A] bg-[#050509] p-5 sm:p-6 flex flex-col gap-4 animate-barber-scale-in transition-all duration-300 hover:border-[#374151]" style={{ animationDelay: "0.15s", animationFillMode: "backwards" }}>
+          {/* Analysis summary card — HUD panel */}
+          <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col gap-4 animate-barber-scale-in transition-all shadow-[0_0_8px_rgba(0,255,209,0.2)] hover:shadow-[0_0_12px_rgba(0,255,209,0.28)]" style={{ animationDelay: "0.15s", animationFillMode: "backwards" }}>
             <div className="text-center space-y-1">
-              <h2 className="text-sm font-semibold">ניתוח פנים AI</h2>
-              <p className="text-sm text-[#A8A8B3]">
+              <h2 className="text-sm font-semibold text-[#00FFD1]">ניתוח פנים AI</h2>
+              <p className="text-sm text-[#9CA3AF]">
                 ניתוח ראשוני יופיע כאן לאחר העלאת סלפי
               </p>
             </div>
 
-            <div className="mt-2 space-y-3 text-sm rounded-2xl border border-[#2A2A3A] bg-[#08080f] px-4 py-3">
+            <div className="mt-2 space-y-3 text-sm rounded-2xl border border-[#00FFD1]/20 bg-[#080810] px-4 py-3 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[#A8A8B3]">סטטוס סלפי</span>
-                <span className="text-white/90">
+                <span className="text-[#00FFD1]/80">סטטוס סלפי</span>
+                <span className="text-[#00FFD1]">
                   {hasPreview ? "תמונה הועלתה" : "ממתין להעלאת סלפי"}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[#A8A8B3]">מצב ניתוח</span>
-                <span className="text-white/90">
+                <span className="text-[#00FFD1]/80">מצב ניתוח</span>
+                <span className="text-[#00FFD1]">
                   {hasHostedImage
                     ? "מוכן לניתוח בשלב הבא"
                     : "הניתוח יופעל לאחר העלאת תמונה"}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[#A8A8B3]">השלב הבא</span>
-                <span className="text-white/90">
+                <span className="text-[#00FFD1]/80">השלב הבא</span>
+                <span className="text-[#00FFD1]">
                   {hasHostedImage
                     ? "לחץ על ״המשך לניתוח״ כדי להפעיל את ה-AI"
                     : "העלה סלפי כדי להמשיך למסך הניתוח"}
@@ -305,11 +333,11 @@ export default function BarberPage() {
           </section>
         </div>
 
-        {/* Flow selection + actions section */}
+        {/* Flow selection + actions section — HUD style */}
         <section className="space-y-3">
           {hasHostedImage && (
-            <div className="space-y-2">
-              <h2 className="text-sm font-medium text-[#A8A8B3] text-center">
+            <div className="space-y-2 rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-4 shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+              <h2 className="text-sm font-medium text-[#00FFD1] text-center">
                 בחר מסלול המשך
               </h2>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
@@ -323,14 +351,14 @@ export default function BarberPage() {
                       // ignore
                     }
                   }}
-                  className={`flex-1 sm:flex-none sm:w-auto rounded-2xl px-4 py-2.5 text-sm sm:text-base flex flex-col items-center justify-center gap-0.5 transition-colors border text-center ${
+                  className={`flex-1 sm:flex-none sm:w-auto rounded-2xl px-4 py-2.5 text-sm sm:text-base flex flex-col items-center justify-center gap-0.5 transition-all border text-center ${
                     selectedFlow === "men"
-                      ? "bg-gradient-to-l from-cyan-500/15 via-cyan-500/10 to-blue-500/10 border-cyan-500/50 text-white"
-                      : "bg-[#050509] border-[#2A2A3A] text-white hover:bg-[#0c0c18]"
+                      ? "bg-[#00FFD1]/10 border-[#00FFD1] text-[#00FFD1] shadow-[0_0_12px_rgba(0,255,209,0.35)]"
+                      : "bg-[#0a0a0f] border-[#00FFD1]/40 text-white hover:border-[#00FFD1]/70 hover:shadow-[0_0_10px_rgba(0,255,209,0.25)]"
                   }`}
                 >
                   <span className="font-medium">מסלול גברים</span>
-                  <span className="text-sm text-[#A8A8B3]">
+                  <span className="text-sm text-[#9CA3AF]">
                     תספורות וזקנים לגברים
                   </span>
                 </button>
@@ -344,14 +372,14 @@ export default function BarberPage() {
                       // ignore
                     }
                   }}
-                  className={`flex-1 sm:flex-none sm:w-auto rounded-2xl px-4 py-2.5 text-sm sm:text-base flex flex-col items-center justify-center gap-0.5 transition-colors border text-center ${
+                  className={`flex-1 sm:flex-none sm:w-auto rounded-2xl px-4 py-2.5 text-sm sm:text-base flex flex-col items-center justify-center gap-0.5 transition-all border text-center ${
                     selectedFlow === "women"
-                      ? "bg-gradient-to-l from-cyan-500/15 via-cyan-500/10 to-blue-500/10 border-cyan-500/50 text-white"
-                      : "bg-[#050509] border-[#2A2A3A] text-white hover:bg-[#0c0c18]"
+                      ? "bg-[#00FFD1]/10 border-[#00FFD1] text-[#00FFD1] shadow-[0_0_12px_rgba(0,255,209,0.35)]"
+                      : "bg-[#0a0a0f] border-[#00FFD1]/40 text-white hover:border-[#00FFD1]/70 hover:shadow-[0_0_10px_rgba(0,255,209,0.25)]"
                   }`}
                 >
                   <span className="font-medium">מסלול נשים</span>
-                  <span className="text-sm text-[#A8A8B3]">
+                  <span className="text-sm text-[#9CA3AF]">
                     מסלול שיער לנשים
                   </span>
                 </button>
@@ -360,7 +388,7 @@ export default function BarberPage() {
                 <button
                   type="button"
                   onClick={handlePrimaryCta}
-                  className="w-full max-w-sm rounded-xl bg-gradient-to-l from-cyan-400 via-cyan-500 to-blue-500 text-black font-semibold py-3.5 text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.12)] transition-all duration-200 hover:brightness-[1.03] hover:shadow-[0_0_28px_rgba(34,211,238,0.16)]"
+                  className="w-full max-w-sm rounded-xl border border-[#00FFD1] bg-[#0a0a0f] text-[#00FFD1] font-semibold py-3.5 text-sm sm:text-base shadow-[0_0_8px_rgba(0,255,209,0.3)] transition-all hover:shadow-[0_0_16px_rgba(0,255,209,0.45)] hover:bg-[#00FFD1]/10"
                 >
                   המשך לניתוח
                 </button>
@@ -376,21 +404,17 @@ export default function BarberPage() {
 
         {/* Features strip */}
         <section className="grid gap-3 sm:gap-4 sm:grid-cols-3 text-center">
-          <div className="rounded-2xl border border-[#2A2A3A] bg-[#050509] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all duration-300 hover:border-[#374151]" style={{ animationDelay: "0.2s", animationFillMode: "backwards" }}>
-            <p className="text-sm text-[#A8A8B3]">מבחר תספורות</p>
-            <p className="text-sm sm:text-base font-medium">
-              100+ תספורות
-            </p>
+          <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#0a0a0f] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]" style={{ animationDelay: "0.2s", animationFillMode: "backwards" }}>
+            <p className="text-sm text-[#00FFD1]/80">מבחר תספורות</p>
+            <p className="text-sm sm:text-base font-medium text-white">100+ תספורות</p>
           </div>
-          <div className="rounded-2xl border border-[#2A2A3A] bg-[#050509] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all duration-300 hover:border-[#374151]" style={{ animationDelay: "0.25s", animationFillMode: "backwards" }}>
-            <p className="text-sm text-[#A8A8B3]">סגנונות זקן</p>
-            <p className="text-sm sm:text-base font-medium">
-              15+ סגנונות זקן
-            </p>
+          <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#0a0a0f] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]" style={{ animationDelay: "0.25s", animationFillMode: "backwards" }}>
+            <p className="text-sm text-[#00FFD1]/80">סגנונות זקן</p>
+            <p className="text-sm sm:text-base font-medium text-white">15+ סגנונות זקן</p>
           </div>
-          <div className="rounded-2xl border border-[#2A2A3A] bg-[#050509] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all duration-300 hover:border-[#374151]" style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}>
-            <p className="text-sm text-[#A8A8B3]">מנוע ניתוח</p>
-            <p className="text-sm sm:text-base font-medium">ניתוח פנים AI</p>
+          <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#0a0a0f] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]" style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}>
+            <p className="text-sm text-[#00FFD1]/80">מנוע ניתוח</p>
+            <p className="text-sm sm:text-base font-medium text-white">ניתוח פנים AI</p>
           </div>
         </section>
 
@@ -400,12 +424,12 @@ export default function BarberPage() {
             <button
               type="button"
               onClick={handlePrimaryCta}
-              className="w-full rounded-xl bg-gradient-to-l from-cyan-400 via-cyan-500 to-blue-500 text-black font-semibold py-3.5 text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.12)] transition-all duration-200 hover:brightness-[1.03] hover:shadow-[0_0_28px_rgba(34,211,238,0.16)]"
+              className="w-full rounded-xl border border-[#00FFD1] bg-[#0a0a0f] text-[#00FFD1] font-semibold py-3.5 text-sm sm:text-base shadow-[0_0_8px_rgba(0,255,209,0.3)] transition-all hover:shadow-[0_0_16px_rgba(0,255,209,0.45)] hover:bg-[#00FFD1]/10"
             >
               העלה תמונה
             </button>
           )}
-          <p className="text-sm text-[#A8A8B3]">
+          <p className="text-sm text-[#9CA3AF]">
             {hasHostedImage
               ? "בשלב הבא תמשיך למסלול שבחרת ותראה את מסך הניתוח"
               : "העלה סלפי אחד וקבל המלצות מותאמות"}

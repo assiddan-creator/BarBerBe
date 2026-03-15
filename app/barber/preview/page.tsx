@@ -170,7 +170,7 @@ function ProductCard({
 
   return (
     <div
-      className={`relative min-w-[9rem] max-w-[13rem] rounded-2xl border border-[#2A2A3A] px-4 py-4 flex flex-col gap-2.5 shadow-xl transition-all duration-200 hover:scale-[1.02] ${gradient} ${roleStyles.border} ${roleStyles.hoverBorder} ${glowHover}`}
+      className={`relative min-w-[9rem] max-w-[13rem] rounded-2xl border border-[#00FFD1]/25 px-4 py-4 flex flex-col gap-2.5 shadow-[0_0_8px_rgba(0,255,209,0.15)] transition-all hover:scale-[1.02] hover:shadow-[0_0_12px_rgba(0,255,209,0.25)] ${gradient} ${roleStyles.border} ${roleStyles.hoverBorder} ${glowHover}`}
     >
       {prod.role === 0 && (
         <span className="absolute top-2 left-2 text-[10px] font-medium px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-500/40">
@@ -204,7 +204,7 @@ function ProductRecommendationsSection({
 }) {
   if (!products.length) return null;
   return (
-    <div className="space-y-3 pt-4 border-t border-[#2A2A3A] text-right">
+    <div className="space-y-3 pt-4 border-t border-[#00FFD1]/20 text-right">
       <p className="text-xs sm:text-sm text-[#A8A8B3] uppercase tracking-wide">
         המלצות מוצרים לשמירה על הלוק 🧴
       </p>
@@ -398,9 +398,9 @@ export default function BarberPreviewPage() {
     return (
       <main
         dir="rtl"
-        className="min-h-screen bg-[#080808] text-white flex items-center justify-center px-4 py-6 sm:py-10"
+        className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
       >
-        <p className="text-base sm:text-lg text-[#A8A8B3]">
+        <p className="text-base sm:text-lg text-[#00FFD1]/80">
           טוען מסך התוצאה של BarBerBe…
         </p>
       </main>
@@ -411,20 +411,20 @@ export default function BarberPreviewPage() {
     return (
       <main
         dir="rtl"
-        className="min-h-screen bg-[#080808] text-white flex items-center justify-center px-4 py-6 sm:py-10"
+        className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
       >
-        <section className="w-full max-w-lg rounded-3xl border border-[#2A2A3A] bg-[#050509] px-6 py-8 space-y-4 text-center shadow-[0_24px_80px_rgba(0,0,0,0.75)]">
-          <h1 className="text-xl sm:text-2xl font-semibold mb-1">
+        <section className="w-full max-w-lg rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-6 py-8 space-y-4 text-center shadow-[0_0_8px_rgba(0,255,209,0.3)]">
+          <h1 className="text-xl sm:text-2xl font-semibold mb-1 text-[#00FFD1]">
             תצוגת תוצאה
           </h1>
-          <p className="text-[13px] sm:text-sm text-[#A8A8B3] leading-relaxed">
+          <p className="text-[13px] sm:text-sm text-[#9CA3AF] leading-relaxed">
             חסרים נתונים להצגת התוצאה. חזור למסך ההעלאה של BarBerBe והעלה סלפי
             חדש.
           </p>
           <button
             type="button"
             onClick={() => router.push("/barber")}
-            className="mt-4 inline-flex items-center justify-center rounded-xl border border-[#2A2A3A] bg-[#101018] px-5 py-2.5 text-sm sm:text-base text-white hover:bg-[#181826] hover:border-[#374151] transition-colors"
+            className="mt-4 inline-flex items-center justify-center rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-5 py-2.5 text-sm sm:text-base text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
           >
             חזור למסך ההעלאה
           </button>
@@ -497,13 +497,13 @@ export default function BarberPreviewPage() {
   return (
     <main
       dir="rtl"
-      className="min-h-screen bg-[#080808] text-white px-4 py-6 sm:py-10"
+      className="min-h-screen bg-[#040406] text-white px-4 py-6 sm:py-10"
     >
-      <section className="w-full max-w-6xl mx-auto rounded-3xl border border-[#2A2A3A] bg-gradient-to-b from-[#11111a] via-[#080808] to-[#050509] shadow-[0_24px_80px_rgba(0,0,0,0.75)] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-8 animate-barber-fade-in">
+      <section className="w-full max-w-6xl mx-auto rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-8 animate-barber-fade-in shadow-[0_0_8px_rgba(0,255,209,0.3)]">
         <div className="relative">
           <Link
             href="/barber"
-            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#2A2A3A] bg-[#08080f] px-3 py-2 text-sm text-[#A8A8B3] hover:text-white hover:border-[#374151] transition-colors z-10"
+            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-3 py-2 text-sm text-[#00FFD1] transition-all z-10 hover:shadow-[0_0_12px_rgba(0,255,209,0.4)]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -514,15 +514,15 @@ export default function BarberPreviewPage() {
         </div>
         <header className="space-y-3 text-center">
           <div className="flex items-baseline justify-center gap-3">
-            <p className="text-[10px] sm:text-xs tracking-[0.18em] text-[#A8A8B3]">
+            <p className="text-[10px] sm:text-xs tracking-[0.18em] text-[#00FFD1]/80">
               BarBerBe
             </p>
-            <p className="text-[10px] sm:text-xs tracking-[0.18em] uppercase text-[#A8A8B3] whitespace-nowrap">
+            <p className="text-[10px] sm:text-xs tracking-[0.18em] uppercase text-[#00FFD1]/70 whitespace-nowrap">
               YOUR PERSONAL STYLE ADVISOR
             </p>
           </div>
           <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-semibold">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-white">
               {mode === "hairstyle"
                 ? "תצוגת תספורת"
                 : mode === "beard"
@@ -531,7 +531,7 @@ export default function BarberPreviewPage() {
                 ? "תצוגת לוק מלא"
                 : "תצוגת תוצאה"}
             </h1>
-            <p className="text-[13px] sm:text-sm text-[#A8A8B3]">
+            <p className="text-[13px] sm:text-sm text-[#9CA3AF]">
               זהו מסך תצוגת ההדמיה לפני חיבור למנוע ה-AI האמיתי
             </p>
           </div>
@@ -541,26 +541,26 @@ export default function BarberPreviewPage() {
         <div className="grid gap-6 lg:gap-8 lg:grid-cols-2 items-start">
           {/* Left column: hero result + original selfie (when relevant) */}
           <div className="space-y-5">
-            {/* 1) Result slot: strict-sized wrapper, image(s) absolute, loading overlay on top */}
+            {/* 1) Result slot — HUD style, cyan glow on image */}
             <section
-              className="rounded-2xl border border-[#2A2A3A] bg-[#050509] overflow-hidden w-full"
+              className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] overflow-hidden w-full shadow-[0_0_8px_rgba(0,255,209,0.2)]"
               aria-label="תוצאת ההדמיה"
             >
               {hasGenerated && generatedUrl && selfieUrl && (
                 <div className="w-full animate-barber-result-reveal">
-                  <div className="flex items-center justify-center gap-0 px-2 py-2 border-b border-[#2A2A3A]">
+                  <div className="flex items-center justify-center gap-0 px-2 py-2 border-b border-[#00FFD1]/20">
                     <div
-                      className="flex rounded-full border border-[#2A2A3A] bg-[#0a0a12] p-0.5"
+                      className="flex rounded-full border border-[#00FFD1]/40 bg-[#080810] p-0.5 shadow-[0_0_6px_rgba(0,255,209,0.15)]"
                       role="group"
                       aria-label="תצוגת השוואה"
                     >
                       <button
                         type="button"
                         onClick={() => setComparisonView("after")}
-                        className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors ${
+                        className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                           comparisonView === "after"
-                            ? "bg-cyan-500/10 text-white border border-cyan-500/30"
-                            : "text-[#A8A8B3] hover:text-white bg-transparent border border-transparent"
+                            ? "bg-[#00FFD1]/15 text-[#00FFD1] border border-[#00FFD1]/50 shadow-[0_0_6px_rgba(0,255,209,0.2)]"
+                            : "text-[#9CA3AF] hover:text-[#00FFD1] bg-transparent border border-transparent"
                         }`}
                       >
                         אחרי
@@ -568,10 +568,10 @@ export default function BarberPreviewPage() {
                       <button
                         type="button"
                         onClick={() => setComparisonView("before")}
-                        className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors ${
+                        className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                           comparisonView === "before"
-                            ? "bg-cyan-500/10 text-white border border-cyan-500/30"
-                            : "text-[#A8A8B3] hover:text-white bg-transparent border border-transparent"
+                            ? "bg-[#00FFD1]/15 text-[#00FFD1] border border-[#00FFD1]/50 shadow-[0_0_6px_rgba(0,255,209,0.2)]"
+                            : "text-[#9CA3AF] hover:text-[#00FFD1] bg-transparent border border-transparent"
                         }`}
                       >
                         לפני
@@ -579,10 +579,10 @@ export default function BarberPreviewPage() {
                       <button
                         type="button"
                         onClick={() => setComparisonView("compare")}
-                        className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors ${
+                        className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                           comparisonView === "compare"
-                            ? "bg-cyan-500/10 text-white border border-cyan-500/30"
-                            : "text-[#A8A8B3] hover:text-white bg-transparent border border-transparent"
+                            ? "bg-[#00FFD1]/15 text-[#00FFD1] border border-[#00FFD1]/50 shadow-[0_0_6px_rgba(0,255,209,0.2)]"
+                            : "text-[#9CA3AF] hover:text-[#00FFD1] bg-transparent border border-transparent"
                         }`}
                       >
                         השוואה
@@ -592,8 +592,8 @@ export default function BarberPreviewPage() {
                 </div>
               )}
 
-              {/* Strict wrapper: never changes size */}
-              <div className="relative w-full aspect-[3/4] max-h-[55vh] md:max-h-[600px] bg-[#050509] rounded-xl overflow-hidden border border-white/10">
+              {/* Image area with cyan glow border */}
+              <div className="relative w-full aspect-[3/4] max-h-[55vh] md:max-h-[600px] bg-[#050509] rounded-xl overflow-hidden border border-[#00FFD1]/25 shadow-[0_0_12px_rgba(0,255,209,0.15)]">
                 {selfieUrl && !(hasGenerated && generatedUrl) && (
                   <>
                     <img
@@ -661,8 +661,8 @@ export default function BarberPreviewPage() {
               {hasGenerated && generatedUrl && selfieUrl && (
                 <>
                   {comparisonView === "after" && (
-                    <div className="px-4 py-3 border-t border-[#2A2A3A] space-y-2">
-                      <label className="block text-sm text-[#A8A8B3] text-right">
+                    <div className="px-4 py-3 border-t border-[#00FFD1]/20 space-y-2">
+                      <label className="block text-sm text-[#00FFD1]/80 text-right">
                         עוצמת השינוי: {changeIntensity}%
                       </label>
                       <input
@@ -673,12 +673,13 @@ export default function BarberPreviewPage() {
                         onChange={(e) =>
                           setChangeIntensity(Number(e.target.value))
                         }
-                        className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-[#1F2937] accent-cyan-500"
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-[#0f0f18]"
+                        style={{ accentColor: "#00FFD1" }}
                       />
                     </div>
                   )}
-                  <div className="px-4 py-3 border-t border-[#2A2A3A] flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">
-                    <p className="text-sm text-[#A8A8B3] text-right leading-relaxed order-2 sm:order-1">
+                  <div className="px-4 py-3 border-t border-[#00FFD1]/20 flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">
+                    <p className="text-sm text-[#9CA3AF] text-right leading-relaxed order-2 sm:order-1">
                       {comparisonView === "after" &&
                         "תוצאת ההדמיה שלך — הדמיה בלבד לפני חיבור למנוע התמונות הסופי"}
                       {comparisonView === "before" && "הסלפי המקורי שהועלה"}
@@ -691,7 +692,7 @@ export default function BarberPreviewPage() {
                         <button
                           type="button"
                           onClick={handleDownloadImage}
-                          className="rounded-xl border border-[#374151] bg-[#101018] px-4 py-2 text-sm font-medium text-white hover:bg-[#181826] hover:border-[#4B5563] transition-colors"
+                          className="rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-4 py-2 text-sm font-medium text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
                         >
                           הורד תמונה
                         </button>
@@ -704,11 +705,11 @@ export default function BarberPreviewPage() {
 
             {/* Original selfie below hero (hidden once a generated result exists) */}
             {!(hasGenerated && generatedUrl) && (
-              <section className="rounded-2xl border border-[#2A2A3A] bg-[#0f0f18] p-4 sm:p-5 flex flex-col gap-3">
-                <h2 className="text-sm font-medium text-[#A8A8B3] text-right">
+              <section className="rounded-2xl border border-[#00FFD1]/25 bg-[#0f0f18] p-4 sm:p-5 flex flex-col gap-3 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
+                <h2 className="text-sm font-medium text-[#00FFD1]/80 text-right">
                   הסלפי המקורי
                 </h2>
-                <div className="border border-[#2A2A3A] rounded-2xl overflow-hidden bg-[#050509] aspect-[4/3] lg:max-h-[600px] flex items-center justify-center">
+                <div className="border border-[#00FFD1]/20 rounded-2xl overflow-hidden bg-[#050509] aspect-[4/3] lg:max-h-[600px] flex items-center justify-center">
                   <img
                     src={selfieUrl}
                     alt="הסלפי שהועלה"
@@ -759,22 +760,22 @@ export default function BarberPreviewPage() {
           {/* Right column: consultation card with customer / barber mode toggle */}
           <div className="lg:sticky lg:top-8">
           {(hairstylePreset || beardPreset) ? (
-            <section className="rounded-2xl border border-[#2A2A3A] bg-[#050509] p-5 sm:p-6 flex flex-col">
+            <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col shadow-[0_0_8px_rgba(0,255,209,0.2)]">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                <h2 className="text-base font-semibold text-white text-center">
+                <h2 className="text-base font-semibold text-[#00FFD1] text-center">
                   כרטיס ייעוץ אישי
                 </h2>
-                <div className="flex rounded-full border border-[#2A2A3A] bg-[#0a0a12] p-0.5 w-full sm:w-auto" role="group" aria-label="מצב תצוגה">
+                <div className="flex rounded-full border border-[#00FFD1]/40 bg-[#080810] p-0.5 w-full sm:w-auto shadow-[0_0_6px_rgba(0,255,209,0.15)]" role="group" aria-label="מצב תצוגה">
                   <button
                     type="button"
                     onClick={() => {
                       setIsBarberMode(false);
                       void fetchAdvice(false);
                     }}
-                    className={`flex-1 sm:flex-none sm:px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    className={`flex-1 sm:flex-none sm:px-4 py-2 rounded-full text-sm font-medium transition-all ${
                       !isBarberMode
-                        ? "bg-cyan-500/10 text-white border border-cyan-500/30"
-                        : "text-[#A8A8B3] hover:text-white bg-transparent border border-transparent"
+                        ? "bg-[#00FFD1]/15 text-[#00FFD1] border border-[#00FFD1]/50"
+                        : "text-[#9CA3AF] hover:text-[#00FFD1] bg-transparent border border-transparent"
                     }`}
                   >
                     מצב לקוח
@@ -785,10 +786,10 @@ export default function BarberPreviewPage() {
                       setIsBarberMode(true);
                       void fetchAdvice(true);
                     }}
-                    className={`flex-1 sm:flex-none sm:px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                    className={`flex-1 sm:flex-none sm:px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                       isBarberMode
-                        ? "bg-cyan-500/10 text-white border border-cyan-500/30"
-                        : "text-[#A8A8B3] hover:text-white bg-transparent border border-transparent"
+                        ? "bg-[#00FFD1]/15 text-[#00FFD1] border border-[#00FFD1]/50"
+                        : "text-[#9CA3AF] hover:text-[#00FFD1] bg-transparent border border-transparent"
                     }`}
                   >
                     מצב ספר
@@ -812,12 +813,12 @@ export default function BarberPreviewPage() {
                             <span className="h-2 w-2 rounded-full bg-current opacity-80" />
                             {formatMaintenanceLevel(mergeMaintenanceLevel(hairstylePreset.maintenanceLevel, beardPreset.maintenanceLevel)).label}
                           </span>
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#2A2A3A] bg-[#101018] px-2.5 py-1 text-[#E5E5F0]">
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#00FFD1]/25 bg-[#0a0a0f] px-2.5 py-1 text-[#E5E5F0]">
                             האופי של הלוק: {[hairstylePreset.vibe, beardPreset.vibe].filter(Boolean).join(" · ")}
                           </span>
                         </div>
                       </div>
-                      <div className="space-y-2 pt-4 border-t border-[#2A2A3A] text-right">
+                      <div className="space-y-2 pt-4 border-t border-[#00FFD1]/20 text-right">
                         <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
                           למה זה יכול להתאים לך
                         </p>
@@ -843,7 +844,7 @@ export default function BarberPreviewPage() {
                         </p>
                       </div>
                       {(hairstylePreset.resultBarberSummary || beardPreset.resultBarberSummary) && (
-                        <div className="space-y-2 pt-4 border-t border-[#2A2A3A]">
+                        <div className="space-y-2 pt-4 border-t border-[#00FFD1]/20">
                           <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
                             סיכום לספר
                           </p>
@@ -853,7 +854,7 @@ export default function BarberPreviewPage() {
                         </div>
                       )}
                       {((hairstylePreset.resultTechnicalNotes?.length ?? 0) + (beardPreset.resultTechnicalNotes?.length ?? 0)) > 0 && (
-                        <div className="space-y-2 pt-4 border-t border-[#2A2A3A]">
+                        <div className="space-y-2 pt-4 border-t border-[#00FFD1]/20">
                           <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
                             ביצוע טכני / נקודות חשובות
                           </p>
@@ -886,12 +887,12 @@ export default function BarberPreviewPage() {
                               <span className="h-2 w-2 rounded-full bg-current opacity-80" />
                               {maint.label}
                             </span>
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#2A2A3A] bg-[#101018] px-2.5 py-1 text-[#E5E5F0]">
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#00FFD1]/25 bg-[#0a0a0f] px-2.5 py-1 text-[#E5E5F0]">
                               האופי של הלוק: {p.vibe}
                             </span>
                           </div>
                         </div>
-                        <div className="space-y-2 pt-4 border-t border-[#2A2A3A] text-right">
+                        <div className="space-y-2 pt-4 border-t border-[#00FFD1]/20 text-right">
                           <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
                             למה זה יכול להתאים לך
                           </p>
@@ -901,7 +902,7 @@ export default function BarberPreviewPage() {
                         </div>
 
                         {productRecommendations.length > 0 && (
-                          <div className="space-y-3 pt-4 border-t border-[#2A2A3A] text-right">
+                          <div className="space-y-3 pt-4 border-t border-[#00FFD1]/20 text-right">
                             <p className="text-xs sm:text-sm text-[#A8A8B3] uppercase tracking-wide">
                               המלצות מוצרים לשמירה על הלוק 🧴
                             </p>
@@ -931,7 +932,7 @@ export default function BarberPreviewPage() {
                           </p>
                         </div>
                         {p.resultBarberSummary && (
-                          <div className="space-y-2 pt-4 border-t border-[#2A2A3A]">
+                          <div className="space-y-2 pt-4 border-t border-[#00FFD1]/20">
                             <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
                               סיכום לספר
                             </p>
@@ -941,7 +942,7 @@ export default function BarberPreviewPage() {
                           </div>
                         )}
                         {p.resultTechnicalNotes && p.resultTechnicalNotes.length > 0 && (
-                          <div className="space-y-2 pt-4 border-t border-[#2A2A3A]">
+                          <div className="space-y-2 pt-4 border-t border-[#00FFD1]/20">
                             <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
                               ביצוע טכני / נקודות חשובות
                             </p>
@@ -958,7 +959,7 @@ export default function BarberPreviewPage() {
                 );
               })()}
 
-              <div className="mt-5 pt-5 border-t border-[#2A2A3A] space-y-2 text-right">
+              <div className="mt-5 pt-5 border-t border-[#00FFD1]/20 space-y-2 text-right">
                 <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
                   ייעוץ אישי AI ✨
                 </p>
@@ -975,7 +976,7 @@ export default function BarberPreviewPage() {
               </div>
             </section>
           ) : (
-            <section className="rounded-2xl border border-[#2A2A3A] bg-[#050509] p-5 sm:p-6 flex flex-col">
+            <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col shadow-[0_0_8px_rgba(0,255,209,0.2)]">
               <h2 className="text-sm font-semibold text-right mb-2">כרטיס תוצאה</h2>
               <p className="text-sm text-[#A8A8B3] text-right">
                 בחר תספורת ו/או זקן למעלה — התוצאה תופיע בחלק העליון
@@ -991,10 +992,10 @@ export default function BarberPreviewPage() {
           </div>
         )}
 
-        <section className="pt-1 space-y-3">
+        <section className="pt-1 space-y-3 rounded-2xl border border-[#00FFD1]/25 bg-[#080810] p-4 shadow-[0_0_8px_rgba(0,255,209,0.15)]">
           <div className="space-y-3">
-            <p className="text-xs sm:text-sm font-medium text-[#A8A8B3] text-center">
-              בחר מודל AI
+            <p className="text-xs sm:text-sm font-medium text-[#00FFD1] text-center">
+              בחר מודל AI — HUD
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {MODEL_OPTIONS.map((opt) => (
@@ -1003,10 +1004,10 @@ export default function BarberPreviewPage() {
                   type="button"
                   onClick={() => setSelectedModel(opt.value)}
                   disabled={isGenerating}
-                  className={`rounded-xl px-3 py-2 text-sm border transition-all duration-200 ${
+                  className={`rounded-xl px-3 py-2 text-sm border transition-all ${
                     selectedModel === opt.value
-                      ? "border-cyan-500/40 bg-cyan-500/10 text-white"
-                      : "border-[#2A2A3A] bg-[#101018] text-white hover:bg-[#181826] hover:border-[#374151]"
+                      ? "border-[#00FFD1] bg-[#00FFD1]/10 text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.35)]"
+                      : "border-[#00FFD1]/35 bg-[#0a0a0f] text-white hover:border-[#00FFD1]/60 hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
                   }`}
                 >
                   {opt.label}
@@ -1019,10 +1020,10 @@ export default function BarberPreviewPage() {
               type="button"
               onClick={handleGenerate}
               disabled={isGenerating || !mode}
-              className={`w-full rounded-xl px-5 py-3 text-sm sm:text-base text-center transition-all duration-200 ${
+              className={`w-full rounded-xl px-5 py-3 text-sm sm:text-base text-center transition-all border ${
                 isGenerating || !mode
-                  ? "bg-[#181818] text-[#666677] cursor-not-allowed border border-[#2A2A3A]"
-                  : "bg-gradient-to-l from-cyan-400 via-cyan-500 to-blue-500 text-black font-semibold shadow-[0_0_20px_rgba(34,211,238,0.12)] hover:brightness-[1.03] hover:shadow-[0_0_24px_rgba(34,211,238,0.16)]"
+                  ? "bg-[#0a0a0f] text-[#666677] cursor-not-allowed border-[#00FFD1]/20"
+                  : "border-[#00FFD1] bg-[#0a0a0f] text-[#00FFD1] font-semibold shadow-[0_0_8px_rgba(0,255,209,0.3)] hover:shadow-[0_0_16px_rgba(0,255,209,0.45)] hover:bg-[#00FFD1]/10"
               }`}
             >
               {isGenerating &&
@@ -1041,7 +1042,7 @@ export default function BarberPreviewPage() {
               {!isGenerating && !mode && "תצוגת תוצאה"}
             </button>
             {!hasGenerated && (
-              <p className="text-[11px] text-[#A8A8B3]">
+              <p className="text-[11px] text-[#9CA3AF]">
                 זוהי תצוגת דמה לפני חיבור למנוע התמונות
               </p>
             )}
@@ -1052,10 +1053,10 @@ export default function BarberPreviewPage() {
               type="button"
               onClick={handleBackToAnalysis}
               disabled={isGenerating}
-              className={`w-full sm:w-auto rounded-xl border border-[#2A2A3A] px-5 py-3 text-sm text-center transition-all duration-200 ${
+              className={`w-full sm:w-auto rounded-xl border px-5 py-3 text-sm text-center transition-all ${
                 isGenerating
-                  ? "bg-[#101018] text-[#666677] cursor-not-allowed"
-                  : "bg-[#101018] text-white hover:bg-[#181826] hover:border-[#374151]"
+                  ? "bg-[#0a0a0f] border-[#00FFD1]/20 text-[#666677] cursor-not-allowed"
+                  : "border-[#00FFD1]/50 bg-[#0a0a0f] text-[#00FFD1] hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
               }`}
             >
               חזור לניתוח
@@ -1064,10 +1065,10 @@ export default function BarberPreviewPage() {
               type="button"
               onClick={handleRestart}
               disabled={isGenerating}
-              className={`w-full sm:w-auto rounded-xl border border-[#374151] px-5 py-3 text-sm text-center transition-all duration-200 ${
+              className={`w-full sm:w-auto rounded-xl border px-5 py-3 text-sm text-center transition-all ${
                 isGenerating
-                  ? "bg-[#181818] text-[#666677] cursor-not-allowed border border-[#2A2A3A]"
-                  : "bg-[#101018] text-white hover:bg-[#181826] hover:border-[#4B5563]"
+                  ? "bg-[#0a0a0f] border-[#00FFD1]/20 text-[#666677] cursor-not-allowed"
+                  : "border-[#00FFD1]/50 bg-[#0a0a0f] text-[#00FFD1] hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]"
               }`}
             >
               התחל מחדש
