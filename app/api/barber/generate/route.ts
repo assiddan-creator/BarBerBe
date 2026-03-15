@@ -93,6 +93,9 @@ export async function POST(request: NextRequest) {
   }
 
   const model = modelOverride ?? "google/nano-banana-pro";
+  const isFluxKontextPro =
+    model === "black-forest-labs/flux-kontext-pro" ||
+    model.startsWith("black-forest-labs/flux-kontext-pro:");
 
   const replicate = new Replicate({
     auth: token,
@@ -113,15 +116,27 @@ export async function POST(request: NextRequest) {
     finalPrompt = `${prompt}. ${BASE_PROTECTION}`;
   }
 
+  if (isFluxKontextPro) {
+    finalPrompt = `Keep this exact person's face, identity, and all facial features unchanged. ${finalPrompt}`;
+  }
+
   try {
+    const input = isFluxKontextPro
+      ? {
+          prompt: finalPrompt,
+          input_image: imageUrl,
+          aspect_ratio: "match_input_image",
+        }
+      : {
+          prompt: finalPrompt,
+          image_input: [imageUrl],
+          aspect_ratio: "match_input_image",
+          resolution: "1K",
+          output_format: "jpg",
+        };
+
     const output = (await replicate.run(model as `${string}/${string}`, {
-      input: {
-        prompt: finalPrompt,
-        image_input: [imageUrl],
-        aspect_ratio: "match_input_image",
-        resolution: "1K",
-        output_format: "jpg",
-      },
+      input,
     })) as unknown;
 
     // Minimal diagnostic logging to help confirm output shape during dev
