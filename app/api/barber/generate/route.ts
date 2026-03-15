@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const output = (await replicate.run(model, {
+    const output = (await replicate.run(model as `${string}/${string}`, {
       input: {
         prompt: finalPrompt,
         image_input: [imageUrl],
