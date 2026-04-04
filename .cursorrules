@@ -1,0 +1,10 @@
+# BarBerBe — Cursor rules
+
+## Styling & UI
+
+When editing layout, CSS, Tailwind, or visual design of React/Next.js components, **follow** `.cursor/skills/frontend-design/SKILL.md` (bold premium futuristic UI: hierarchy, depth, neon accents, biometric/HUD patterns where appropriate).
+
+## Code
+
+- Match existing project patterns; minimal unrelated refactors.
+- Prefer focused diffs tied to the user request.

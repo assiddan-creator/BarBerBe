@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   HAIRSTYLE_PRESETS,
   BEARD_PRESETS,
@@ -21,6 +21,52 @@ import {
   BARBER_HAIR_TYPE_STORAGE_KEY,
 } from "@/lib/barber-session";
 import { GenerationLoadingOverlay } from "@/components/GenerationLoadingOverlay";
+
+/** Cybernetic viewport: no photo border — grid overlay + corner brackets + scan line */
+function BiometricImageViewport({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`relative w-full overflow-hidden bg-[#010102] shadow-[inset_0_0_80px_rgba(0,255,209,0.04),0_0_40px_rgba(0,255,209,0.08)] ${className}`}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none z-[5] biometric-grid-overlay"
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0 overflow-hidden pointer-events-none z-[6]"
+        aria-hidden
+      >
+        <div
+          className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00FFD1] to-transparent animate-barber-scan-line shadow-[0_0_14px_rgba(0,255,209,0.55)]"
+          style={{ animationDuration: "2.5s" }}
+        />
+      </div>
+      <span
+        className="pointer-events-none absolute top-2 start-2 z-[7] h-7 w-7 border-t-2 border-s-2 border-[#00FFD1] opacity-95 shadow-[0_0_10px_rgba(0,255,209,0.35)]"
+        aria-hidden
+      />
+      <span
+        className="pointer-events-none absolute top-2 end-2 z-[7] h-7 w-7 border-t-2 border-e-2 border-[#00FFD1] opacity-95 shadow-[0_0_10px_rgba(0,255,209,0.35)]"
+        aria-hidden
+      />
+      <span
+        className="pointer-events-none absolute bottom-2 start-2 z-[7] h-7 w-7 border-b-2 border-s-2 border-[#00FFD1] opacity-95 shadow-[0_0_10px_rgba(0,255,209,0.35)]"
+        aria-hidden
+      />
+      <span
+        className="pointer-events-none absolute bottom-2 end-2 z-[7] h-7 w-7 border-b-2 border-e-2 border-[#00FFD1] opacity-95 shadow-[0_0_10px_rgba(0,255,209,0.35)]"
+        aria-hidden
+      />
+      <div className="absolute inset-0 z-[1]">{children}</div>
+    </div>
+  );
+}
 
 function resolveHairstylePreset(value: string | null): BarberPreset | null {
   if (!value) return null;
@@ -171,7 +217,7 @@ function ProductCard({
 
   return (
     <div
-      className={`relative min-w-[9rem] max-w-[13rem] rounded-2xl border border-[#00FFD1]/25 px-4 py-4 flex flex-col gap-2.5 shadow-[0_0_8px_rgba(0,255,209,0.15)] transition-all hover:scale-[1.02] hover:shadow-[0_0_12px_rgba(0,255,209,0.25)] ${gradient} ${roleStyles.border} ${roleStyles.hoverBorder} ${glowHover}`}
+      className={`data-readout-float relative min-w-[9rem] max-w-[13rem] rounded-lg px-4 py-4 flex flex-col gap-2.5 transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,255,209,0.2)] ${gradient} ${roleStyles.border} ${roleStyles.hoverBorder} ${glowHover}`}
     >
       {prod.role === 0 && (
         <span className="absolute top-2 left-2 text-[10px] font-medium px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-500/40">
@@ -205,9 +251,9 @@ function ProductRecommendationsSection({
 }) {
   if (!products.length) return null;
   return (
-    <div className="space-y-3 pt-4 border-t border-[#00FFD1]/20 text-right">
-      <p className="text-xs sm:text-sm text-[#A8A8B3] uppercase tracking-wide">
-        המלצות מוצרים לשמירה על הלוק 🧴
+    <div className="space-y-3 pt-4 border-t border-[#00FFD1]/15 text-right">
+      <p className="font-mono text-[10px] sm:text-xs text-[#00FFD1]/70 tracking-[0.2em] uppercase">
+        MODULE :: PRODUCT STACK · MAINTAIN
       </p>
       <div className="flex flex-wrap gap-3 justify-center">
         {products.map((prod) => {
@@ -405,8 +451,8 @@ export default function BarberPreviewPage() {
         dir="rtl"
         className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
       >
-        <p className="text-base sm:text-lg text-[#00FFD1]/80">
-          טוען מסך התוצאה של BarBerBe…
+        <p className="font-mono text-sm tracking-widest text-[#00FFD1]/90">
+          SYSTEM INITIATE… SYNC BUFFER
         </p>
       </main>
     );
@@ -418,13 +464,15 @@ export default function BarberPreviewPage() {
         dir="rtl"
         className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
       >
-        <section className="w-full max-w-lg rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-6 py-8 space-y-4 text-center shadow-[0_0_8px_rgba(0,255,209,0.3)]">
-          <h1 className="text-xl sm:text-2xl font-semibold mb-1 text-[#00FFD1]">
-            תצוגת תוצאה
+        <section className="data-readout-float w-full max-w-lg rounded-lg px-6 py-8 space-y-4 text-center">
+          <p className="font-mono text-[10px] tracking-[0.35em] text-[#00FFD1]/70">
+            ABORT: NO SUBJECT VECTOR
+          </p>
+          <h1 className="text-xl sm:text-2xl font-semibold mb-1 text-[#00FFD1] tracking-wide">
+            VECTOR OUTPUT — LOCKED
           </h1>
           <p className="text-[13px] sm:text-sm text-[#9CA3AF] leading-relaxed">
-            חסרים נתונים להצגת התוצאה. חזור למסך ההעלאה של BarBerBe והעלה סלפי
-            חדש.
+            חסרים נתונים להצגת התוצאה. חזור למסך ההעלאה והעלה סלפי חדש.
           </p>
           <button
             type="button"
@@ -502,42 +550,45 @@ export default function BarberPreviewPage() {
   return (
     <main
       dir="rtl"
-      className="min-h-screen bg-[#040406] text-white px-4 py-6 sm:py-10"
+      className="min-h-screen text-white px-4 py-6 sm:py-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(0,255,209,0.08),#020203_45%)]"
     >
-      <section className="w-full max-w-6xl mx-auto rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-8 animate-barber-fade-in shadow-[0_0_8px_rgba(0,255,209,0.3)]">
+      <section className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-8 sm:py-10 space-y-10 animate-barber-fade-in">
         <div className="relative">
           <Link
             href="/barber"
-            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-3 py-2 text-sm text-[#00FFD1] transition-all z-10 hover:shadow-[0_0_12px_rgba(0,255,209,0.4)]"
+            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-md font-mono text-xs tracking-widest px-3 py-2 text-[#00FFD1] transition-all z-10 data-readout-float hover:shadow-[0_0_20px_rgba(0,255,209,0.25)]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
-            <span>ראשי</span>
+            <span>HOME</span>
           </Link>
         </div>
-        <header className="space-y-3 text-center">
+        <header className="space-y-2 text-center">
+          <p className="font-mono text-[10px] sm:text-xs tracking-[0.4em] text-[#00FFD1]/80">
+            SYSTEM INITIATE · VECTOR OUTPUT
+          </p>
           <div className="flex items-baseline justify-center gap-3">
-            <p className="text-xs tracking-widest text-[#00FFD1]">
+            <p className="text-xs tracking-widest text-[#00FFD1] font-semibold">
               BarBerBe
             </p>
-            <p className="text-xs tracking-widest uppercase text-[#00FFD1]/80 whitespace-nowrap">
-              YOUR PERSONAL STYLE ADVISOR
+            <p className="font-mono text-[10px] tracking-widest uppercase text-[#00FFD1]/60 whitespace-nowrap">
+              BIOMETRIC RENDER MODULE
             </p>
           </div>
           <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-semibold text-white">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-wide">
               {mode === "hairstyle"
-                ? "תצוגת תספורת"
+                ? "HAIRSTYLE · PREVIEW"
                 : mode === "beard"
-                ? "תצוגת זקן"
+                ? "BEARD · PREVIEW"
                 : mode === "combo"
-                ? "תצוגת לוק מלא"
-                : "תצוגת תוצאה"}
+                ? "FULL LOOK · PREVIEW"
+                : "RESULT · PREVIEW"}
             </h1>
-            <p className="text-[13px] sm:text-sm text-[#9CA3AF]">
-              זהו מסך תצוגת ההדמיה לפני חיבור למנוע ה-AI האמיתי
+            <p className="font-mono text-[11px] sm:text-xs text-[#00FFD1]/55 tracking-[0.2em]">
+              AWAITING NEURAL SYNTH · SUBJECT LOCKED
             </p>
           </div>
         </header>
@@ -546,16 +597,19 @@ export default function BarberPreviewPage() {
         <div className="grid gap-6 lg:gap-8 lg:grid-cols-2 items-start">
           {/* Left column: hero result + original selfie (when relevant) */}
           <div className="space-y-5">
-            {/* 1) Result slot — HUD style, cyan glow on image */}
+            {/* 1) Result slot — biometric viewport (no photo border) */}
             <section
-              className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] overflow-hidden w-full shadow-[0_0_8px_rgba(0,255,209,0.2)]"
+              className="data-readout-float rounded-xl overflow-hidden w-full"
               aria-label="תוצאת ההדמיה"
             >
               {hasGenerated && generatedUrl && selfieUrl && (
                 <div className="w-full animate-barber-result-reveal">
-                  <div className="flex items-center justify-center gap-0 px-2 py-2 border-b border-[#00FFD1]/20">
+                  <div className="flex items-center justify-center gap-0 px-2 py-2 border-b border-[#00FFD1]/15 bg-black/40">
+                    <p className="font-mono text-[9px] tracking-[0.25em] text-[#00FFD1]/50 pe-3 hidden sm:block">
+                      CHANNEL SELECT
+                    </p>
                     <div
-                      className="flex rounded-full border border-[#00FFD1]/40 bg-[#080810] p-0.5 shadow-[0_0_6px_rgba(0,255,209,0.15)]"
+                      className="flex rounded-md font-mono text-[10px] tracking-wider border border-[#00FFD1]/30 bg-[#050508] p-0.5 shadow-[0_0_12px_rgba(0,255,209,0.12)]"
                       role="group"
                       aria-label="תצוגת השוואה"
                     >
@@ -597,8 +651,7 @@ export default function BarberPreviewPage() {
                 </div>
               )}
 
-              {/* Image area with cyan glow border */}
-              <div className="relative w-full aspect-[3/4] max-h-[55vh] md:max-h-[600px] bg-[#050509] rounded-xl overflow-hidden border border-[#00FFD1]/25 shadow-[0_0_12px_rgba(0,255,209,0.15)]">
+              <BiometricImageViewport className="aspect-[3/4] max-h-[55vh] md:max-h-[600px]">
                 {selfieUrl && !(hasGenerated && generatedUrl) && (
                   <>
                     <img
@@ -655,20 +708,23 @@ export default function BarberPreviewPage() {
                   </>
                 )}
                 {!selfieUrl && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center px-5 py-10 text-center">
-                    <p className="text-[13px] sm:text-sm text-[#A8A8B3] leading-relaxed">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center px-5 py-10 text-center z-[2]">
+                    <p className="font-mono text-[10px] tracking-widest text-[#00FFD1]/50 mb-2">
+                      NO SIGNAL
+                    </p>
+                    <p className="text-[13px] sm:text-sm text-[#9CA3AF] leading-relaxed">
                       העלה סלפי במסך ההעלאה כדי להמשיך
                     </p>
                   </div>
                 )}
-              </div>
+              </BiometricImageViewport>
 
               {hasGenerated && generatedUrl && selfieUrl && (
                 <>
                   {comparisonView === "after" && (
-                    <div className="px-4 py-3 border-t border-[#00FFD1]/20 space-y-2">
-                      <label className="block text-sm text-[#00FFD1]/80 text-right">
-                        עוצמת השינוי: {changeIntensity}%
+                    <div className="px-4 py-3 border-t border-[#00FFD1]/15 space-y-2 bg-black/30">
+                      <label className="block font-mono text-[10px] tracking-wider text-[#00FFD1]/70 text-right">
+                        BLEND INTENSITY :: {changeIntensity}%
                       </label>
                       <input
                         type="range"
@@ -683,10 +739,10 @@ export default function BarberPreviewPage() {
                       />
                     </div>
                   )}
-                  <div className="px-4 py-3 border-t border-[#00FFD1]/20 flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">
-                    <p className="text-sm text-[#9CA3AF] text-right leading-relaxed order-2 sm:order-1">
+                  <div className="px-4 py-3 border-t border-[#00FFD1]/15 flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 bg-black/25">
+                    <p className="text-xs sm:text-sm text-[#9CA3AF] text-right leading-relaxed order-2 sm:order-1">
                       {comparisonView === "after" &&
-                        "תוצאת ההדמיה שלך — הדמיה בלבד לפני חיבור למנוע התמונות הסופי"}
+                        "OUTPUT VECTOR — PREVIEW ONLY · FINAL ENGINE PENDING"}
                       {comparisonView === "before" && "הסלפי המקורי שהועלה"}
                       {comparisonView === "compare" &&
                         "השוואה: לפני ואחרי — תוצאת ההדמיה"}
@@ -710,17 +766,17 @@ export default function BarberPreviewPage() {
 
             {/* Original selfie below hero (hidden once a generated result exists) */}
             {!(hasGenerated && generatedUrl) && (
-              <section className="rounded-2xl border border-[#00FFD1]/25 bg-[#0f0f18] p-4 sm:p-5 flex flex-col gap-3 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
-                <h2 className="text-sm font-medium text-[#00FFD1]/80 text-right">
-                  הסלפי המקורי
+              <section className="data-readout-float rounded-xl p-4 sm:p-5 flex flex-col gap-3">
+                <h2 className="font-mono text-[10px] tracking-[0.25em] text-[#00FFD1]/80 text-right">
+                  RAW CAPTURE · SOURCE FRAME
                 </h2>
-                <div className="border border-[#00FFD1]/20 rounded-2xl overflow-hidden bg-[#050509] aspect-[4/3] lg:max-h-[600px] flex items-center justify-center">
+                <BiometricImageViewport className="aspect-[4/3] lg:max-h-[600px]">
                   <img
                     src={selfieUrl}
                     alt="הסלפי שהועלה"
-                    className="w-full h-full object-contain object-center"
+                    className="absolute inset-0 w-full h-full object-contain object-center"
                   />
-                </div>
+                </BiometricImageViewport>
                 <p className="text-[13px] sm:text-sm text-[#A8A8B3] text-right min-h-[1.5rem] leading-relaxed">
                   {mode === "hairstyle" &&
                     (hairstylePreset || selectedHairstyle) && (
@@ -765,10 +821,10 @@ export default function BarberPreviewPage() {
           {/* Right column: consultation card with customer / barber mode toggle */}
           <div className="lg:sticky lg:top-8">
           {(hairstylePreset || beardPreset) ? (
-            <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col shadow-[0_0_8px_rgba(0,255,209,0.2)]">
+            <section className="data-readout-float rounded-xl p-5 sm:p-6 flex flex-col">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                <h2 className="text-base font-semibold text-[#00FFD1] text-center">
-                  כרטיס ייעוץ אישי
+                <h2 className="font-mono text-xs sm:text-sm tracking-[0.2em] text-[#00FFD1] text-center">
+                  CONSULTATION · DATA READOUT
                 </h2>
                 <div className="flex rounded-full border border-[#00FFD1]/40 bg-[#080810] p-0.5 w-full sm:w-auto shadow-[0_0_6px_rgba(0,255,209,0.15)]" role="group" aria-label="מצב תצוגה">
                   <button
@@ -908,8 +964,8 @@ export default function BarberPreviewPage() {
 
                         {productRecommendations.length > 0 && (
                           <div className="space-y-3 pt-4 border-t border-[#00FFD1]/20 text-right">
-                            <p className="text-xs sm:text-sm text-[#A8A8B3] uppercase tracking-wide">
-                              המלצות מוצרים לשמירה על הלוק 🧴
+                            <p className="font-mono text-[10px] text-[#00FFD1]/70 uppercase tracking-[0.2em]">
+                              MODULE :: PRODUCT STACK
                             </p>
                             <div className="flex flex-wrap gap-3 justify-center">
                               {productRecommendations.map((prod) => {
@@ -964,27 +1020,29 @@ export default function BarberPreviewPage() {
                 );
               })()}
 
-              <div className="mt-5 pt-5 border-t border-[#00FFD1]/20 space-y-2 text-right">
-                <p className="text-xs sm:text-[13px] font-medium text-[#A8A8B3] uppercase tracking-wide">
-                  ייעוץ אישי AI ✨
+              <div className="mt-5 pt-5 border-t border-[#00FFD1]/15 space-y-2 text-right">
+                <p className="font-mono text-[10px] sm:text-[11px] text-[#00FFD1]/70 uppercase tracking-[0.25em]">
+                  NEURAL CONSULT · PROTOCOL
                 </p>
                 {isLoadingAdvice && (
-                  <p className="text-sm text-[#A8A8B3] animate-pulse">
-                    Claude מנתח...
+                  <p className="font-mono text-xs text-[#00FFD1]/80 animate-pulse tracking-wider">
+                    PROCESSING… NEURAL BUFFER
                   </p>
                 )}
                 {aiAdvice && !isLoadingAdvice && (
-                  <div className="rounded-xl border-l-4 border-cyan-500 bg-[#0a0a12] px-4 py-3 text-[13px] sm:text-sm text-[#E5E7EB] leading-relaxed text-right">
+                  <div className="rounded-md border-s-2 border-[#00FFD1] bg-[#050508]/90 px-4 py-3 text-[13px] sm:text-sm text-[#E5E7EB] leading-relaxed text-right shadow-[inset_0_0_24px_rgba(0,255,209,0.04)]">
                     {aiAdvice}
                   </div>
                 )}
               </div>
             </section>
           ) : (
-            <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col shadow-[0_0_8px_rgba(0,255,209,0.2)]">
-              <h2 className="text-sm font-semibold text-right mb-2">כרטיס תוצאה</h2>
-              <p className="text-sm text-[#A8A8B3] text-right">
-                בחר תספורת ו/או זקן למעלה — התוצאה תופיע בחלק העליון
+            <section className="data-readout-float rounded-xl p-5 sm:p-6 flex flex-col">
+              <h2 className="font-mono text-[10px] tracking-[0.2em] text-[#00FFD1]/80 text-right mb-2">
+                AWAITING PARAMETERS
+              </h2>
+              <p className="text-sm text-[#9CA3AF] text-right">
+                בחר תספורת ו/או זקן — התוצאה תופיע בחלק העליון
               </p>
             </section>
           )}
@@ -997,10 +1055,10 @@ export default function BarberPreviewPage() {
           </div>
         )}
 
-        <section className="pt-1 space-y-3 rounded-2xl border border-[#00FFD1]/25 bg-[#080810] p-4 shadow-[0_0_8px_rgba(0,255,209,0.15)]">
+        <section className="pt-1 space-y-3 data-readout-float rounded-xl p-4">
           <div className="space-y-3">
-            <p className="text-xs sm:text-sm font-medium text-[#00FFD1] text-center">
-              בחר מודל AI — HUD
+            <p className="font-mono text-[10px] sm:text-xs text-[#00FFD1]/80 text-center tracking-[0.3em]">
+              ENGINE SELECT · RENDER PIPELINE
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {MODEL_OPTIONS.map((opt) => (
