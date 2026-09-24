@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
 import { v2 as cloudinary } from "cloudinary";
 import { BEARD_PRESETS, HAIRSTYLE_PRESETS } from "@/lib/barber-presets";
+import { verifyGenerationPermit } from "@/lib/barber-generation-permit.server";
 
 export const runtime = "nodejs";
 
@@ -115,6 +116,7 @@ export async function POST(request: NextRequest) {
     imageUrl?: string;
     hairId?: string;
     beardId?: string;
+    generationPermit?: string;
   };
   try {
     body = (await request.json()) as typeof body;
@@ -125,11 +127,19 @@ export async function POST(request: NextRequest) {
   const imageUrl = body.imageUrl?.trim();
   const hairId = body.hairId?.trim();
   const beardId = body.beardId?.trim();
+  const generationPermit = body.generationPermit?.trim();
 
   if (!imageUrl || !imageUrl.startsWith("https://")) {
     return NextResponse.json(
       { error: "Invalid source image" },
       { status: 400 },
+    );
+  }
+
+  if (!verifyGenerationPermit(imageUrl, generationPermit)) {
+    return NextResponse.json(
+      { error: "Generation permit is missing or expired" },
+      { status: 403 },
     );
   }
 
