@@ -57,8 +57,28 @@ export function appendBarberResultHistory(
   maxItems = 8,
 ): BarberResultHistoryItem[] {
   if (typeof window === "undefined") return [];
-  const next = [item, ...readBarberResultHistory().filter((x) => x.id !== item.id)]
-    .slice(0, maxItems);
+
+  const existing = readBarberResultHistory().filter((x) => x.id !== item.id);
+  const combined = [item, ...existing];
+  const favoriteId = sessionStorage.getItem(
+    BARBER_FAVORITE_RESULT_ID_STORAGE_KEY,
+  );
+
+  let next = combined.slice(0, maxItems);
+
+  if (
+    favoriteId &&
+    !next.some((historyItem) => historyItem.id === favoriteId)
+  ) {
+    const favoriteItem = combined.find(
+      (historyItem) => historyItem.id === favoriteId,
+    );
+
+    if (favoriteItem) {
+      next = [...next.slice(0, Math.max(0, maxItems - 1)), favoriteItem];
+    }
+  }
+
   try {
     sessionStorage.setItem(BARBER_RESULT_HISTORY_STORAGE_KEY, JSON.stringify(next));
   } catch {
