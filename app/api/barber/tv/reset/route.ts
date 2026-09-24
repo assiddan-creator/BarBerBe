@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getBarberTvSupabase,
+  barberTvSyncConfigured,
   hashBarberTvControllerToken,
+  readBarberTvSession,
+  writeBarberTvSession,
 } from "@/lib/barber-tv-store.server";
 
 export const runtime = "nodejs";
@@ -14,8 +16,7 @@ function noStoreJson(body: unknown, status = 200) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = getBarberTvSupabase();
-  if (!supabase) {
+  if (!barberTvSyncConfigured()) {
     return noStoreJson({ error: "TV_SYNC_NOT_CONFIGURED" }, 503);
   }
 
@@ -33,36 +34,36 @@ export async function POST(request: NextRequest) {
     return noStoreJson({ error: "INVALID_TV_RESET" }, 400);
   }
 
-  const { data, error } = await supabase
-    .from("barberbe_tv_sessions")
-    .select("controller_token_hash")
-    .eq("code", code)
-    .maybeSingle();
+  try {
+    const stored = await readBarberTvSession(code);
 
-  if (error) {
-    return noStoreJson({ error: "TV_SESSION_READ_FAILED" }, 502);
-  }
+    if (!stored) {
+      return noStoreJson({ error: "TV_SESSION_NOT_FOUND" }, 404);
+    }
 
-  if (!data) {
-    return noStoreJson({ error: "TV_SESSION_NOT_FOUND" }, 404);
-  }
+    const { session, etag } = stored;
+    const suppliedHash = hashBarberTvControllerToken(controllerToken);
 
-  const suppliedHash = hashBarberTvControllerToken(controllerToken);
-  if (
-    !data.controller_token_hash ||
-    suppliedHash !== data.controller_token_hash
-  ) {
-    return noStoreJson({ error: "TV_CONTROLLER_DENIED" }, 403);
-  }
+    if (
+      !session.controllerTokenHash ||
+      suppliedHash !== session.controllerTokenHash
+    ) {
+      return noStoreJson({ error: "TV_CONTROLLER_DENIED" }, 403);
+    }
 
-  const { error: deleteError } = await supabase
-    .from("barberbe_tv_sessions")
-    .delete()
-    .eq("code", code);
+    await writeBarberTvSession(
+      {
+        ...session,
+        paired: false,
+        controllerTokenHash: undefined,
+        expiresAt: new Date(0).toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      { ifMatch: etag, allowOverwrite: true },
+    );
 
-  if (deleteError) {
+    return noStoreJson({ ok: true });
+  } catch {
     return noStoreJson({ error: "TV_RESET_FAILED" }, 502);
   }
-
-  return noStoreJson({ ok: true });
 }
