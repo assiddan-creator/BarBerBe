@@ -247,12 +247,12 @@ export default function BarberStylesPage() {
   const continueToPreview = () => {
     if (flow === "women") {
       if (!selectedWomenStyle) return;
-      router.push("/barber/women/preview");
+      router.push("/barber/result");
       return;
     }
 
     if (!selectedHair && !selectedBeard) return;
-    router.push("/barber/preview");
+    router.push("/barber/result");
   };
 
   const canContinue =
