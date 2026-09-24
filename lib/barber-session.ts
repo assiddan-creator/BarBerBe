@@ -13,6 +13,8 @@ export const BARBER_ANALYSIS_ENGINE_STORAGE_KEY = "barber_analysis_engine";
 export const BARBER_ANALYSIS_STORAGE_KEY = "barber_analysis";
 export const BARBER_HAIR_TYPE_STORAGE_KEY = "barber_hair_type";
 export const BARBER_RESULT_HISTORY_STORAGE_KEY = "barber_result_history";
+export const BARBER_CLIENT_NAME_STORAGE_KEY = "barber_client_name";
+export const BARBER_FAVORITE_RESULT_ID_STORAGE_KEY = "barber_favorite_result_id";
 
 export interface BarberResultHistoryItem {
   id: string;
@@ -81,6 +83,8 @@ export function clearBarberWorkingSession(options?: { keepHistory?: boolean }) {
     BARBER_WOMEN_GENERATED_IMAGE_STORAGE_KEY,
     BARBER_ANALYSIS_STORAGE_KEY,
     BARBER_HAIR_TYPE_STORAGE_KEY,
+    BARBER_CLIENT_NAME_STORAGE_KEY,
+    BARBER_FAVORITE_RESULT_ID_STORAGE_KEY,
   ];
 
   if (!options?.keepHistory) {
