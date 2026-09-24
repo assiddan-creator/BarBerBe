@@ -1,8 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
+import { v2 as cloudinary } from "cloudinary";
 import { WOMEN_PRESETS, type WomenPreset } from "@/lib/women-presets";
 
 export const runtime = "nodejs";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+async function persistResultImage(sourceUrl: string): Promise<{
+  imageUrl: string;
+  publicId?: string;
+}> {
+  const configured =
+    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET;
+
+  if (!configured) return { imageUrl: sourceUrl };
+
+  try {
+    const result = await cloudinary.uploader.upload(sourceUrl, {
+      resource_type: "image",
+      folder: "barber_results",
+      overwrite: false,
+      unique_filename: true,
+    });
+    return {
+      imageUrl: result.secure_url || sourceUrl,
+      publicId: result.public_id,
+    };
+  } catch {
+    return { imageUrl: sourceUrl };
+  }
+}
 
 const WOMEN_PRESET_IDS = new Set(WOMEN_PRESETS.map((p) => p.id));
 
@@ -124,10 +158,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ imageUrl: outputUrl });
+    const persisted = await persistResultImage(outputUrl);
+    return NextResponse.json(persisted);
   } catch (err) {
-    const message =
-      err instanceof Error ? err.message : "Generation request failed";
-    return NextResponse.json({ error: message }, { status: 502 });
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.error("[barber/women/generate] generation failed", err);
+    }
+    return NextResponse.json(
+      { error: "Image generation failed" },
+      { status: 502 },
+    );
   }
 }
