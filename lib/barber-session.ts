@@ -17,6 +17,7 @@ export interface BarberResultHistoryItem {
   id: string;
   createdAt: number;
   imageUrl: string;
+  publicId?: string;
   sourceImageUrl: string;
   title: string;
   flow: "men" | "women";
