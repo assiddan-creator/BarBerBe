@@ -82,6 +82,7 @@ export default function BarberResultPage() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [clientName, setClientName] = useState("");
   const [favoriteResultId, setFavoriteResultId] = useState<string | null>(null);
+  const [summaryCopied, setSummaryCopied] = useState(false);
 
   useEffect(() => {
     try {
@@ -179,6 +180,56 @@ export default function BarberResultPage() {
       }
     } catch {
       // Favorite state is optional session metadata.
+    }
+  };
+
+  const favoriteHistoryItem = useMemo(
+    () => history.find((item) => item.id === favoriteResultId) ?? null,
+    [history, favoriteResultId],
+  );
+
+  const getProfessionalSummaryForItem = (
+    item: BarberResultHistoryItem | null,
+  ) => {
+    if (!item) return "";
+
+    if (item.flow === "women") {
+      const preset = WOMEN_PRESETS.find(
+        (candidate) => candidate.id === item.womenStyleId,
+      );
+      return preset?.resultStylistSummary ?? "";
+    }
+
+    const hair = HAIRSTYLE_PRESETS.find(
+      (candidate) => candidate.id === item.hairId,
+    );
+    const beard = BEARD_PRESETS.find(
+      (candidate) => candidate.id === item.beardId,
+    );
+
+    return [hair?.resultBarberSummary, beard?.resultBarberSummary]
+      .filter(Boolean)
+      .join(" ");
+  };
+
+  const copyConsultationSummary = async () => {
+    const chosen = favoriteHistoryItem ?? currentHistoryItem;
+    if (!chosen) return;
+
+    const professionalSummary = getProfessionalSummaryForItem(chosen);
+    const lines = [
+      clientName.trim() ? `לקוח: ${clientName.trim()}` : null,
+      `לוק נבחר: ${chosen.title}`,
+      professionalSummary ? `הערת ספר: ${professionalSummary}` : null,
+      "נוצר באמצעות BarBerBe",
+    ].filter(Boolean);
+
+    try {
+      await navigator.clipboard.writeText(lines.join("\n"));
+      setSummaryCopied(true);
+      window.setTimeout(() => setSummaryCopied(false), 1800);
+    } catch {
+      // Clipboard may be unavailable in embedded browsers.
     }
   };
 
@@ -616,6 +667,16 @@ export default function BarberResultPage() {
                 {favoriteResultId === currentHistoryItem.id
                   ? "★ הלוק המועדף"
                   : "☆ סמן כלוק מועדף"}
+              </button>
+            )}
+
+            {userMode === "barber" && (favoriteHistoryItem || currentHistoryItem) && (
+              <button
+                type="button"
+                onClick={() => void copyConsultationSummary()}
+                className="w-full rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-3 text-sm font-bold text-white/72 transition hover:bg-white/[0.05] hover:text-white"
+              >
+                {summaryCopied ? "הסיכום הועתק ✓" : "העתק סיכום ייעוץ"}
               </button>
             )}
 
