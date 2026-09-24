@@ -19,6 +19,15 @@ import {
 type Flow = "men" | "women";
 type UserMode = "personal" | "barber";
 
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+]);
+
 export default function BarberPage() {
   const router = useRouter();
   const skin = getConfiguredBarberSkin();
@@ -97,6 +106,7 @@ export default function BarberPage() {
       }
 
       setHostedSelfieUrl(data.url);
+      setPreviewUrl(data.url);
 
       let previousPublicId: string | null = null;
       try {
@@ -147,7 +157,19 @@ export default function BarberPage() {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !file.type.startsWith("image/")) return;
+    if (!file) return;
+
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+      setUploadError("הקובץ הזה לא נתמך. אפשר להעלות JPG, PNG, WEBP או HEIC.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      setUploadError("התמונה גדולה מדי. הגודל המקסימלי הוא 10MB.");
+      event.target.value = "";
+      return;
+    }
 
     setUploadError(null);
     setHostedSelfieUrl(null);
