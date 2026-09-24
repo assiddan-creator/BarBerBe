@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
 import { v2 as cloudinary } from "cloudinary";
+import { verifyGenerationPermit } from "@/lib/barber-generation-permit.server";
 import { WOMEN_PRESETS, type WomenPreset } from "@/lib/women-presets";
 
 export const runtime = "nodejs";
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: { imageUrl?: string; styleId?: string };
+  let body: { imageUrl?: string; styleId?: string; generationPermit?: string };
   try {
     body = (await request.json()) as typeof body;
   } catch {
