@@ -19,6 +19,7 @@ import {
   BARBER_BEARD_STORAGE_KEY,
   BARBER_ANALYSIS_STORAGE_KEY,
   BARBER_HAIR_TYPE_STORAGE_KEY,
+  BARBER_USER_MODE_STORAGE_KEY,
 } from "@/lib/barber-session";
 import { GenerationLoadingOverlay } from "@/components/GenerationLoadingOverlay";
 
@@ -355,7 +356,9 @@ export default function BarberPreviewPage() {
         BARBER_HAIRSTYLE_STORAGE_KEY,
       );
       const storedBeard = sessionStorage.getItem(BARBER_BEARD_STORAGE_KEY);
+      const storedUserMode = sessionStorage.getItem(BARBER_USER_MODE_STORAGE_KEY);
       setSelfieUrl(storedSelfie);
+      setIsBarberMode(storedUserMode === "barber");
       setSelectedStyle(storedStyle);
 
       let hairstyle = storedHairstyle;
