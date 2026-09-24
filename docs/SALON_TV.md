@@ -82,3 +82,11 @@ Salon TV is visual-only.
 
 On TVs that support Multi View, the salon can keep YouTube/Spotify or another audio source active alongside the BarBerBe display.
 On TVs without Multi View, BarBerBe does not attempt to control or replace the salon's music source.
+
+
+## Current infrastructure status
+
+- Vercel Blob store: `barberbe-tv`
+- Access: private
+- Region: `iad1`
+- Connected to the BarBerBe Vercel project.
