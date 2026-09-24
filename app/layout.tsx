@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Assi Fast Booth — AI Photo Transformation",
-  description: "High-performance AI photo booth powered by fal.ai nano-banana-2",
+  title: "BarBerBe — Try your next look",
+  description:
+    "AI hairstyle and beard previews for personal use and barber consultations.",
 };
 
 export default function RootLayout({
@@ -23,10 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#040406] text-white`}
-      >
+    <html lang="he" dir="rtl">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
     </html>
