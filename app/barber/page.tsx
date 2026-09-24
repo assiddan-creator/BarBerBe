@@ -183,6 +183,9 @@ export default function BarberPage() {
     reader.readAsDataURL(file);
 
     void uploadSelfie(file);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const continueToStyles = () => {
@@ -215,7 +218,7 @@ export default function BarberPage() {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept=".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif"
         onChange={handleFileChange}
         className="hidden"
       />
