@@ -4,13 +4,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { SkinBackdrop } from "@/components/barber/SkinBackdrop";
+import { SalonTvController } from "@/components/barber/SalonTvController";
 import { getConfiguredBarberSkin } from "@/lib/barber-skins";
 import {
   BEARD_PRESETS,
   HAIRSTYLE_PRESETS,
   type BarberPreset,
 } from "@/lib/barber-presets";
+import { getBarberProductRecommendations } from "@/lib/barber-products";
 import { WOMEN_PRESETS, type WomenPreset } from "@/lib/women-presets";
+import { getWomenProductRecommendations } from "@/lib/women-products";
 import {
   BARBER_BEARD_STORAGE_KEY,
   BARBER_CLIENT_NAME_STORAGE_KEY,
@@ -233,7 +236,51 @@ export default function BarberResultPage() {
     }
   };
 
-  const handoffImageUrl = favoriteHistoryItem?.imageUrl ?? generatedUrl;
+  const tvHistoryItem = favoriteHistoryItem ?? currentHistoryItem;
+  const handoffImageUrl = tvHistoryItem?.imageUrl ?? generatedUrl;
+
+  const tvSuggestedCategoryIds = useMemo(() => {
+    if (!tvHistoryItem) return [];
+
+    if (tvHistoryItem.flow === "women") {
+      const preset = WOMEN_PRESETS.find(
+        (candidate) => candidate.id === tvHistoryItem.womenStyleId,
+      );
+      return preset
+        ? getWomenProductRecommendations(preset).map((item) => item.id)
+        : [];
+    }
+
+    const hair = HAIRSTYLE_PRESETS.find(
+      (candidate) => candidate.id === tvHistoryItem.hairId,
+    );
+    const beard = BEARD_PRESETS.find(
+      (candidate) => candidate.id === tvHistoryItem.beardId,
+    );
+
+    return getBarberProductRecommendations(
+      {
+        hairstyleId: hair?.id,
+        beardId: beard?.id,
+        maintenanceLevel: hair?.maintenanceLevel ?? beard?.maintenanceLevel,
+        hairstyleVibe: hair?.vibe,
+        beardVibe: beard?.vibe,
+        hasBeard: Boolean(beard),
+        isCleanShaven: Boolean(beard?.id && /clean|shaven/i.test(beard.id)),
+      },
+      3,
+    ).map((item) => item.id);
+  }, [tvHistoryItem]);
+
+  const tvClientView = tvHistoryItem
+    ? {
+        clientName: clientName.trim() || undefined,
+        title: tvHistoryItem.title,
+        beforeUrl: tvHistoryItem.sourceImageUrl,
+        afterUrl: tvHistoryItem.imageUrl,
+        favorite: favoriteResultId === tvHistoryItem.id,
+      }
+    : null;
 
   const getSelectionTitle = () =>
     flow === "women"
@@ -655,6 +702,13 @@ export default function BarberResultPage() {
                 )}
               </>
             ) : null}
+
+            {userMode === "barber" && (
+              <SalonTvController
+                clientView={tvClientView}
+                suggestedCategoryIds={tvSuggestedCategoryIds}
+              />
+            )}
 
             {generatedUrl && currentHistoryItem && (
               <button
