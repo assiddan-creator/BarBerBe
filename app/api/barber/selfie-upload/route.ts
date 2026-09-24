@@ -9,6 +9,15 @@ cloudinary.config({
 
 export const runtime = "nodejs";
 
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+]);
+
 export async function POST(req: NextRequest) {
   try {
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -54,10 +63,17 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (!fileLike.type || !fileLike.type.startsWith("image/")) {
+    if (!fileLike.type || !ALLOWED_IMAGE_TYPES.has(fileLike.type)) {
       return NextResponse.json(
-        { error: "Only image uploads are supported" },
-        { status: 400 }
+        { error: "Unsupported image type" },
+        { status: 400 },
+      );
+    }
+
+    if (!fileLike.size || fileLike.size > MAX_IMAGE_BYTES) {
+      return NextResponse.json(
+        { error: "Image is too large. Maximum size is 10 MB." },
+        { status: 413 },
       );
     }
 
@@ -66,12 +82,14 @@ export async function POST(req: NextRequest) {
 
     const uploadResult = await new Promise<{
       secure_url?: string;
+      public_id?: string;
     }>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
           resource_type: "image",
           folder: "barber_selfies",
-          overwrite: true,
+          overwrite: false,
+          unique_filename: true,
         },
         (error, result) => {
           if (error) {
@@ -105,14 +123,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ url: uploadResult.secure_url });
+    return NextResponse.json({
+      url: uploadResult.secure_url,
+      publicId: uploadResult.public_id,
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
       console.error("[barber/selfie-upload] Unexpected error", message);
     }
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Image upload failed" },
+      { status: 500 },
+    );
   }
 }
 
