@@ -13,6 +13,8 @@ import {
 import { WOMEN_PRESETS, type WomenPreset } from "@/lib/women-presets";
 import {
   BARBER_BEARD_STORAGE_KEY,
+  BARBER_CLIENT_NAME_STORAGE_KEY,
+  BARBER_FAVORITE_RESULT_ID_STORAGE_KEY,
   BARBER_FLOW_STORAGE_KEY,
   BARBER_GENERATION_PERMIT_STORAGE_KEY,
   BARBER_HAIRSTYLE_STORAGE_KEY,
@@ -78,6 +80,8 @@ export default function BarberResultPage() {
   const [history, setHistory] = useState<BarberResultHistoryItem[]>([]);
   const [compareMode, setCompareMode] = useState(false);
   const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [clientName, setClientName] = useState("");
+  const [favoriteResultId, setFavoriteResultId] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -96,6 +100,12 @@ export default function BarberResultPage() {
       setBeardId(sessionStorage.getItem(BARBER_BEARD_STORAGE_KEY));
       setWomenStyleId(sessionStorage.getItem(BARBER_WOMEN_STYLE_STORAGE_KEY));
       setHistory(readBarberResultHistory());
+      setClientName(
+        sessionStorage.getItem(BARBER_CLIENT_NAME_STORAGE_KEY) ?? "",
+      );
+      setFavoriteResultId(
+        sessionStorage.getItem(BARBER_FAVORITE_RESULT_ID_STORAGE_KEY),
+      );
     } catch {
       // Session persistence is optional.
     } finally {
@@ -133,6 +143,43 @@ export default function BarberResultPage() {
       if (current.length >= 3) return current;
       return [...current, id];
     });
+  };
+
+  const currentHistoryItem = useMemo(
+    () => history.find((item) => item.imageUrl === generatedUrl) ?? null,
+    [history, generatedUrl],
+  );
+
+  const saveClientName = (value: string) => {
+    const trimmed = value.slice(0, 50);
+    setClientName(trimmed);
+    try {
+      if (trimmed.trim()) {
+        sessionStorage.setItem(BARBER_CLIENT_NAME_STORAGE_KEY, trimmed);
+      } else {
+        sessionStorage.removeItem(BARBER_CLIENT_NAME_STORAGE_KEY);
+      }
+    } catch {
+      // Client name is optional session metadata.
+    }
+  };
+
+  const toggleFavorite = () => {
+    if (!currentHistoryItem) return;
+
+    const next =
+      favoriteResultId === currentHistoryItem.id ? null : currentHistoryItem.id;
+    setFavoriteResultId(next);
+
+    try {
+      if (next) {
+        sessionStorage.setItem(BARBER_FAVORITE_RESULT_ID_STORAGE_KEY, next);
+      } else {
+        sessionStorage.removeItem(BARBER_FAVORITE_RESULT_ID_STORAGE_KEY);
+      }
+    } catch {
+      // Favorite state is optional session metadata.
+    }
   };
 
   const getSelectionTitle = () =>
@@ -483,6 +530,22 @@ export default function BarberResultPage() {
           </section>
 
           <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+            {userMode === "barber" && (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                <label className="block text-xs font-bold text-white/45">
+                  שם לקוח · אופציונלי
+                </label>
+                <input
+                  type="text"
+                  value={clientName}
+                  onChange={(event) => saveClientName(event.target.value)}
+                  maxLength={50}
+                  placeholder="למשל: דניאל"
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/25 focus:border-white/25"
+                />
+              </div>
+            )}
+
             <div className="rounded-[1.6rem] border border-white/10 bg-[#17171b] p-5 sm:p-6">
               <p className="text-xs font-bold text-[var(--skin-accent)]">
                 {userMode === "barber" ? "לוק לייעוץ" : "בחרת"}
@@ -490,6 +553,11 @@ export default function BarberResultPage() {
               <h1 className="mt-2 text-2xl font-black tracking-[-0.03em]">
                 {selectedTitle}
               </h1>
+              {userMode === "barber" && clientName.trim() && (
+                <p className="mt-1 text-xs text-white/38">
+                  לקוח: {clientName.trim()}
+                </p>
+              )}
               <p className="mt-2 text-sm leading-6 text-white/45">
                 {userMode === "barber"
                   ? "ההדמיה היא כלי שיחה לפני התספורת. אפשר לחזור, לשנות כיוון ולהשוות."
@@ -534,6 +602,22 @@ export default function BarberResultPage() {
                 )}
               </>
             ) : null}
+
+            {generatedUrl && currentHistoryItem && (
+              <button
+                type="button"
+                onClick={toggleFavorite}
+                className={`w-full rounded-2xl border px-4 py-3 text-sm font-bold transition ${
+                  favoriteResultId === currentHistoryItem.id
+                    ? "border-[var(--skin-accent)] bg-[var(--skin-accent)]/10 text-white"
+                    : "border-white/10 bg-white/[0.025] text-white/72 hover:text-white"
+                }`}
+              >
+                {favoriteResultId === currentHistoryItem.id
+                  ? "★ הלוק המועדף"
+                  : "☆ סמן כלוק מועדף"}
+              </button>
+            )}
 
             {generatedUrl && userMode === "barber" && (
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
@@ -587,6 +671,7 @@ export default function BarberResultPage() {
                 <div className="grid grid-cols-4 gap-2">
                   {history.slice(0, 4).map((item) => {
                     const selectedForCompare = compareIds.includes(item.id);
+                    const favorite = favoriteResultId === item.id;
                     return (
                       <button
                         key={item.id}
@@ -615,6 +700,11 @@ export default function BarberResultPage() {
                           alt={item.title}
                           className="aspect-square h-full w-full object-cover"
                         />
+                        {favorite && (
+                          <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--skin-accent)] text-[10px] font-black text-white">
+                            ★
+                          </span>
+                        )}
                         {compareMode && (
                           <span className="absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-[10px]">
                             {selectedForCompare
