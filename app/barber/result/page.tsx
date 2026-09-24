@@ -248,22 +248,7 @@ export default function BarberResultPage() {
     }
   };
 
-  const startFreshPhoto = async () => {
-    let selfiePublicId: string | null = null;
-    try {
-      selfiePublicId = sessionStorage.getItem(
-        BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
-      );
-    } catch {
-      // ignore storage errors
-    }
-
-    void cleanupAsset(selfiePublicId);
-    clearBarberWorkingSession({ keepHistory: true });
-    router.push("/barber");
-  };
-
-  const startNewClient = async () => {
+  const resetCurrentSession = async () => {
     let selfiePublicId: string | null = null;
     try {
       selfiePublicId = sessionStorage.getItem(
@@ -612,7 +597,7 @@ export default function BarberResultPage() {
               </button>
               <button
                 type="button"
-                onClick={userMode === "barber" ? startNewClient : startFreshPhoto}
+                onClick={resetCurrentSession}
                 className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-bold text-white/72 hover:text-white"
               >
                 {userMode === "barber" ? "לקוח חדש" : "תמונה חדשה"}
