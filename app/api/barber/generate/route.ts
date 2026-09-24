@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
       output_format: "jpg",
     };
 
-    const output = (await replicate.run(model, {
+    const output = (await replicate.run(GENERATION_MODEL, {
       input,
     })) as unknown;
 
