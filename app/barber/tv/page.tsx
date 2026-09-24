@@ -141,6 +141,14 @@ export default function SalonTvPage() {
     [payload.featuredProducts],
   );
 
+  const payloadAgeMs = Math.max(0, Date.now() - (payload.updatedAt || 0));
+  const effectiveMode =
+    payload.mode === "client" && payloadAgeMs > 2 * 60 * 1000
+      ? "idle"
+      : payload.mode === "product" && payloadAgeMs > 3 * 60 * 1000
+        ? "idle"
+        : payload.mode;
+
   return (
     <main
       dir="rtl"
@@ -207,7 +215,7 @@ export default function SalonTvPage() {
             </div>
           )}
 
-          {status === "paired" && payload.mode === "client" && payload.client && (
+          {status === "paired" && effectiveMode === "client" && payload.client && (
             <div className="grid w-full max-w-[1500px] gap-[3vw] lg:grid-cols-2">
               {payload.client.beforeUrl && (
                 <div className="relative overflow-hidden rounded-[2vw] border border-white/10 bg-black/25">
@@ -245,7 +253,7 @@ export default function SalonTvPage() {
             </div>
           )}
 
-          {status === "paired" && payload.mode === "product" && payload.product && (
+          {status === "paired" && effectiveMode === "product" && payload.product && (
             <div className="grid w-full max-w-[1300px] items-center gap-[5vw] lg:grid-cols-[.8fr_1.2fr]">
               <div className="overflow-hidden rounded-[2vw] border border-white/10 bg-white/[0.03] p-[2vw]">
                 {payload.product.imageUrl ? (
@@ -282,7 +290,7 @@ export default function SalonTvPage() {
             </div>
           )}
 
-          {status === "paired" && payload.mode === "idle" && (
+          {status === "paired" && effectiveMode === "idle" && (
             <div className="w-full max-w-[1500px] text-center">
               <p className="text-[clamp(1.2rem,1.8vw,1.8rem)] text-white/45">
                 {skin.brand.tagline}
