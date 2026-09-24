@@ -8,6 +8,7 @@ import {
   BARBER_ANALYSIS_ENGINE_STORAGE_KEY,
   BARBER_BEARD_STORAGE_KEY,
   BARBER_FLOW_STORAGE_KEY,
+  BARBER_GENERATION_PERMIT_STORAGE_KEY,
   BARBER_HAIRSTYLE_STORAGE_KEY,
   BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
   BARBER_SELFIE_STORAGE_KEY,
@@ -98,7 +99,7 @@ export default function BarberPage() {
       });
 
       const data = (await response.json().catch(() => null)) as
-        | { url?: string; publicId?: string; error?: string }
+        | { url?: string; publicId?: string; generationPermit?: string | null; error?: string }
         | null;
 
       if (!response.ok || !data?.url) {
@@ -122,6 +123,15 @@ export default function BarberPage() {
           );
         } else {
           sessionStorage.removeItem(BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY);
+        }
+
+        if (data.generationPermit) {
+          sessionStorage.setItem(
+            BARBER_GENERATION_PERMIT_STORAGE_KEY,
+            data.generationPermit,
+          );
+        } else {
+          sessionStorage.removeItem(BARBER_GENERATION_PERMIT_STORAGE_KEY);
         }
 
         sessionStorage.setItem(BARBER_ANALYSIS_ENGINE_STORAGE_KEY, "alt");
