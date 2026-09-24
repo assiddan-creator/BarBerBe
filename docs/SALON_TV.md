@@ -51,22 +51,25 @@ The recommendation engine uses the linked category to prioritize products that f
 
 ## Sync backend
 
-TV sync is intentionally isolated behind Supabase.
+Salon TV uses a dedicated **private Vercel Blob store** connected only to the BarBerBe Vercel project.
 
-Required environment variables:
-
-```
-BARBERBE_SUPABASE_URL=
-BARBERBE_SUPABASE_SERVICE_ROLE_KEY=
-```
-
-Database migration:
+Required environment variable, normally injected automatically when the Blob store is connected:
 
 ```
-supabase/migrations/20260924_barberbe_tv_sessions.sql
+BLOB_READ_WRITE_TOKEN=
 ```
 
-Do not point these variables at an unrelated Supabase project unless that is an explicit product decision.
+Session state is stored as small private JSON blobs under:
+
+```
+barberbe-tv/sessions/<6-digit-code>.json
+```
+
+The browser never receives the Blob read/write token. All Blob reads and writes happen through the BarBerBe server API.
+
+Pairing writes use the Blob ETag as a conditional write guard, so one display cannot be claimed by two controller phones at the same time.
+
+Street Vibe and Vesti Beauty storage must remain completely separate from BarBerBe.
 
 ## Music-friendly behavior
 
