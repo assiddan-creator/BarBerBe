@@ -29,9 +29,13 @@ export async function POST(request: NextRequest) {
   }
 
   const publicId = body.publicId?.trim();
-  if (!publicId || !publicId.startsWith("barber_selfies/")) {
+  const allowed =
+    publicId?.startsWith("barber_selfies/") ||
+    publicId?.startsWith("barber_results/");
+
+  if (!publicId || !allowed) {
     return NextResponse.json(
-      { error: "Invalid selfie id" },
+      { error: "Invalid asset id" },
       { status: 400 },
     );
   }
