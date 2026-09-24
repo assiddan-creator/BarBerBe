@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { barberTvSyncConfigured } from "@/lib/barber-tv-store.server";
 
 export const runtime = "nodejs";
 
@@ -20,6 +21,9 @@ export async function GET() {
         cloudinary: cloudinaryConfigured ? "configured" : "missing",
       },
       generationModel: "google/nano-banana-2",
+      optionalServices: {
+        salonTvSync: barberTvSyncConfigured() ? "configured" : "missing",
+      },
     },
     {
       status: ok ? 200 : 503,
