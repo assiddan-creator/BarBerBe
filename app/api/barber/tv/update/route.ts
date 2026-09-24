@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getBarberTvSupabase,
+  barberTvSyncConfigured,
   hashBarberTvControllerToken,
+  readBarberTvSession,
+  writeBarberTvSession,
 } from "@/lib/barber-tv-store.server";
 import type { SalonProduct } from "@/lib/barber-salon-products";
 import type { SalonTvPayload } from "@/lib/barber-tv";
@@ -114,8 +116,7 @@ function sanitizePayload(value: unknown): SalonTvPayload | null {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = getBarberTvSupabase();
-  if (!supabase) {
+  if (!barberTvSyncConfigured()) {
     return noStoreJson({ error: "TV_SYNC_NOT_CONFIGURED" }, 503);
   }
 
@@ -139,43 +140,38 @@ export async function POST(request: NextRequest) {
     return noStoreJson({ error: "INVALID_TV_UPDATE" }, 400);
   }
 
-  const { data: session, error: readError } = await supabase
-    .from("barberbe_tv_sessions")
-    .select("controller_token_hash, paired, expires_at")
-    .eq("code", code)
-    .maybeSingle();
+  try {
+    const stored = await readBarberTvSession(code);
 
-  if (readError) {
-    return noStoreJson({ error: "TV_SESSION_READ_FAILED" }, 502);
-  }
+    if (!stored || !stored.session.paired) {
+      return noStoreJson({ error: "TV_SESSION_NOT_PAIRED" }, 404);
+    }
 
-  if (!session || !session.paired) {
-    return noStoreJson({ error: "TV_SESSION_NOT_PAIRED" }, 404);
-  }
+    const { session, etag } = stored;
 
-  if (new Date(session.expires_at).getTime() <= Date.now()) {
-    return noStoreJson({ error: "TV_SESSION_EXPIRED" }, 410);
-  }
+    if (new Date(session.expiresAt).getTime() <= Date.now()) {
+      return noStoreJson({ error: "TV_SESSION_EXPIRED" }, 410);
+    }
 
-  const suppliedHash = hashBarberTvControllerToken(controllerToken);
-  if (
-    !session.controller_token_hash ||
-    suppliedHash !== session.controller_token_hash
-  ) {
-    return noStoreJson({ error: "TV_CONTROLLER_DENIED" }, 403);
-  }
+    const suppliedHash = hashBarberTvControllerToken(controllerToken);
+    if (
+      !session.controllerTokenHash ||
+      suppliedHash !== session.controllerTokenHash
+    ) {
+      return noStoreJson({ error: "TV_CONTROLLER_DENIED" }, 403);
+    }
 
-  const { error: updateError } = await supabase
-    .from("barberbe_tv_sessions")
-    .update({
-      payload,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("code", code);
+    await writeBarberTvSession(
+      {
+        ...session,
+        payload,
+        updatedAt: new Date().toISOString(),
+      },
+      { ifMatch: etag, allowOverwrite: true },
+    );
 
-  if (updateError) {
+    return noStoreJson({ ok: true, payload });
+  } catch {
     return noStoreJson({ error: "TV_UPDATE_FAILED" }, 502);
   }
-
-  return noStoreJson({ ok: true, payload });
 }
