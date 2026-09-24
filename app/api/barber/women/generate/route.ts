@@ -13,10 +13,11 @@ function getPresetById(styleId: string): WomenPreset | null {
 function buildWomenGenerationPrompt(preset: WomenPreset): string {
   const hairPrompt = preset.aiPrompt.trim();
   return (
-    "High-end salon hair edit. Keep the same person, same face, same identity, same skin tone, same lighting, same background. " +
-    "Apply only the following hair style change. Do not change makeup, clothing, or background. " +
-    "Result must be photorealistic, premium salon quality, no over-stylization, no unrealistic beauty edits. " +
-    `Hair style to apply: ${hairPrompt}`
+    "Edit this portrait into a premium photorealistic salon result. " +
+    "Keep the same person's facial features, identity, expression, skin texture, head shape, pose, camera angle, framing, lighting direction, clothing, and background exactly the same. " +
+    "Only the hair changes. Preserve natural skin detail and realistic hairline geometry. " +
+    `Apply this hairstyle: ${hairPrompt}. ` +
+    "The result should look like the same person photographed immediately after a professional salon appointment."
   );
 }
 
@@ -109,6 +110,8 @@ export async function POST(request: NextRequest) {
         image_input: [imageUrl],
         aspect_ratio: "match_input_image",
         resolution: "1K",
+        google_search: false,
+        image_search: false,
         output_format: "jpg",
       },
     })) as unknown;
