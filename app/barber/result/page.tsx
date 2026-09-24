@@ -591,6 +591,17 @@ export default function BarberResultPage() {
               </div>
             )}
 
+            {generatedUrl && (
+              <button
+                type="button"
+                disabled={isGenerating}
+                onClick={() => void generate()}
+                className="w-full rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-3 text-sm font-bold text-white/72 transition hover:bg-white/[0.05] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                גרסה נוספת לאותו לוק
+              </button>
+            )}
+
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
               <button
                 type="button"
