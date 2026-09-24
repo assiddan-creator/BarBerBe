@@ -144,9 +144,7 @@ export default function BarberPage() {
       // ignore storage errors
     }
 
-    router.push(
-      selectedFlow === "women" ? "/barber/women/analysis" : "/barber/analysis",
-    );
+    router.push("/barber/styles");
   };
 
   return (
