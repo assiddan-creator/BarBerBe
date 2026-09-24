@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  barberTvSyncConfigured,
   createBarberTvControllerToken,
-  getBarberTvSupabase,
   hashBarberTvControllerToken,
+  readBarberTvSession,
+  writeBarberTvSession,
 } from "@/lib/barber-tv-store.server";
 
 export const runtime = "nodejs";
@@ -15,8 +17,7 @@ function noStoreJson(body: unknown, status = 200) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = getBarberTvSupabase();
-  if (!supabase) {
+  if (!barberTvSyncConfigured()) {
     return noStoreJson({ error: "TV_SYNC_NOT_CONFIGURED" }, 503);
   }
 
@@ -32,55 +33,44 @@ export async function POST(request: NextRequest) {
     return noStoreJson({ error: "INVALID_TV_CODE" }, 400);
   }
 
-  const { data: existing, error: readError } = await supabase
-    .from("barberbe_tv_sessions")
-    .select("code, paired, expires_at")
-    .eq("code", code)
-    .maybeSingle();
+  try {
+    const stored = await readBarberTvSession(code);
+    if (!stored) {
+      return noStoreJson({ error: "TV_SESSION_NOT_FOUND" }, 404);
+    }
 
-  if (readError) {
-    return noStoreJson({ error: "TV_SESSION_READ_FAILED" }, 502);
-  }
+    const { session, etag } = stored;
 
-  if (!existing) {
-    return noStoreJson({ error: "TV_SESSION_NOT_FOUND" }, 404);
-  }
+    if (new Date(session.expiresAt).getTime() <= Date.now()) {
+      return noStoreJson({ error: "TV_SESSION_EXPIRED" }, 410);
+    }
 
-  if (new Date(existing.expires_at).getTime() <= Date.now()) {
-    return noStoreJson({ error: "TV_SESSION_EXPIRED" }, 410);
-  }
+    if (session.paired) {
+      return noStoreJson({ error: "TV_ALREADY_PAIRED" }, 409);
+    }
 
-  if (existing.paired) {
-    return noStoreJson({ error: "TV_ALREADY_PAIRED" }, 409);
-  }
+    const controllerToken = createBarberTvControllerToken();
 
-  const controllerToken = createBarberTvControllerToken();
-  const controllerTokenHash =
-    hashBarberTvControllerToken(controllerToken);
+    await writeBarberTvSession(
+      {
+        ...session,
+        paired: true,
+        controllerTokenHash: hashBarberTvControllerToken(controllerToken),
+        updatedAt: new Date().toISOString(),
+      },
+      { ifMatch: etag, allowOverwrite: true },
+    );
 
-  const { data, error } = await supabase
-    .from("barberbe_tv_sessions")
-    .update({
-      paired: true,
-      controller_token_hash: controllerTokenHash,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("code", code)
-    .eq("paired", false)
-    .select("code, expires_at")
-    .maybeSingle();
-
-  if (error) {
+    return noStoreJson({
+      code: session.code,
+      controllerToken,
+      expiresAt: session.expiresAt,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("412") || message.includes("precondition")) {
+      return noStoreJson({ error: "TV_ALREADY_PAIRED" }, 409);
+    }
     return noStoreJson({ error: "TV_PAIR_FAILED" }, 502);
   }
-
-  if (!data) {
-    return noStoreJson({ error: "TV_ALREADY_PAIRED" }, 409);
-  }
-
-  return noStoreJson({
-    code: data.code,
-    controllerToken,
-    expiresAt: data.expires_at,
-  });
 }
