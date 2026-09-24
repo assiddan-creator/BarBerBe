@@ -136,8 +136,8 @@ function getDisplayName(preset: BarberPreset | null): string {
 }
 
 const MODEL_OPTIONS = [
-  { label: "Nano Banana Pro", value: "google/nano-banana-pro" },
   { label: "Nano Banana 2", value: "google/nano-banana-2" },
+  { label: "Nano Banana Pro", value: "google/nano-banana-pro" },
   { label: "Flux 2 Pro", value: "black-forest-labs/flux-2-pro" },
   { label: "Flux Kontext Pro", value: "black-forest-labs/flux-kontext-pro" },
 ] as const;
@@ -282,7 +282,7 @@ export default function BarberPreviewPage() {
   type ComparisonView = "after" | "before" | "compare";
   const [comparisonView, setComparisonView] = useState<ComparisonView>("after");
   const [selectedModel, setSelectedModel] = useState<string>(
-    "google/nano-banana-pro",
+    "google/nano-banana-2",
   );
   const [changeIntensity, setChangeIntensity] = useState(100);
   const [aiAdvice, setAiAdvice] = useState<string | null>(null);
