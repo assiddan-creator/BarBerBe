@@ -383,8 +383,8 @@ export default function BarberAnalysisPage() {
   const [realAnalysis, setRealAnalysis] = useState<BarberAnalysisResult | null>(
     null,
   );
-  const [engineLabel, setEngineLabel] = useState<"GPT-4o" | "Qwen2-VL">(
-    "GPT-4o",
+  const [engineLabel, setEngineLabel] = useState<"Gemini 2.5 Flash" | "Qwen2-VL">(
+    "Qwen2-VL",
   );
 
   const analysisProfile = useMemo(
@@ -446,7 +446,7 @@ export default function BarberAnalysisPage() {
   useEffect(() => {
     if (!hydrated || !selfieUrl) return;
 
-    let engine: "live" | "alt" = "live";
+    let engine: "live" | "alt" = "alt";
     try {
       const stored = sessionStorage.getItem(BARBER_ANALYSIS_ENGINE_STORAGE_KEY);
       if (stored === "live" || stored === "alt") {
@@ -456,7 +456,7 @@ export default function BarberAnalysisPage() {
       // ignore
     }
 
-    setEngineLabel(engine === "alt" ? "Qwen2-VL" : "GPT-4o");
+    setEngineLabel(engine === "alt" ? "Qwen2-VL" : "Gemini 2.5 Flash");
 
     const endpoint =
       engine === "alt" ? "/api/barber/analyze-alt" : "/api/barber/analyze";
@@ -486,14 +486,14 @@ export default function BarberAnalysisPage() {
           setRealAnalysis(data.analysis);
         } else
           setAnalysisError(
-            data?.error ?? "הניתוח נכשל. נשתמש בהמלצות ברירת מחדל.",
+            "הניתוח האישי לא זמין כרגע. אפשר לבחור סגנון ידנית ולהמשיך להדמיה.",
           );
       })
       .catch(() => {
         if (!cancelled) {
           setAnalysisLoading(false);
           setAnalysisError(
-            "לא ניתן לנתח את התמונה כרגע. נשתמש בהמלצות ברירת מחדל.",
+            "הניתוח האישי לא זמין כרגע. אפשר לבחור סגנון ידנית ולהמשיך להדמיה.",
           );
         }
       });
@@ -851,7 +851,7 @@ export default function BarberAnalysisPage() {
                   </div>
                 )}
 
-                {!hideBeardSections && (
+                {realAnalysis && !hideBeardSections && (
                   <div className="mt-1 space-y-3 text-sm rounded-2xl border border-[#00FFD1]/25 bg-[#080810] px-4 py-3 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-[#00FFD1]/80">התאמה לזקן</span>
@@ -860,6 +860,7 @@ export default function BarberAnalysisPage() {
                   </div>
                 )}
 
+                {realAnalysis && (
                 <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#080810] px-4 py-3 space-y-2.5 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
                   <p className="text-xs tracking-[0.12em] uppercase text-[#00FFD1]/70 mb-1.5 text-center">
                     פלט סריקה
@@ -889,6 +890,7 @@ export default function BarberAnalysisPage() {
                     </div>
                   </dl>
                 </div>
+                )}
 
                 {realAnalysis?.personalSummaryHe && (
                   <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#0a0a12] px-4 py-3 text-center space-y-1.5 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
@@ -913,7 +915,7 @@ export default function BarberAnalysisPage() {
               {/* Recommended hairstyles (top 3) — preset buttons with cyan glow */}
               <div className="space-y-2 flex flex-col items-center">
                 <h3 className="text-sm font-medium text-[#00FFD1]">
-                  התספורות המומלצות עבורך
+                  {realAnalysis ? "התספורות המומלצות עבורך" : "בחירות פתיחה לתספורת"}
                 </h3>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {recommendedHairstyles.map((preset) => {
@@ -981,7 +983,7 @@ export default function BarberAnalysisPage() {
                   {/* Recommended beards (top 3) */}
                   <div className="space-y-2 flex flex-col items-center">
                     <h3 className="text-sm font-medium text-[#00FFD1]">
-                      סגנונות הזקן המומלצים עבורך
+                      {realAnalysis ? "סגנונות הזקן המומלצים עבורך" : "בחירות פתיחה לזקן"}
                     </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {recommendedBeards.map((preset) => {
