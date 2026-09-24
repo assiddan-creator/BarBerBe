@@ -9,6 +9,8 @@ import {
 
 export const runtime = "nodejs";
 
+const PAIRED_SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
 function noStoreJson(body: unknown, status = 200) {
   return NextResponse.json(body, {
     status,
@@ -51,11 +53,16 @@ export async function POST(request: NextRequest) {
 
     const controllerToken = createBarberTvControllerToken();
 
+    const pairedExpiresAt = new Date(
+      Date.now() + PAIRED_SESSION_TTL_MS,
+    ).toISOString();
+
     await writeBarberTvSession(
       {
         ...session,
         paired: true,
         controllerTokenHash: hashBarberTvControllerToken(controllerToken),
+        expiresAt: pairedExpiresAt,
         updatedAt: new Date().toISOString(),
       },
       { ifMatch: etag, allowOverwrite: true },
@@ -64,7 +71,7 @@ export async function POST(request: NextRequest) {
     return noStoreJson({
       code: session.code,
       controllerToken,
-      expiresAt: session.expiresAt,
+      expiresAt: pairedExpiresAt,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
