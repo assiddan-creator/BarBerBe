@@ -6,10 +6,14 @@ import { SkinBackdrop } from "@/components/barber/SkinBackdrop";
 import { getConfiguredBarberSkin } from "@/lib/barber-skins";
 import {
   BARBER_ANALYSIS_ENGINE_STORAGE_KEY,
+  BARBER_BEARD_STORAGE_KEY,
   BARBER_FLOW_STORAGE_KEY,
+  BARBER_HAIRSTYLE_STORAGE_KEY,
+  BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
   BARBER_SELFIE_STORAGE_KEY,
   BARBER_STYLE_STORAGE_KEY,
   BARBER_USER_MODE_STORAGE_KEY,
+  BARBER_WOMEN_STYLE_STORAGE_KEY,
 } from "@/lib/barber-session";
 
 type Flow = "men" | "women";
@@ -85,7 +89,7 @@ export default function BarberPage() {
       });
 
       const data = (await response.json().catch(() => null)) as
-        | { url?: string; error?: string }
+        | { url?: string; publicId?: string; error?: string }
         | null;
 
       if (!response.ok || !data?.url) {
@@ -94,13 +98,44 @@ export default function BarberPage() {
 
       setHostedSelfieUrl(data.url);
 
+      let previousPublicId: string | null = null;
       try {
+        previousPublicId = sessionStorage.getItem(
+          BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
+        );
+
         sessionStorage.setItem(BARBER_SELFIE_STORAGE_KEY, data.url);
+        if (data.publicId) {
+          sessionStorage.setItem(
+            BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
+            data.publicId,
+          );
+        } else {
+          sessionStorage.removeItem(BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY);
+        }
+
         sessionStorage.setItem(BARBER_ANALYSIS_ENGINE_STORAGE_KEY, "alt");
         sessionStorage.setItem(BARBER_USER_MODE_STORAGE_KEY, userMode);
         sessionStorage.removeItem(BARBER_STYLE_STORAGE_KEY);
+        sessionStorage.removeItem(BARBER_HAIRSTYLE_STORAGE_KEY);
+        sessionStorage.removeItem(BARBER_BEARD_STORAGE_KEY);
+        sessionStorage.removeItem(BARBER_WOMEN_STYLE_STORAGE_KEY);
       } catch {
         // ignore storage errors
+      }
+
+      if (
+        previousPublicId &&
+        previousPublicId !== data.publicId &&
+        previousPublicId.startsWith("barber_selfies/")
+      ) {
+        void fetch("/api/barber/selfie-delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ publicId: previousPublicId }),
+        }).catch(() => {
+          // Cleanup is best-effort and must not block the user flow.
+        });
       }
     } catch {
       setHostedSelfieUrl(null);
