@@ -10,7 +10,7 @@ import {
 
 export const runtime = "nodejs";
 
-const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 function noStoreJson(body: unknown, status = 200) {
   return NextResponse.json(body, {
