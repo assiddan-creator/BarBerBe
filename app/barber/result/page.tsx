@@ -519,6 +519,10 @@ export default function BarberResultPage() {
                       type="button"
                       onClick={() => {
                         setGeneratedUrl(item.imageUrl);
+                        setFlow(item.flow);
+                        setHairId(item.hairId ?? null);
+                        setBeardId(item.beardId ?? null);
+                        setWomenStyleId(item.womenStyleId ?? null);
                         setViewMode("after");
                       }}
                       className="overflow-hidden rounded-xl border border-white/10 bg-black/20"
