@@ -1,82 +1,107 @@
 "use client";
 
-import Link from "next/link";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-
-function ScanningDots() {
-  const [dots, setDots] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setDots((d) => (d + 1) % 4), 400);
-    return () => clearInterval(id);
-  }, []);
-  return <span className="inline-block min-w-[1.2em] text-left">{".".repeat(dots)}</span>;
-}
 import { useRouter } from "next/navigation";
 import {
+  BARBER_ANALYSIS_ENGINE_STORAGE_KEY,
+  BARBER_FLOW_STORAGE_KEY,
   BARBER_SELFIE_STORAGE_KEY,
   BARBER_STYLE_STORAGE_KEY,
-  BARBER_FLOW_STORAGE_KEY,
-  BARBER_DEFAULT_HERO_IMAGE,
-  BARBER_ANALYSIS_ENGINE_STORAGE_KEY,
+  BARBER_USER_MODE_STORAGE_KEY,
 } from "@/lib/barber-session";
 
+type Flow = "men" | "women";
+type UserMode = "personal" | "barber";
+
 export default function BarberPage() {
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [hostedSelfieUrl, setHostedSelfieUrl] = useState<string | null>(null);
+  const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
+  const [userMode, setUserMode] = useState<UserMode>("personal");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [selectedFlow, setSelectedFlow] = useState<"men" | "women" | null>(
-    null,
-  );
-  const [selectedEngine, setSelectedEngine] = useState<"live" | "alt">("alt");
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const hasPreview = Boolean(previewUrl);
   const hasHostedImage = Boolean(hostedSelfieUrl);
-  const router = useRouter();
 
-  const handleOpenFilePicker = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+  useEffect(() => {
+    try {
+      const storedSelfie = sessionStorage.getItem(BARBER_SELFIE_STORAGE_KEY);
+      if (storedSelfie?.startsWith("http")) {
+        setHostedSelfieUrl(storedSelfie);
+        setPreviewUrl(storedSelfie);
+      }
+
+      const storedFlow = sessionStorage.getItem(BARBER_FLOW_STORAGE_KEY);
+      if (storedFlow === "men" || storedFlow === "women") {
+        setSelectedFlow(storedFlow);
+      }
+
+      const storedMode = sessionStorage.getItem(BARBER_USER_MODE_STORAGE_KEY);
+      if (storedMode === "personal" || storedMode === "barber") {
+        setUserMode(storedMode);
+      }
+    } catch {
+      // Session storage is optional. The UI can still work without persistence.
+    }
+  }, []);
+
+  const chooseMode = (mode: UserMode) => {
+    setUserMode(mode);
+    try {
+      sessionStorage.setItem(BARBER_USER_MODE_STORAGE_KEY, mode);
+    } catch {
+      // ignore storage errors
     }
   };
+
+  const chooseFlow = (flow: Flow) => {
+    setSelectedFlow(flow);
+    try {
+      sessionStorage.setItem(BARBER_FLOW_STORAGE_KEY, flow);
+    } catch {
+      // ignore storage errors
+    }
+  };
+
+  const openFilePicker = () => fileInputRef.current?.click();
 
   const uploadSelfie = async (file: File) => {
     setUploading(true);
     setUploadError(null);
+
     try {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("/api/barber/selfie-upload", {
+      const response = await fetch("/api/barber/selfie-upload", {
         method: "POST",
         body: formData,
       });
 
-      const data = (await res.json().catch(() => null)) as
+      const data = (await response.json().catch(() => null)) as
         | { url?: string; error?: string }
         | null;
 
-      if (!res.ok || !data?.url) {
+      if (!response.ok || !data?.url) {
         throw new Error(data?.error || "Upload failed");
       }
 
       setHostedSelfieUrl(data.url);
+
       try {
         sessionStorage.setItem(BARBER_SELFIE_STORAGE_KEY, data.url);
         sessionStorage.setItem(BARBER_ANALYSIS_ENGINE_STORAGE_KEY, "alt");
+        sessionStorage.setItem(BARBER_USER_MODE_STORAGE_KEY, userMode);
         sessionStorage.removeItem(BARBER_STYLE_STORAGE_KEY);
       } catch {
         // ignore storage errors
       }
-      // Keep route selection explicit. Analysis now defaults to the Replicate-backed engine.
     } catch {
-      setUploadError("לא הצלחנו להעלות את התמונה. נסה שוב בעוד רגע.");
       setHostedSelfieUrl(null);
-      try {
-        sessionStorage.removeItem(BARBER_SELFIE_STORAGE_KEY);
-      } catch {
-        // ignore storage errors
-      }
+      setUploadError("לא הצלחנו להעלות את התמונה. נסה שוב בעוד רגע.");
     } finally {
       setUploading(false);
     }
@@ -91,354 +116,229 @@ export default function BarberPage() {
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      if (typeof reader.result !== "string") return;
-      const dataUrl = reader.result;
-      setPreviewUrl(dataUrl);
-      // Do not write large base64 data URLs into sessionStorage; hosted URL will be stored after upload.
+      if (typeof reader.result === "string") {
+        setPreviewUrl(reader.result);
+      }
     };
     reader.readAsDataURL(file);
 
     void uploadSelfie(file);
   };
 
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem(BARBER_SELFIE_STORAGE_KEY);
-      if (stored) {
-        if (stored.startsWith("http://") || stored.startsWith("https://")) {
-          setHostedSelfieUrl(stored);
-          setPreviewUrl(stored);
-        } else if (stored.startsWith("data:")) {
-          // Legacy base64 flow: keep as preview only; analysis page will handle compatibility.
-          setPreviewUrl(stored);
-        }
-      }
-      const storedFlow = sessionStorage.getItem(BARBER_FLOW_STORAGE_KEY);
-      if (storedFlow === "men" || storedFlow === "women") {
-        setSelectedFlow(storedFlow);
-      }
-      const storedEngine = sessionStorage.getItem(
-        BARBER_ANALYSIS_ENGINE_STORAGE_KEY,
-      );
-      if (storedEngine === "live" || storedEngine === "alt") {
-        setSelectedEngine(storedEngine);
-      }
-    } catch {
-      // ignore storage errors
-    }
-  }, []);
-
-  const handlePrimaryCta = () => {
+  const continueToStyles = () => {
     if (!hasHostedImage) {
-      setUploadError("יש להעלות תמונה לפני שממשיכים לניתוח.");
-      handleOpenFilePicker();
+      setUploadError("קודם מעלים תמונה.");
+      openFilePicker();
       return;
     }
-    let flow: "men" | "women" | null = null;
+
+    if (!selectedFlow) {
+      setUploadError("בחר מה בא לך לנסות.");
+      return;
+    }
+
     try {
-      const storedFlow = sessionStorage.getItem(BARBER_FLOW_STORAGE_KEY);
-      if (storedFlow === "men" || storedFlow === "women") {
-        flow = storedFlow;
-      }
+      sessionStorage.setItem(BARBER_USER_MODE_STORAGE_KEY, userMode);
+      sessionStorage.setItem(BARBER_FLOW_STORAGE_KEY, selectedFlow);
     } catch {
       // ignore storage errors
     }
-    if (flow === "women") {
-      router.push("/barber/women/analysis");
-    } else {
-      // default: men's flow
-      router.push("/barber/analysis");
-    }
+
+    router.push(
+      selectedFlow === "women" ? "/barber/women/analysis" : "/barber/analysis",
+    );
   };
 
   return (
     <main
       dir="rtl"
-      className="min-h-screen bg-[#040406] text-white flex items-center justify-center px-4 py-6 sm:py-10"
+      className="min-h-screen overflow-hidden bg-[#0d0d0f] text-[#f7f3eb]"
     >
-      <section className="w-full max-w-5xl rounded-3xl border border-[#00FFD1]/30 bg-[#0a0a0f] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-10 animate-barber-fade-in shadow-[0_0_8px_rgba(0,255,209,0.3)]">
-        <div className="relative">
-          <Link
-            href="/barber"
-            className="absolute top-0 right-0 inline-flex items-center gap-2 rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-3 py-2 text-sm text-[#00FFD1] transition-all z-10 hover:shadow-[0_0_12px_rgba(0,255,209,0.4)] hover:border-[#00FFD1]"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-            <span>ראשי</span>
-          </Link>
-        </div>
-        {/* Top branding area */}
-        <header className="space-y-4 text-center animate-barber-fade-in" style={{ animationDelay: "0.05s", animationFillMode: "backwards" }}>
-          <div className="flex flex-col items-center justify-center gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-center">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#00FFD1]/40 bg-[#0a0a0f] px-3 py-1 text-xs tracking-[0.18em] text-[#00FFD1] shadow-[0_0_8px_rgba(0,255,209,0.2)]">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#00FFD1] animate-pulse" />
-                  AI HAIR SIMULATOR
-                </span>
-              </div>
-              <div className="flex flex-col items-center justify-center gap-1">
-                <h1 className="text-2xl sm:text-3xl tracking-[0.25em] font-semibold text-white">
-                  BarBerBe
-                </h1>
-                <p className="text-[10px] sm:text-xs tracking-[0.22em] uppercase text-[#00FFD1]/80 whitespace-nowrap">
-                  YOUR PERSONAL STYLE ADVISOR
-                </p>
-              </div>
-              <p className="text-sm sm:text-base leading-relaxed text-[#9CA3AF]">
-                העלה סלפי אחד וקבל המלצות מותאמות לתספורת וזקן
-              </p>
-            </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(255,117,76,0.16),transparent_30%),radial-gradient(circle_at_85%_18%,rgba(92,209,182,0.11),transparent_28%),linear-gradient(180deg,#121216_0%,#0d0d0f_58%,#09090a_100%)]" />
+
+      <section className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
+        <header className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xl font-black tracking-[-0.04em] sm:text-2xl">
+              BarBerBe
+            </p>
+            <p className="mt-0.5 text-[11px] text-white/45">TRY IT BEFORE YOU CUT IT</p>
+          </div>
+
+          <div className="flex rounded-full border border-white/10 bg-white/[0.04] p-1 text-sm backdrop-blur">
+            <button
+              type="button"
+              onClick={() => chooseMode("personal")}
+              className={`rounded-full px-3.5 py-2 transition sm:px-4 ${
+                userMode === "personal"
+                  ? "bg-[#f7f3eb] text-[#151518]"
+                  : "text-white/60 hover:text-white"
+              }`}
+            >
+              בשבילי
+            </button>
+            <button
+              type="button"
+              onClick={() => chooseMode("barber")}
+              className={`rounded-full px-3.5 py-2 transition sm:px-4 ${
+                userMode === "barber"
+                  ? "bg-[#f7f3eb] text-[#151518]"
+                  : "text-white/60 hover:text-white"
+              }`}
+            >
+              אני ספר/ית
+            </button>
           </div>
         </header>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-        />
+        <div className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:py-14">
+          <div className="order-2 space-y-7 lg:order-1">
+            <div className="space-y-4">
+              <span className="inline-flex items-center rounded-full border border-[#ff754c]/30 bg-[#ff754c]/10 px-3 py-1 text-xs font-semibold text-[#ff9b7c]">
+                {userMode === "barber" ? "ייעוץ ויזואלי מול הלקוח" : "סלפי אחד. כמה לוקים. בלי לנחש."}
+              </span>
 
-        {/* Main content grid */}
-        <div className="grid gap-6 lg:gap-8 lg:grid-cols-3">
-          {/* Upload card — hero bg + scan line */}
-          <section className="lg:col-span-2 rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col gap-4 animate-barber-scale-in transition-all duration-300 shadow-[0_0_8px_rgba(0,255,209,0.2)] hover:shadow-[0_0_12px_rgba(0,255,209,0.3)]" style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}>
-            <div className="space-y-2 text-center">
-              <h2 className="text-sm font-medium text-[#00FFD1]">
-                העלאת סלפי
-              </h2>
-              <p className="text-sm text-[#9CA3AF]">
-                תמונה חדה עם תאורה קדמית תשפר את ניתוח ה-AI
-              </p>
+              <div className="space-y-3">
+                <h1 className="max-w-xl text-4xl font-black leading-[0.98] tracking-[-0.055em] sm:text-5xl lg:text-6xl">
+                  לראות את הלוק
+                  <br />
+                  <span className="text-[#ff754c]">לפני המספריים.</span>
+                </h1>
+                <p className="max-w-lg text-base leading-7 text-white/58 sm:text-lg">
+                  {userMode === "barber"
+                    ? "מעלים תמונה, בוחרים כיוון ומראים ללקוח איך הוא יכול להיראות לפני שמתחילים לעבוד."
+                    : "מעלים תמונה, בוחרים כיוון ורואים איך תספורת, זקן או עיצוב שיער נראים עליך באמת."}
+                </p>
+              </div>
             </div>
 
-            <div className="mt-1 flex-1 space-y-4">
-              <div
-                onClick={handleOpenFilePicker}
-                className="group border border-[#00FFD1]/40 rounded-2xl aspect-[4/3] flex items-center justify-center text-center cursor-pointer overflow-hidden relative shadow-[0_0_8px_rgba(0,255,209,0.25)] hover:shadow-[0_0_14px_rgba(0,255,209,0.4)] transition-all duration-300"
+            {hasHostedImage && (
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-white/78">מה בא לך לנסות?</p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => chooseFlow("men")}
+                    className={`rounded-2xl border p-4 text-right transition ${
+                      selectedFlow === "men"
+                        ? "border-[#ff754c] bg-[#ff754c]/12 shadow-[0_0_0_1px_rgba(255,117,76,0.2)]"
+                        : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.055]"
+                    }`}
+                  >
+                    <span className="text-2xl">✂️</span>
+                    <span className="mt-2 block font-bold">תספורות + זקן</span>
+                    <span className="mt-1 block text-sm text-white/48">
+                      קצרים, פיידים, קלאסי, זיפים ולוקים מלאים
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => chooseFlow("women")}
+                    className={`rounded-2xl border p-4 text-right transition ${
+                      selectedFlow === "women"
+                        ? "border-[#5cd1b6] bg-[#5cd1b6]/10 shadow-[0_0_0_1px_rgba(92,209,182,0.18)]"
+                        : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.055]"
+                    }`}
+                  >
+                    <span className="text-2xl">💇</span>
+                    <span className="mt-2 block font-bold">עיצובי שיער</span>
+                    <span className="mt-1 block text-sm text-white/48">
+                      אורכים, שכבות, נפח, מרקם וכיוונים לסלון
+                    </span>
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={continueToStyles}
+                  className="mt-1 w-full rounded-2xl bg-[#f7f3eb] px-5 py-4 text-base font-black text-[#151518] transition hover:scale-[1.01] hover:bg-white active:scale-[0.99]"
+                >
+                  {userMode === "barber" ? "פתח ייעוץ ללקוח" : "תראו לי לוקים"}
+                </button>
+              </div>
+            )}
+
+            {!hasHostedImage && (
+              <div className="flex flex-wrap gap-2 text-xs text-white/42">
+                <span className="rounded-full border border-white/8 px-3 py-1.5">שומר על הזהות</span>
+                <span className="rounded-full border border-white/8 px-3 py-1.5">לפני / אחרי</span>
+                <span className="rounded-full border border-white/8 px-3 py-1.5">מצב ספר/ית</span>
+              </div>
+            )}
+
+            {uploadError && (
+              <p className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+                {uploadError}
+              </p>
+            )}
+          </div>
+
+          <div className="order-1 lg:order-2">
+            <div className="relative mx-auto max-w-xl">
+              <div className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-[#ff754c]/18 via-transparent to-[#5cd1b6]/12 blur-2xl" />
+
+              <button
+                type="button"
+                onClick={openFilePicker}
+                className="group relative block aspect-[4/5] w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#17171b] text-right shadow-[0_30px_90px_rgba(0,0,0,0.4)]"
               >
-                {/* Hero background when no preview */}
-                {!hasPreview && (
+                {hasPreview ? (
                   <>
-                    <div
-                      className="absolute inset-0 bg-cover bg-center rounded-2xl pointer-events-none"
-                      style={{ backgroundImage: "url(/images/scan-bg-1.png)" }}
+                    <img
+                      src={previewUrl ?? undefined}
+                      alt="התמונה שהועלתה"
+                      className="h-full w-full object-contain"
                     />
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[#040406] via-[#040406]/70 to-[#040406]/50 pointer-events-none" />
-                  </>
-                )}
-                {!hasPreview ? (
-                  <>
-                    {/* Animated scan line — always visible on upload area */}
-                    <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none" aria-hidden>
-                      <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00FFD1] to-transparent animate-barber-scan-line shadow-[0_0_10px_rgba(0,255,209,0.6)]" style={{ animationDuration: "2s" }} />
-                    </div>
-                    <div className="relative z-10 flex flex-col items-center justify-center gap-3 px-4">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0a0a0f]/90 border border-[#00FFD1]/50 shadow-[0_0_12px_rgba(0,255,209,0.2)] group-hover:border-[#00FFD1]">
-                        <span className="text-lg">📸</span>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-base sm:text-lg font-medium text-white">
-                          העלה סלפי פרונטלי
-                        </p>
-                        <p className="text-xs sm:text-sm text-[#00FFD1]/90">
-                          תמונה חדה עם תאורה קדמית תשפר את ניתוח ה-AI
-                        </p>
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent px-5 pb-5 pt-16">
+                      <div className="flex items-end justify-between gap-3">
+                        <div>
+                          <p className="font-bold text-white">
+                            {uploading ? "מעלה את התמונה..." : "מעולה. זה הבסיס שלנו."}
+                          </p>
+                          <p className="mt-1 text-sm text-white/58">
+                            לחץ על התמונה כדי להחליף
+                          </p>
+                        </div>
+                        <span className={`h-3 w-3 rounded-full ${
+                          uploading ? "animate-pulse bg-[#ffb49d]" : "bg-[#5cd1b6]"
+                        }`} />
                       </div>
                     </div>
                   </>
                 ) : (
-                  <div className="relative h-full w-full bg-[#040406]">
-                    <img
-                      src={previewUrl ?? undefined}
-                      alt="תצוגה מקדימה של הסלפי שהועלה"
-                      className="h-full w-full object-contain object-center rounded-2xl"
-                    />
-                    {uploading && (
-                      <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-                        <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00FFD1] to-transparent animate-barber-scan-line shadow-[0_0_10px_rgba(0,255,209,0.6)]" style={{ animationDuration: "2s" }} />
-                      </div>
-                    )}
-                    <div className="absolute right-3 top-3 rounded-full bg-black/80 border border-[#00FFD1]/60 px-3 py-1 text-xs text-[#00FFD1] flex items-center gap-1 shadow-[0_0_6px_rgba(0,255,209,0.3)]">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#00FFD1]" />
-                      {uploading ? (
-                        <span className="inline-flex items-center">
-                          SCANNING<ScanningDots />
-                        </span>
-                      ) : (
-                        "התמונה נטענה"
-                      )}
+                  <div className="flex h-full flex-col items-center justify-center px-8 text-center">
+                    <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f7f3eb] text-3xl text-[#151518] transition group-hover:scale-105">
+                      +
                     </div>
+                    <p className="text-xl font-black">העלה תמונה טובה שלך</p>
+                    <p className="mt-2 max-w-xs text-sm leading-6 text-white/48">
+                      פנים ברורות, תאורה טובה, והשיער בתוך הפריים. אנחנו נשמור את האדם ונחליף רק את הלוק.
+                    </p>
+                    <span className="mt-5 rounded-full bg-[#ff754c] px-5 py-2.5 text-sm font-bold text-white">
+                      בחר תמונה
+                    </span>
                   </div>
                 )}
-              </div>
-
-              {hasPreview && (
-                <>
-                  <div className="flex justify-center w-full">
-                    <button
-                      type="button"
-                      onClick={handleOpenFilePicker}
-                      className="inline-flex items-center justify-center rounded-xl border border-[#00FFD1]/50 bg-[#0a0a0f] px-4 py-2 text-sm text-[#00FFD1] transition-all hover:shadow-[0_0_10px_rgba(0,255,209,0.35)]"
-                    >
-                      החלף תמונה
-                    </button>
-                  </div>
-                  <p className="text-sm text-[#9CA3AF] text-center">
-                    {uploading
-                      ? "מעלה את התמונה לאחסון מאובטח..."
-                      : hasHostedImage
-                      ? "התמונה נטענה בהצלחה. בשלב הבא נבצע ניתוח פנים AI ונציע לוקים מותאמים עבורך"
-                      : "מכינים את התמונה לניתוח..."}
-                  </p>
-                </>
-              )}
+              </button>
             </div>
-          </section>
-
-          {/* Analysis summary card — HUD panel */}
-          <section className="rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-5 sm:p-6 flex flex-col gap-4 animate-barber-scale-in transition-all shadow-[0_0_8px_rgba(0,255,209,0.2)] hover:shadow-[0_0_12px_rgba(0,255,209,0.28)]" style={{ animationDelay: "0.15s", animationFillMode: "backwards" }}>
-            <div className="text-center space-y-1">
-              <h2 className="text-sm font-semibold text-[#00FFD1]">ניתוח פנים AI</h2>
-              <p className="text-sm text-[#9CA3AF]">
-                ניתוח ראשוני יופיע כאן לאחר העלאת סלפי
-              </p>
-            </div>
-
-            <div className="mt-2 space-y-3 text-sm rounded-2xl border border-[#00FFD1]/20 bg-[#080810] px-4 py-3 shadow-[0_0_6px_rgba(0,255,209,0.15)]">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-[#00FFD1]/80">סטטוס סלפי</span>
-                <span className="text-[#00FFD1]">
-                  {hasPreview ? "תמונה הועלתה" : "ממתין להעלאת סלפי"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-[#00FFD1]/80">מצב ניתוח</span>
-                <span className="text-[#00FFD1]">
-                  {hasHostedImage
-                    ? "מוכן לניתוח בשלב הבא"
-                    : "הניתוח יופעל לאחר העלאת תמונה"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-[#00FFD1]/80">השלב הבא</span>
-                <span className="text-[#00FFD1]">
-                  {hasHostedImage
-                    ? "לחץ על ״המשך לניתוח״ כדי להפעיל את ה-AI"
-                    : "העלה סלפי כדי להמשיך למסך הניתוח"}
-                </span>
-              </div>
-            </div>
-          </section>
+          </div>
         </div>
 
-        {/* Flow selection + actions section — HUD style */}
-        <section className="space-y-3">
-          {hasHostedImage && (
-            <div className="space-y-2 rounded-2xl border border-[#00FFD1]/30 bg-[#0a0a0f] p-4 shadow-[0_0_8px_rgba(0,255,209,0.2)]">
-              <h2 className="text-sm font-medium text-[#00FFD1] text-center">
-                בחר מסלול המשך
-              </h2>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    try {
-                      sessionStorage.setItem(BARBER_FLOW_STORAGE_KEY, "men");
-                      setSelectedFlow("men");
-                    } catch {
-                      // ignore
-                    }
-                  }}
-                  className={`flex-1 sm:flex-none sm:w-auto rounded-2xl px-4 py-2.5 text-sm sm:text-base flex flex-col items-center justify-center gap-0.5 transition-all border text-center ${
-                    selectedFlow === "men"
-                      ? "bg-[#00FFD1]/10 border-[#00FFD1] text-[#00FFD1] shadow-[0_0_12px_rgba(0,255,209,0.35)]"
-                      : "bg-[#0a0a0f] border-[#00FFD1]/40 text-white hover:border-[#00FFD1]/70 hover:shadow-[0_0_10px_rgba(0,255,209,0.25)]"
-                  }`}
-                >
-                  <span className="font-medium">מסלול גברים</span>
-                  <span className="text-sm text-[#9CA3AF]">
-                    תספורות וזקנים לגברים
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    try {
-                      sessionStorage.setItem(BARBER_FLOW_STORAGE_KEY, "women");
-                      setSelectedFlow("women");
-                    } catch {
-                      // ignore
-                    }
-                  }}
-                  className={`flex-1 sm:flex-none sm:w-auto rounded-2xl px-4 py-2.5 text-sm sm:text-base flex flex-col items-center justify-center gap-0.5 transition-all border text-center ${
-                    selectedFlow === "women"
-                      ? "bg-[#00FFD1]/10 border-[#00FFD1] text-[#00FFD1] shadow-[0_0_12px_rgba(0,255,209,0.35)]"
-                      : "bg-[#0a0a0f] border-[#00FFD1]/40 text-white hover:border-[#00FFD1]/70 hover:shadow-[0_0_10px_rgba(0,255,209,0.25)]"
-                  }`}
-                >
-                  <span className="font-medium">מסלול נשים</span>
-                  <span className="text-sm text-[#9CA3AF]">
-                    מסלול שיער לנשים
-                  </span>
-                </button>
-              </div>
-              <div className="w-full flex justify-center pt-2">
-                <button
-                  type="button"
-                  onClick={handlePrimaryCta}
-                  className="w-full max-w-sm rounded-xl border border-[#00FFD1] bg-[#0a0a0f] text-[#00FFD1] font-semibold py-3.5 text-sm sm:text-base shadow-[0_0_8px_rgba(0,255,209,0.3)] transition-all hover:shadow-[0_0_16px_rgba(0,255,209,0.45)] hover:bg-[#00FFD1]/10"
-                >
-                  המשך לניתוח
-                </button>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Upload error (if any) */}
-        {uploadError && (
-          <p className="text-sm text-red-400 text-right">{uploadError}</p>
-        )}
-
-        {/* Features strip */}
-        <section className="grid gap-3 sm:gap-4 sm:grid-cols-3 text-center">
-          <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#0a0a0f] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]" style={{ animationDelay: "0.2s", animationFillMode: "backwards" }}>
-            <p className="text-sm text-[#00FFD1]/80">מבחר תספורות</p>
-            <p className="text-sm sm:text-base font-medium text-white">100+ תספורות</p>
-          </div>
-          <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#0a0a0f] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]" style={{ animationDelay: "0.25s", animationFillMode: "backwards" }}>
-            <p className="text-sm text-[#00FFD1]/80">סגנונות זקן</p>
-            <p className="text-sm sm:text-base font-medium text-white">15+ סגנונות זקן</p>
-          </div>
-          <div className="rounded-2xl border border-[#00FFD1]/25 bg-[#0a0a0f] px-4 py-3 flex flex-col items-center justify-center gap-1 animate-barber-fade-in transition-all hover:shadow-[0_0_8px_rgba(0,255,209,0.25)]" style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}>
-            <p className="text-sm text-[#00FFD1]/80">מנוע ניתוח</p>
-            <p className="text-sm sm:text-base font-medium text-white">ניתוח פנים AI</p>
-          </div>
-        </section>
-
-        {/* Bottom CTA (only when no image uploaded yet) */}
-        <section className="pt-2 space-y-2 text-center">
-          {!hasHostedImage && (
-            <button
-              type="button"
-              onClick={handlePrimaryCta}
-              className="w-full rounded-xl border border-[#00FFD1] bg-[#0a0a0f] text-[#00FFD1] font-semibold py-3.5 text-sm sm:text-base shadow-[0_0_8px_rgba(0,255,209,0.3)] transition-all hover:shadow-[0_0_16px_rgba(0,255,209,0.45)] hover:bg-[#00FFD1]/10"
-            >
-              העלה תמונה
-            </button>
-          )}
-          <p className="text-sm text-[#9CA3AF]">
-            {hasHostedImage
-              ? "בשלב הבא תמשיך למסלול שבחרת ותראה את מסך הניתוח"
-              : "העלה סלפי אחד וקבל המלצות מותאמות"}
-          </p>
-        </section>
+        <footer className="grid gap-3 border-t border-white/8 py-5 text-sm text-white/42 sm:grid-cols-3">
+          <p>לקהל הרחב: משחקים עם לוקים לפני שמחליטים.</p>
+          <p>לספרים: מראים כיוון לפני התספורת.</p>
+          <p className="sm:text-left">מנוע הדמיה: Nano Banana 2</p>
+        </footer>
       </section>
     </main>
   );
 }
-
