@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
 import { SkinBackdrop } from "@/components/barber/SkinBackdrop";
 import { getConfiguredBarberSkin } from "@/lib/barber-skins";
 import {
@@ -288,20 +289,40 @@ export default function BarberResultPage() {
   };
 
   const shareImage = async () => {
-    if (!generatedUrl || !navigator.share) {
-      await downloadImage();
-      return;
-    }
+    if (!generatedUrl) return;
 
     try {
-      await navigator.share({
-        title: "BarBerBe",
-        text: "הלוק שבדקתי ב-BarBerBe",
-        url: generatedUrl,
+      const response = await fetch(generatedUrl);
+      const blob = await response.blob();
+      const file = new File([blob], "barberbe-look.jpg", {
+        type: blob.type || "image/jpeg",
       });
+
+      if (
+        navigator.share &&
+        navigator.canShare?.({ files: [file] })
+      ) {
+        await navigator.share({
+          title: "BarBerBe",
+          text: "הלוק שבדקתי ב-BarBerBe",
+          files: [file],
+        });
+        return;
+      }
+
+      if (navigator.share) {
+        await navigator.share({
+          title: "BarBerBe",
+          text: "הלוק שבדקתי ב-BarBerBe",
+          url: generatedUrl,
+        });
+        return;
+      }
     } catch {
-      // User cancelled or sharing is unavailable.
+      // Fall through to download if native sharing fails or is cancelled.
     }
+
+    await downloadImage();
   };
 
   if (!hydrated) {
@@ -493,6 +514,26 @@ export default function BarberResultPage() {
                 )}
               </>
             ) : null}
+
+            {generatedUrl && userMode === "barber" && (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-xl bg-white p-2">
+                    <QRCodeSVG
+                      value={generatedUrl}
+                      size={104}
+                      marginSize={0}
+                    />
+                  </div>
+                  <div>
+                    <p className="font-bold">שלח ללקוח</p>
+                    <p className="mt-1 text-sm leading-5 text-white/45">
+                      סריקה אחת והתוצאה נפתחת ישר בטלפון.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {generatedUrl && (
               <div className="grid grid-cols-2 gap-3">
