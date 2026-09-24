@@ -13,7 +13,7 @@ import {
 
 export const runtime = "nodejs";
 
-const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const PAIRING_TTL_MS = 5 * 60 * 1000;
 
 function noStoreJson(body: unknown, status = 200) {
   return NextResponse.json(body, {
@@ -27,7 +27,7 @@ export async function POST() {
     return noStoreJson({ error: "TV_SYNC_NOT_CONFIGURED" }, 503);
   }
 
-  const expiresAt = new Date(Date.now() + SESSION_TTL_MS).toISOString();
+  const expiresAt = new Date(Date.now() + PAIRING_TTL_MS).toISOString();
 
   for (let attempt = 0; attempt < 8; attempt += 1) {
     const code = createBarberTvPairingCode();
