@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
 import { v2 as cloudinary } from "cloudinary";
+import { BEARD_PRESETS, HAIRSTYLE_PRESETS } from "@/lib/barber-presets";
 
 export const runtime = "nodejs";
 
@@ -40,7 +41,8 @@ async function persistResultImage(sourceUrl: string): Promise<{
 type BarberType = "hairstyle" | "beard" | "combo";
 
 const GENERATION_MODEL = "google/nano-banana-2";
-const MAX_PROMPT_LENGTH = 1800;
+const HAIR_BY_ID = new Map(HAIRSTYLE_PRESETS.map((preset) => [preset.id, preset]));
+const BEARD_BY_ID = new Map(BEARD_PRESETS.map((preset) => [preset.id, preset]));
 
 function extractOutputUrl(output: unknown): string | undefined {
   if (!output) return undefined;
@@ -111,9 +113,8 @@ export async function POST(request: NextRequest) {
 
   let body: {
     imageUrl?: string;
-    prompt?: string;
-    type?: BarberType;
-    model?: string;
+    hairId?: string;
+    beardId?: string;
   };
   try {
     body = (await request.json()) as typeof body;
@@ -121,44 +122,47 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { imageUrl, prompt, type, model: modelOverride } = body;
-  if (!imageUrl || !prompt || !type) {
+  const imageUrl = body.imageUrl?.trim();
+  const hairId = body.hairId?.trim();
+  const beardId = body.beardId?.trim();
+
+  if (!imageUrl || !imageUrl.startsWith("https://")) {
     return NextResponse.json(
-      { error: "Missing imageUrl, prompt, or type" },
+      { error: "Invalid source image" },
       { status: 400 },
     );
   }
 
-  if (
-    modelOverride &&
-    modelOverride !== GENERATION_MODEL
-  ) {
+  const hairPreset = hairId ? HAIR_BY_ID.get(hairId) : undefined;
+  const beardPreset = beardId ? BEARD_BY_ID.get(beardId) : undefined;
+
+  if (hairId && !hairPreset) {
     return NextResponse.json(
-      { error: "Unsupported generation model" },
+      { error: "Unknown hairstyle" },
       { status: 400 },
     );
   }
 
-  if (
-    typeof prompt !== "string" ||
-    prompt.trim().length === 0 ||
-    prompt.length > MAX_PROMPT_LENGTH
-  ) {
+  if (beardId && !beardPreset) {
     return NextResponse.json(
-      { error: "Invalid generation prompt" },
+      { error: "Unknown beard style" },
       { status: 400 },
     );
   }
 
-  if (!["hairstyle", "beard", "combo"].includes(type)) {
+  if (!hairPreset && !beardPreset) {
     return NextResponse.json(
-      { error: "Invalid generation type" },
+      { error: "Choose at least one known style" },
       { status: 400 },
     );
   }
 
-  const model = GENERATION_MODEL;
-  const isFluxKontextPro = false;
+  const type: BarberType =
+    hairPreset && beardPreset
+      ? "combo"
+      : hairPreset
+        ? "hairstyle"
+        : "beard";
 
   const replicate = new Replicate({
     auth: token,
@@ -167,20 +171,23 @@ export async function POST(request: NextRequest) {
   const BASE_PROTECTION =
     "Photorealistic salon-quality edit. Keep the same person's facial features, identity, expression, skin texture, head shape, pose, camera angle, framing, lighting direction, clothing, and background exactly the same. Preserve natural skin detail and realistic hairline geometry. Only the requested hair and/or beard area changes.";
 
-  let finalPrompt = "";
-
-  if (type === "hairstyle") {
-    finalPrompt = `Edit only the hairstyle to match: ${prompt}. Keep the existing beard and facial hair exactly the same. ${BASE_PROTECTION}`;
-  } else if (type === "beard") {
-    finalPrompt = `Edit only the beard and facial hair to match: ${prompt}. Keep the existing hairstyle exactly the same. ${BASE_PROTECTION}`;
-  } else if (type === "combo") {
-    finalPrompt = `Edit the hairstyle and beard together to match: ${prompt}. ${BASE_PROTECTION}`;
-  } else {
-    finalPrompt = `${prompt}. ${BASE_PROTECTION}`;
+  let stylePrompt = "";
+  if (hairPreset && beardPreset) {
+    stylePrompt =
+      `Apply this hairstyle: ${hairPreset.aiPrompt}. Apply this beard style: ${beardPreset.aiPrompt}. The final result is one natural, photorealistic salon portrait with both changes integrated realistically.`;
+  } else if (hairPreset) {
+    stylePrompt = hairPreset.aiPrompt;
+  } else if (beardPreset) {
+    stylePrompt = beardPreset.aiPrompt;
   }
 
-  if (isFluxKontextPro) {
-    finalPrompt = `Keep this exact person's face, identity, and all facial features unchanged. ${finalPrompt}`;
+  let finalPrompt = "";
+  if (type === "hairstyle") {
+    finalPrompt = `Edit only the hairstyle to match: ${stylePrompt}. Keep the existing beard and facial hair exactly the same. ${BASE_PROTECTION}`;
+  } else if (type === "beard") {
+    finalPrompt = `Edit only the beard and facial hair to match: ${stylePrompt}. Keep the existing hairstyle exactly the same. ${BASE_PROTECTION}`;
+  } else {
+    finalPrompt = `Edit the hairstyle and beard together to match: ${stylePrompt}. ${BASE_PROTECTION}`;
   }
 
   try {
