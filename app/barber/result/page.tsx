@@ -74,6 +74,8 @@ export default function BarberResultPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<BarberResultHistoryItem[]>([]);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   useEffect(() => {
     try {
@@ -112,6 +114,21 @@ export default function BarberResultPage() {
   const canGenerate =
     Boolean(selfieUrl) &&
     (flow === "women" ? Boolean(womenPreset) : Boolean(hairPreset || beardPreset));
+
+  const compareItems = useMemo(
+    () => history.filter((item) => compareIds.includes(item.id)).slice(0, 3),
+    [history, compareIds],
+  );
+
+  const toggleCompareItem = (id: string) => {
+    setCompareIds((current) => {
+      if (current.includes(id)) {
+        return current.filter((itemId) => itemId !== id);
+      }
+      if (current.length >= 3) return current;
+      return [...current, id];
+    });
+  };
 
   const getSelectionTitle = () =>
     flow === "women"
@@ -385,7 +402,29 @@ export default function BarberResultPage() {
               )}
 
               <div className="relative min-h-[520px] bg-[#111114] sm:min-h-[620px]">
-                {isGenerating ? (
+                {compareMode && compareItems.length >= 2 ? (
+                  <div
+                    className={`grid min-h-[520px] sm:min-h-[620px] ${
+                      compareItems.length === 2 ? "grid-cols-2" : "grid-cols-3"
+                    }`}
+                  >
+                    {compareItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="relative border-l border-white/8 last:border-l-0"
+                      >
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="h-full w-full object-contain"
+                        />
+                        <span className="absolute inset-x-2 bottom-2 rounded-full bg-black/70 px-3 py-1.5 text-center text-xs">
+                          {item.title}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : isGenerating ? (
                   <div className="absolute inset-0">
                     <img
                       src={selfieUrl}
@@ -550,29 +589,65 @@ export default function BarberResultPage() {
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  {history.slice(0, 4).map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        setGeneratedUrl(item.imageUrl);
-                        setFlow(item.flow);
-                        setHairId(item.hairId ?? null);
-                        setBeardId(item.beardId ?? null);
-                        setWomenStyleId(item.womenStyleId ?? null);
-                        setViewMode("after");
-                      }}
-                      className="overflow-hidden rounded-xl border border-white/10 bg-black/20"
-                      title={item.title}
-                    >
-                      <img
-                        src={item.imageUrl}
-                        alt={item.title}
-                        className="aspect-square h-full w-full object-cover"
-                      />
-                    </button>
-                  ))}
+                  {history.slice(0, 4).map((item) => {
+                    const selectedForCompare = compareIds.includes(item.id);
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          if (compareMode) {
+                            toggleCompareItem(item.id);
+                            return;
+                          }
+                          setGeneratedUrl(item.imageUrl);
+                          setFlow(item.flow);
+                          setHairId(item.hairId ?? null);
+                          setBeardId(item.beardId ?? null);
+                          setWomenStyleId(item.womenStyleId ?? null);
+                          setViewMode("after");
+                        }}
+                        className={`relative overflow-hidden rounded-xl border bg-black/20 ${
+                          selectedForCompare
+                            ? "border-[var(--skin-accent)]"
+                            : "border-white/10"
+                        }`}
+                        title={item.title}
+                      >
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="aspect-square h-full w-full object-cover"
+                        />
+                        {compareMode && (
+                          <span className="absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-[10px]">
+                            {selectedForCompare
+                              ? compareIds.indexOf(item.id) + 1
+                              : "○"}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCompareMode((current) => {
+                      const next = !current;
+                      if (!next) setCompareIds([]);
+                      return next;
+                    });
+                  }}
+                  className="mt-3 w-full rounded-xl border border-white/10 px-3 py-2 text-xs font-bold text-white/68 hover:text-white"
+                >
+                  {compareMode
+                    ? compareItems.length >= 2
+                      ? `מציג השוואה של ${compareItems.length} לוקים`
+                      : "בחר לפחות 2 לוקים להשוואה"
+                    : "השווה בין לוקים"}
+                </button>
               </div>
             )}
 
