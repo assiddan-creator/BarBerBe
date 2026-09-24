@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
+import { createGenerationPermit } from "@/lib/barber-generation-permit.server";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -123,9 +124,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const generationPermit = createGenerationPermit(uploadResult.secure_url);
+
     return NextResponse.json({
       url: uploadResult.secure_url,
       publicId: uploadResult.public_id,
+      generationPermit,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
