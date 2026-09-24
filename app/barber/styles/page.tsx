@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { SkinBackdrop } from "@/components/barber/SkinBackdrop";
+import { getConfiguredBarberSkin } from "@/lib/barber-skins";
 import {
   BEARD_PRESETS,
   HAIRSTYLE_PRESETS,
@@ -46,12 +48,12 @@ function BarberCard({
       onClick={onClick}
       className={`relative rounded-2xl border p-4 text-right transition ${
         selected
-          ? "border-[#ff754c] bg-[#ff754c]/12 shadow-[0_0_0_1px_rgba(255,117,76,0.18)]"
+          ? "border-[var(--skin-accent)] bg-[#ff754c]/12 shadow-[0_0_0_1px_rgba(255,117,76,0.18)]"
           : "border-white/10 bg-white/[0.035] hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.055]"
       }`}
     >
       {recommended && (
-        <span className="absolute left-3 top-3 rounded-full bg-[#5cd1b6]/14 px-2 py-1 text-[10px] font-bold text-[#8ce3cf]">
+        <span className="absolute left-3 top-3 rounded-full bg-[#5cd1b6]/14 px-2 py-1 text-[10px] font-bold text-[var(--skin-accent-alt)]">
           הצעה חכמה
         </span>
       )}
@@ -90,12 +92,12 @@ function WomenCard({
       onClick={onClick}
       className={`relative rounded-2xl border p-4 text-right transition ${
         selected
-          ? "border-[#5cd1b6] bg-[#5cd1b6]/10 shadow-[0_0_0_1px_rgba(92,209,182,0.16)]"
+          ? "border-[var(--skin-accent-alt)] bg-[#5cd1b6]/10 shadow-[0_0_0_1px_rgba(92,209,182,0.16)]"
           : "border-white/10 bg-white/[0.035] hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.055]"
       }`}
     >
       {recommended && (
-        <span className="absolute left-3 top-3 rounded-full bg-[#ff754c]/12 px-2 py-1 text-[10px] font-bold text-[#ff9b7c]">
+        <span className="absolute left-3 top-3 rounded-full bg-[#ff754c]/12 px-2 py-1 text-[10px] font-bold text-[var(--skin-accent)]">
           הצעה חכמה
         </span>
       )}
@@ -117,6 +119,7 @@ function WomenCard({
 
 export default function BarberStylesPage() {
   const router = useRouter();
+  const skin = getConfiguredBarberSkin();
   const [selfieUrl, setSelfieUrl] = useState<string | null>(null);
   const [flow, setFlow] = useState<Flow>("men");
   const [userMode, setUserMode] = useState<UserMode>("personal");
@@ -262,7 +265,7 @@ export default function BarberStylesPage() {
 
   if (!selfieUrl) {
     return (
-      <main dir="rtl" className="min-h-screen bg-[#0d0d0f] px-5 text-[#f7f3eb]">
+      <main dir="rtl" className="min-h-screen bg-[var(--skin-bg)] px-5 text-[var(--skin-text)]">
         <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center text-center">
           <p className="text-3xl font-black">צריך תמונה כדי להתחיל.</p>
           <button
@@ -280,9 +283,10 @@ export default function BarberStylesPage() {
   return (
     <main
       dir="rtl"
-      className="min-h-screen bg-[#0d0d0f] text-[#f7f3eb]"
+      className="relative min-h-screen overflow-hidden bg-[var(--skin-bg)] text-[var(--skin-text)]"
     >
-      <div className="mx-auto w-full max-w-7xl px-5 py-6 sm:px-8 lg:px-10">
+      <SkinBackdrop media={skin.media.styles} className="fixed" />
+      <div className="relative mx-auto w-full max-w-7xl px-5 py-6 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between gap-4 border-b border-white/8 pb-5">
           <button
             type="button"
@@ -292,7 +296,7 @@ export default function BarberStylesPage() {
             חזרה
           </button>
           <div className="text-center">
-            <p className="text-lg font-black">BarBerBe</p>
+            <p className="text-lg font-black">{skin.brand.name}</p>
             <p className="text-xs text-white/38">
               {userMode === "barber" ? "ייעוץ מול הלקוח" : "בחר את הלוק הבא"}
             </p>
@@ -343,7 +347,7 @@ export default function BarberStylesPage() {
               <div className="space-y-10">
                 <div>
                   <div className="mb-4">
-                    <p className="text-sm font-bold text-[#ff9b7c]">שלב 1</p>
+                    <p className="text-sm font-bold text-[var(--skin-accent)]">שלב 1</p>
                     <h1 className="mt-1 text-3xl font-black tracking-[-0.035em] sm:text-4xl">
                       בחר תספורת
                     </h1>
@@ -365,7 +369,7 @@ export default function BarberStylesPage() {
                 <div>
                   <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold text-[#8ce3cf]">שלב 2 · אופציונלי</p>
+                      <p className="text-sm font-bold text-[var(--skin-accent-alt)]">שלב 2 · אופציונלי</p>
                       <h2 className="mt-1 text-2xl font-black tracking-[-0.025em] sm:text-3xl">
                         רוצה גם זקן?
                       </h2>
@@ -396,7 +400,7 @@ export default function BarberStylesPage() {
             ) : (
               <div>
                 <div className="mb-5">
-                  <p className="text-sm font-bold text-[#8ce3cf]">בחר כיוון</p>
+                  <p className="text-sm font-bold text-[var(--skin-accent-alt)]">בחר כיוון</p>
                   <h1 className="mt-1 text-3xl font-black tracking-[-0.035em] sm:text-4xl">
                     איזה שיער בא לך לראות?
                   </h1>
