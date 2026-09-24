@@ -233,6 +233,8 @@ export default function BarberResultPage() {
     }
   };
 
+  const handoffImageUrl = favoriteHistoryItem?.imageUrl ?? generatedUrl;
+
   const getSelectionTitle = () =>
     flow === "women"
       ? womenPreset?.displayNameHe ?? womenPreset?.nameHe ?? "לוק שיער"
@@ -680,20 +682,22 @@ export default function BarberResultPage() {
               </button>
             )}
 
-            {generatedUrl && userMode === "barber" && (
+            {handoffImageUrl && userMode === "barber" && (
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-xl bg-white p-2">
                     <QRCodeSVG
-                      value={generatedUrl}
+                      value={handoffImageUrl}
                       size={104}
                       marginSize={0}
                     />
                   </div>
                   <div>
-                    <p className="font-bold">שלח ללקוח</p>
+                    <p className="font-bold">
+                      {favoriteHistoryItem ? "שלח את הלוק המועדף" : "שלח ללקוח"}
+                    </p>
                     <p className="mt-1 text-sm leading-5 text-white/45">
-                      סריקה אחת והתוצאה נפתחת ישר בטלפון.
+                      סריקה אחת והתוצאה הנבחרת נפתחת ישר בטלפון.
                     </p>
                   </div>
                 </div>
