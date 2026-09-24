@@ -24,14 +24,33 @@ interface BlobCredentials {
   storeId: string;
 }
 
+function normalizeStoreId(value: string): string {
+  return value.startsWith("store_") ? value.slice("store_".length) : value;
+}
+
 function getBlobCredentials(): BlobCredentials | null {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
-  if (!token) return null;
+  const readWriteToken = process.env.BLOB_READ_WRITE_TOKEN?.trim();
 
-  const [, , , storeId = ""] = token.split("_");
-  if (!storeId) return null;
+  if (readWriteToken) {
+    const [, , , parsedStoreId = ""] = readWriteToken.split("_");
+    const storeId =
+      normalizeStoreId(process.env.BLOB_STORE_ID?.trim() || parsedStoreId);
 
-  return { token, storeId };
+    if (storeId) {
+      return { token: readWriteToken, storeId };
+    }
+  }
+
+  const oidcToken = process.env.VERCEL_OIDC_TOKEN?.trim();
+  const storeId = normalizeStoreId(
+    process.env.BLOB_STORE_ID?.trim() || "",
+  );
+
+  if (oidcToken && storeId) {
+    return { token: oidcToken, storeId };
+  }
+
+  return null;
 }
 
 function sessionPath(code: string): string {
