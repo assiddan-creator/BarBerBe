@@ -140,15 +140,6 @@ export default function BarberResultPage() {
           .filter(Boolean)
           .join(" + ") || "לוק חדש";
 
-  const buildMenPrompt = () => {
-    if (hairPreset && beardPreset) {
-      return `Apply this hairstyle: ${hairPreset.aiPrompt}. Apply this beard style: ${beardPreset.aiPrompt}. The final result is one natural, photorealistic salon portrait with both changes integrated realistically.`;
-    }
-    if (hairPreset) return hairPreset.aiPrompt;
-    if (beardPreset) return beardPreset.aiPrompt;
-    return "";
-  };
-
   const generate = async () => {
     if (!selfieUrl || !canGenerate || isGenerating) return;
 
@@ -173,14 +164,8 @@ export default function BarberResultPage() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 imageUrl: selfieUrl,
-                prompt: buildMenPrompt(),
-                type:
-                  hairPreset && beardPreset
-                    ? "combo"
-                    : hairPreset
-                      ? "hairstyle"
-                      : "beard",
-                model: "google/nano-banana-2",
+                hairId: hairPreset?.id,
+                beardId: beardPreset?.id,
               }),
             });
 
