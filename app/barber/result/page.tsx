@@ -192,7 +192,18 @@ export default function BarberResultPage() {
         ...(womenPreset?.id ? { womenStyleId: womenPreset.id } : {}),
       };
 
-      setHistory(appendBarberResultHistory(historyItem));
+      const previousHistory = readBarberResultHistory();
+      const nextHistory = appendBarberResultHistory(historyItem);
+      setHistory(nextHistory);
+
+      const retainedIds = new Set(
+        nextHistory.map((item) => item.publicId).filter(Boolean),
+      );
+      for (const oldItem of previousHistory) {
+        if (oldItem.publicId && !retainedIds.has(oldItem.publicId)) {
+          void cleanupAsset(oldItem.publicId);
+        }
+      }
     } catch {
       setError("לא הצלחנו להכין את ההדמיה הפעם. אפשר לנסות שוב בלי לאבד את הבחירה.");
     } finally {
