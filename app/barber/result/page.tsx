@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { SkinBackdrop } from "@/components/barber/SkinBackdrop";
+import { getConfiguredBarberSkin } from "@/lib/barber-skins";
 import {
   BEARD_PRESETS,
   HAIRSTYLE_PRESETS,
@@ -32,14 +34,14 @@ function BarberSelection({
     <div className="space-y-3">
       {hair && (
         <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-          <p className="text-xs font-bold text-[#ff9b7c]">תספורת</p>
+          <p className="text-xs font-bold text-[var(--skin-accent)]">תספורת</p>
           <p className="mt-1 text-lg font-black">{hair.displayNameHe ?? hair.nameHe}</p>
           <p className="mt-1 text-sm leading-6 text-white/48">{hair.resultUserText ?? hair.description}</p>
         </div>
       )}
       {beard && (
         <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-          <p className="text-xs font-bold text-[#8ce3cf]">זקן</p>
+          <p className="text-xs font-bold text-[var(--skin-accent-alt)]">זקן</p>
           <p className="mt-1 text-lg font-black">{beard.displayNameHe ?? beard.nameHe}</p>
           <p className="mt-1 text-sm leading-6 text-white/48">{beard.resultUserText ?? beard.description}</p>
         </div>
@@ -50,6 +52,7 @@ function BarberSelection({
 
 export default function BarberResultPage() {
   const router = useRouter();
+  const skin = getConfiguredBarberSkin();
   const startedRef = useRef(false);
 
   const [selfieUrl, setSelfieUrl] = useState<string | null>(null);
@@ -204,7 +207,7 @@ export default function BarberResultPage() {
 
   if (!hydrated) {
     return (
-      <main dir="rtl" className="min-h-screen bg-[#0d0d0f] text-[#f7f3eb]">
+      <main dir="rtl" className="min-h-screen bg-[var(--skin-bg)] text-[var(--skin-text)]">
         <div className="flex min-h-screen items-center justify-center">
           <p className="text-white/45">מכין את הלוק…</p>
         </div>
@@ -214,7 +217,7 @@ export default function BarberResultPage() {
 
   if (!canGenerate || !selfieUrl) {
     return (
-      <main dir="rtl" className="min-h-screen bg-[#0d0d0f] px-5 text-[#f7f3eb]">
+      <main dir="rtl" className="min-h-screen bg-[var(--skin-bg)] px-5 text-[var(--skin-text)]">
         <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center text-center">
           <p className="text-3xl font-black">חסר לנו לוק או תמונה.</p>
           <button
@@ -237,8 +240,9 @@ export default function BarberResultPage() {
           .join(" + ");
 
   return (
-    <main dir="rtl" className="min-h-screen bg-[#0d0d0f] text-[#f7f3eb]">
-      <div className="mx-auto w-full max-w-7xl px-5 py-6 sm:px-8 lg:px-10">
+    <main dir="rtl" className="relative min-h-screen overflow-hidden bg-[var(--skin-bg)] text-[var(--skin-text)]">
+      <SkinBackdrop media={skin.media.result} className="fixed" />
+      <div className="relative mx-auto w-full max-w-7xl px-5 py-6 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between gap-4 border-b border-white/8 pb-5">
           <button
             type="button"
@@ -248,7 +252,7 @@ export default function BarberResultPage() {
             החלף לוק
           </button>
           <div className="text-center">
-            <p className="text-lg font-black">BarBerBe</p>
+            <p className="text-lg font-black">{skin.brand.name}</p>
             <p className="text-xs text-white/38">
               {userMode === "barber" ? "תצוגת לקוח" : "הלוק החדש שלך"}
             </p>
@@ -269,7 +273,7 @@ export default function BarberResultPage() {
                         onClick={() => setViewMode(mode)}
                         className={`rounded-full px-4 py-2 transition ${
                           viewMode === mode
-                            ? "bg-[#f7f3eb] text-[#151518]"
+                            ? "bg-[var(--skin-text)] text-[var(--skin-bg)]"
                             : "text-white/48 hover:text-white"
                         }`}
                       >
@@ -288,6 +292,7 @@ export default function BarberResultPage() {
                       alt="התמונה המקורית"
                       className="h-full w-full object-contain opacity-55"
                     />
+                    <SkinBackdrop media={skin.media.generating} />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/35 backdrop-blur-[2px]">
                       <div className="max-w-sm px-6 text-center">
                         <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-2 border-white/15 border-t-[#ff754c]" />
@@ -307,7 +312,7 @@ export default function BarberResultPage() {
                       </div>
                       <div className="relative">
                         <img src={generatedUrl} alt="אחרי" className="h-full w-full object-contain" />
-                        <span className="absolute right-3 top-3 rounded-full bg-[#ff754c] px-3 py-1 text-xs font-bold">אחרי</span>
+                        <span className="absolute right-3 top-3 rounded-full bg-[var(--skin-accent)] px-3 py-1 text-xs font-bold">אחרי</span>
                       </div>
                     </div>
                   ) : (
@@ -344,7 +349,7 @@ export default function BarberResultPage() {
 
           <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
             <div className="rounded-[1.6rem] border border-white/10 bg-[#17171b] p-5 sm:p-6">
-              <p className="text-xs font-bold text-[#ff9b7c]">
+              <p className="text-xs font-bold text-[var(--skin-accent)]">
                 {userMode === "barber" ? "לוק לייעוץ" : "בחרת"}
               </p>
               <h1 className="mt-2 text-2xl font-black tracking-[-0.03em]">
@@ -361,8 +366,8 @@ export default function BarberResultPage() {
               <>
                 <BarberSelection hair={hairPreset} beard={beardPreset} />
                 {userMode === "barber" && (
-                  <div className="rounded-2xl border border-[#5cd1b6]/20 bg-[#5cd1b6]/7 p-5">
-                    <p className="text-sm font-black text-[#8ce3cf]">פתק מקצועי</p>
+                  <div className="rounded-2xl border border-[var(--skin-accent-alt)]/20 bg-[#5cd1b6]/7 p-5">
+                    <p className="text-sm font-black text-[var(--skin-accent-alt)]">פתק מקצועי</p>
                     {hairPreset?.resultBarberSummary && (
                       <p className="mt-2 text-sm leading-6 text-white/64">
                         {hairPreset.resultBarberSummary}
@@ -382,8 +387,8 @@ export default function BarberResultPage() {
                   <p className="text-sm leading-6 text-white/58">{womenPreset.resultUserText}</p>
                 </div>
                 {userMode === "barber" && (
-                  <div className="rounded-2xl border border-[#5cd1b6]/20 bg-[#5cd1b6]/7 p-5">
-                    <p className="text-sm font-black text-[#8ce3cf]">פתק מקצועי</p>
+                  <div className="rounded-2xl border border-[var(--skin-accent-alt)]/20 bg-[#5cd1b6]/7 p-5">
+                    <p className="text-sm font-black text-[var(--skin-accent-alt)]">פתק מקצועי</p>
                     <p className="mt-2 text-sm leading-6 text-white/64">
                       {womenPreset.resultStylistSummary}
                     </p>
