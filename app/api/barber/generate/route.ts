@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const model = modelOverride ?? "google/nano-banana-pro";
+  const model = modelOverride ?? "google/nano-banana-2";
   const isFluxKontextPro =
     model === "black-forest-labs/flux-kontext-pro" ||
     model.startsWith("black-forest-labs/flux-kontext-pro:");
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
   });
 
   const BASE_PROTECTION =
-    "Ultra-realistic 8K portrait photo edit. STRICT IDENTITY LOCK: Keep the exact same face shape, eyes, nose, lips, jawline, and skin texture. No smoothing, no makeup. Preserve the original lighting and background perfectly.";
+    "Photorealistic salon-quality edit. Keep the same person's facial features, identity, expression, skin texture, head shape, pose, camera angle, framing, lighting direction, clothing, and background exactly the same. Preserve natural skin detail and realistic hairline geometry. Only the requested hair and/or beard area changes.";
 
   let finalPrompt = "";
 
@@ -132,6 +132,8 @@ export async function POST(request: NextRequest) {
           image_input: [imageUrl],
           aspect_ratio: "match_input_image",
           resolution: "1K",
+          google_search: false,
+          image_search: false,
           output_format: "jpg",
         };
 
