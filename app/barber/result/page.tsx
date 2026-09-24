@@ -14,9 +14,14 @@ import {
   BARBER_BEARD_STORAGE_KEY,
   BARBER_FLOW_STORAGE_KEY,
   BARBER_HAIRSTYLE_STORAGE_KEY,
+  BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
   BARBER_SELFIE_STORAGE_KEY,
   BARBER_USER_MODE_STORAGE_KEY,
   BARBER_WOMEN_STYLE_STORAGE_KEY,
+  appendBarberResultHistory,
+  clearBarberWorkingSession,
+  readBarberResultHistory,
+  type BarberResultHistoryItem,
 } from "@/lib/barber-session";
 
 type Flow = "men" | "women";
@@ -67,6 +72,7 @@ export default function BarberResultPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("after");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<BarberResultHistoryItem[]>([]);
 
   useEffect(() => {
     try {
@@ -81,6 +87,7 @@ export default function BarberResultPage() {
       setHairId(sessionStorage.getItem(BARBER_HAIRSTYLE_STORAGE_KEY));
       setBeardId(sessionStorage.getItem(BARBER_BEARD_STORAGE_KEY));
       setWomenStyleId(sessionStorage.getItem(BARBER_WOMEN_STYLE_STORAGE_KEY));
+      setHistory(readBarberResultHistory());
     } catch {
       // Session persistence is optional.
     } finally {
@@ -104,6 +111,16 @@ export default function BarberResultPage() {
   const canGenerate =
     Boolean(selfieUrl) &&
     (flow === "women" ? Boolean(womenPreset) : Boolean(hairPreset || beardPreset));
+
+  const getSelectionTitle = () =>
+    flow === "women"
+      ? womenPreset?.displayNameHe ?? womenPreset?.nameHe ?? "לוק שיער"
+      : [
+          hairPreset?.displayNameHe ?? hairPreset?.nameHe,
+          beardPreset?.displayNameHe ?? beardPreset?.nameHe,
+        ]
+          .filter(Boolean)
+          .join(" + ") || "לוק חדש";
 
   const buildMenPrompt = () => {
     if (hairPreset && beardPreset) {
@@ -150,7 +167,7 @@ export default function BarberResultPage() {
             });
 
       const data = (await response.json().catch(() => null)) as
-        | { imageUrl?: string; error?: string }
+        | { imageUrl?: string; publicId?: string; error?: string }
         | null;
 
       if (!response.ok || !data?.imageUrl) {
@@ -158,6 +175,24 @@ export default function BarberResultPage() {
       }
 
       setGeneratedUrl(data.imageUrl);
+
+      const historyItem: BarberResultHistoryItem = {
+        id:
+          typeof crypto !== "undefined" && "randomUUID" in crypto
+            ? crypto.randomUUID()
+            : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        createdAt: Date.now(),
+        imageUrl: data.imageUrl,
+        ...(data.publicId ? { publicId: data.publicId } : {}),
+        sourceImageUrl: selfieUrl,
+        title: getSelectionTitle(),
+        flow,
+        ...(hairPreset?.id ? { hairId: hairPreset.id } : {}),
+        ...(beardPreset?.id ? { beardId: beardPreset.id } : {}),
+        ...(womenPreset?.id ? { womenStyleId: womenPreset.id } : {}),
+      };
+
+      setHistory(appendBarberResultHistory(historyItem));
     } catch {
       setError("לא הצלחנו להכין את ההדמיה הפעם. אפשר לנסות שוב בלי לאבד את הבחירה.");
     } finally {
@@ -186,6 +221,59 @@ export default function BarberResultPage() {
     } catch {
       window.open(generatedUrl, "_blank");
     }
+  };
+
+  const cleanupAsset = async (publicId?: string | null) => {
+    if (!publicId) return;
+    try {
+      await fetch("/api/barber/selfie-delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publicId }),
+      });
+    } catch {
+      // Cleanup is best-effort and should never block the user.
+    }
+  };
+
+  const startFreshPhoto = async () => {
+    let selfiePublicId: string | null = null;
+    try {
+      selfiePublicId = sessionStorage.getItem(
+        BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
+      );
+    } catch {
+      // ignore storage errors
+    }
+
+    void cleanupAsset(selfiePublicId);
+    clearBarberWorkingSession({ keepHistory: true });
+    router.push("/barber");
+  };
+
+  const startNewClient = async () => {
+    let selfiePublicId: string | null = null;
+    try {
+      selfiePublicId = sessionStorage.getItem(
+        BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
+      );
+    } catch {
+      // ignore storage errors
+    }
+
+    const ids = new Set(
+      [selfiePublicId, ...history.map((item) => item.publicId)].filter(
+        (value): value is string => Boolean(value),
+      ),
+    );
+
+    for (const publicId of ids) {
+      void cleanupAsset(publicId);
+    }
+
+    clearBarberWorkingSession();
+    setHistory([]);
+    router.push("/barber");
   };
 
   const shareImage = async () => {
@@ -232,12 +320,7 @@ export default function BarberResultPage() {
     );
   }
 
-  const selectedTitle =
-    flow === "women"
-      ? womenPreset?.displayNameHe
-      : [hairPreset?.displayNameHe ?? hairPreset?.nameHe, beardPreset?.displayNameHe ?? beardPreset?.nameHe]
-          .filter(Boolean)
-          .join(" + ");
+  const selectedTitle = getSelectionTitle();
 
   return (
     <main dir="rtl" className="relative min-h-screen overflow-hidden bg-[var(--skin-bg)] text-[var(--skin-text)]">
@@ -419,6 +502,39 @@ export default function BarberResultPage() {
               </div>
             )}
 
+            {history.length > 1 && (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <p className="text-sm font-bold">
+                    {userMode === "barber" ? "הלוקים של הלקוח" : "הלוקים שניסית"}
+                  </p>
+                  <span className="text-xs text-white/38">
+                    {history.length} תוצאות
+                  </span>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {history.slice(0, 4).map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        setGeneratedUrl(item.imageUrl);
+                        setViewMode("after");
+                      }}
+                      className="overflow-hidden rounded-xl border border-white/10 bg-black/20"
+                      title={item.title}
+                    >
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title}
+                        className="aspect-square h-full w-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
               <button
                 type="button"
@@ -429,10 +545,10 @@ export default function BarberResultPage() {
               </button>
               <button
                 type="button"
-                onClick={() => router.push("/barber")}
+                onClick={userMode === "barber" ? startNewClient : startFreshPhoto}
                 className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-bold text-white/72 hover:text-white"
               >
-                תמונה חדשה
+                {userMode === "barber" ? "לקוח חדש" : "תמונה חדשה"}
               </button>
             </div>
 
