@@ -11,10 +11,31 @@ import {
 
 type TvStatus =
   | "loading"
+  | "setup"
   | "waiting"
   | "paired"
   | "unconfigured"
   | "error";
+
+function storeDisplayCode(value: string | null) {
+  try {
+    if (value) {
+      localStorage.setItem(BARBER_TV_DISPLAY_CODE_STORAGE_KEY, value);
+    } else {
+      localStorage.removeItem(BARBER_TV_DISPLAY_CODE_STORAGE_KEY);
+    }
+  } catch {
+    // Smart TV browsers can have restricted storage.
+  }
+}
+
+function readStoredDisplayCode(): string | null {
+  try {
+    return localStorage.getItem(BARBER_TV_DISPLAY_CODE_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
 
 export default function SalonTvPage() {
   const skin = getConfiguredBarberSkin();
@@ -25,31 +46,10 @@ export default function SalonTvPage() {
   const code = snapshot?.code ?? null;
   const payload = snapshot?.payload ?? DEFAULT_SALON_TV_PAYLOAD;
 
-  useEffect(() => {
-    let cancelled = false;
-    let timer: number | null = null;
+  const startPairing = async () => {
+    setStatus("loading");
 
-    const storeCode = (value: string | null) => {
-      try {
-        if (value) {
-          localStorage.setItem(BARBER_TV_DISPLAY_CODE_STORAGE_KEY, value);
-        } else {
-          localStorage.removeItem(BARBER_TV_DISPLAY_CODE_STORAGE_KEY);
-        }
-      } catch {
-        // Smart TV browsers can have restricted storage.
-      }
-    };
-
-    const readStoredCode = () => {
-      try {
-        return localStorage.getItem(BARBER_TV_DISPLAY_CODE_STORAGE_KEY);
-      } catch {
-        return null;
-      }
-    };
-
-    const createSession = async () => {
+    try {
       const response = await fetch("/api/barber/tv/session", {
         method: "POST",
         cache: "no-store",
@@ -59,66 +59,74 @@ export default function SalonTvPage() {
         | { error?: string }
         | null;
 
-      if (cancelled) return null;
-
-      if (response.status === 503 && data && "error" in data) {
+      if (response.status === 503) {
         setStatus("unconfigured");
-        return null;
+        return;
       }
 
       if (!response.ok || !data || !("code" in data)) {
         setStatus("error");
-        return null;
+        return;
       }
 
       setSnapshot(data);
-      storeCode(data.code);
+      storeDisplayCode(data.code);
       setStatus(data.paired ? "paired" : "waiting");
-      return data.code;
-    };
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    let timer: number | null = null;
 
     const readSession = async (sessionCode: string) => {
-      const response = await fetch(
-        `/api/barber/tv/session?code=${encodeURIComponent(sessionCode)}`,
-        { cache: "no-store" },
-      );
-      const data = (await response.json().catch(() => null)) as
-        | SalonTvSessionSnapshot
-        | { error?: string }
-        | null;
+      try {
+        const response = await fetch(
+          `/api/barber/tv/session?code=${encodeURIComponent(sessionCode)}`,
+          { cache: "no-store" },
+        );
+        const data = (await response.json().catch(() => null)) as
+          | SalonTvSessionSnapshot
+          | { error?: string }
+          | null;
 
-      if (cancelled) return false;
+        if (cancelled) return;
 
-      if (response.status === 503 && data && "error" in data) {
-        setStatus("unconfigured");
-        return false;
+        if (response.status === 503) {
+          setStatus("unconfigured");
+          return;
+        }
+
+        if (response.status === 404 || response.status === 410) {
+          storeDisplayCode(null);
+          setSnapshot(null);
+          setStatus("setup");
+          return;
+        }
+
+        if (!response.ok || !data || !("code" in data)) {
+          setStatus("error");
+          return;
+        }
+
+        setSnapshot(data);
+        setStatus(data.paired ? "paired" : "waiting");
+      } catch {
+        if (!cancelled) setStatus("error");
       }
-
-      if (response.status === 404 || response.status === 410) {
-        storeCode(null);
-        return false;
-      }
-
-      if (!response.ok || !data || !("code" in data)) {
-        setStatus("error");
-        return true;
-      }
-
-      setSnapshot(data);
-      setStatus(data.paired ? "paired" : "waiting");
-      return true;
     };
 
     const poll = async () => {
-      const sessionCode = snapshot?.code ?? readStoredCode();
+      const sessionCode = readStoredDisplayCode();
 
       if (!sessionCode) {
-        await createSession();
+        setStatus((current) =>
+          current === "loading" ? "setup" : current,
+        );
       } else {
-        const found = await readSession(sessionCode);
-        if (!found) {
-          await createSession();
-        }
+        await readSession(sessionCode);
       }
 
       if (!cancelled) {
@@ -132,12 +140,13 @@ export default function SalonTvPage() {
       cancelled = true;
       if (timer) window.clearTimeout(timer);
     };
-    // snapshot is intentionally not a dependency; polling owns refresh.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const idleProducts = useMemo(
-    () => payload.featuredProducts?.filter((product) => product.active).slice(0, 4) ?? [],
+    () =>
+      payload.featuredProducts
+        ?.filter((product) => product.active)
+        .slice(0, 4) ?? [],
     [payload.featuredProducts],
   );
 
@@ -180,6 +189,26 @@ export default function SalonTvPage() {
             <p className="text-2xl text-white/45">מכין את מסך המספרה…</p>
           )}
 
+          {status === "setup" && (
+            <div className="max-w-3xl text-center">
+              <p className="text-[clamp(2.4rem,5vw,5rem)] font-black">
+                מסך המספרה מוכן
+              </p>
+              <p className="mx-auto mt-5 max-w-2xl text-[clamp(1rem,1.5vw,1.5rem)] leading-8 text-white/48">
+                קוד החיבור נשאר מוסתר. כשהספר רוצה לחבר טלפון חדש,
+                מפעילים כאן חלון חיבור קצר עם השלט.
+              </p>
+              <button
+                type="button"
+                autoFocus
+                onClick={() => void startPairing()}
+                className="mt-9 rounded-2xl bg-[var(--skin-accent)] px-8 py-4 text-[clamp(1rem,1.5vw,1.35rem)] font-black text-white outline-none ring-offset-4 ring-offset-black focus:ring-2 focus:ring-white/70"
+              >
+                פתח חיבור ל־5 דקות
+              </button>
+            </div>
+          )}
+
           {status === "unconfigured" && (
             <div className="max-w-2xl text-center">
               <p className="text-4xl font-black">Salon TV מוכן לחיבור</p>
@@ -193,7 +222,7 @@ export default function SalonTvPage() {
             <div className="max-w-2xl text-center">
               <p className="text-4xl font-black">לא הצלחנו לחבר את המסך</p>
               <p className="mt-4 text-xl text-white/45">
-                רענון הדף ינסה שוב.
+                אפשר לרענן את הדף ולנסות שוב.
               </p>
             </div>
           )}
@@ -210,85 +239,90 @@ export default function SalonTvPage() {
                 {code}
               </div>
               <p className="mt-8 text-sm text-white/30">
-                אחרי החיבור הקוד ייעלם ורק הטלפון שחיבר את המסך יוכל לשלוט בו.
+                הקוד תקף ל־5 דקות בלבד. אחרי החיבור הוא נעלם ורק
+                הטלפון שחיבר את המסך יכול לשלוט בו.
               </p>
             </div>
           )}
 
-          {status === "paired" && effectiveMode === "client" && payload.client && (
-            <div className="grid w-full max-w-[1500px] gap-[3vw] lg:grid-cols-2">
-              {payload.client.beforeUrl && (
-                <div className="relative overflow-hidden rounded-[2vw] border border-white/10 bg-black/25">
-                  <img
-                    src={payload.client.beforeUrl}
-                    alt="לפני"
-                    className="aspect-[4/5] h-full w-full object-contain"
-                  />
-                  <span className="absolute right-4 top-4 rounded-full bg-black/70 px-4 py-2 text-sm">
-                    לפני
-                  </span>
-                </div>
-              )}
-              <div className="relative overflow-hidden rounded-[2vw] border border-white/10 bg-black/25">
-                <img
-                  src={payload.client.afterUrl}
-                  alt={payload.client.title}
-                  className="aspect-[4/5] h-full w-full object-contain"
-                />
-                <span className="absolute right-4 top-4 rounded-full bg-[var(--skin-accent)] px-4 py-2 text-sm font-bold">
-                  {payload.client.favorite ? "★ נבחר" : "אחרי"}
-                </span>
-              </div>
-
-              <div className="lg:col-span-2 text-center">
-                {payload.client.clientName && (
-                  <p className="text-xl text-white/45">
-                    {payload.client.clientName}
-                  </p>
-                )}
-                <h1 className="mt-2 text-[clamp(2rem,4vw,4.5rem)] font-black">
-                  {payload.client.title}
-                </h1>
-              </div>
-            </div>
-          )}
-
-          {status === "paired" && effectiveMode === "product" && payload.product && (
-            <div className="grid w-full max-w-[1300px] items-center gap-[5vw] lg:grid-cols-[.8fr_1.2fr]">
-              <div className="overflow-hidden rounded-[2vw] border border-white/10 bg-white/[0.03] p-[2vw]">
-                {payload.product.imageUrl ? (
-                  <img
-                    src={payload.product.imageUrl}
-                    alt={payload.product.name}
-                    className="mx-auto aspect-square max-h-[55vh] w-full object-contain"
-                  />
-                ) : (
-                  <div className="flex aspect-square items-center justify-center text-[8vw]">
-                    🧴
+          {status === "paired" &&
+            effectiveMode === "client" &&
+            payload.client && (
+              <div className="grid w-full max-w-[1500px] gap-[3vw] lg:grid-cols-2">
+                {payload.client.beforeUrl && (
+                  <div className="relative overflow-hidden rounded-[2vw] border border-white/10 bg-black/25">
+                    <img
+                      src={payload.client.beforeUrl}
+                      alt="לפני"
+                      className="aspect-[4/5] h-full w-full object-contain"
+                    />
+                    <span className="absolute right-4 top-4 rounded-full bg-black/70 px-4 py-2 text-sm">
+                      לפני
+                    </span>
                   </div>
                 )}
-              </div>
+                <div className="relative overflow-hidden rounded-[2vw] border border-white/10 bg-black/25">
+                  <img
+                    src={payload.client.afterUrl}
+                    alt={payload.client.title}
+                    className="aspect-[4/5] h-full w-full object-contain"
+                  />
+                  <span className="absolute right-4 top-4 rounded-full bg-[var(--skin-accent)] px-4 py-2 text-sm font-bold">
+                    {payload.client.favorite ? "★ נבחר" : "אחרי"}
+                  </span>
+                </div>
 
-              <div>
-                <p className="text-[clamp(1rem,1.5vw,1.4rem)] font-bold text-[var(--skin-accent)]">
-                  נמצא אצלנו במספרה
-                </p>
-                <h1 className="mt-4 text-[clamp(2.5rem,5vw,5.5rem)] font-black leading-[1.05]">
-                  {payload.product.name}
-                </h1>
-                {payload.product.note && (
-                  <p className="mt-5 max-w-2xl text-[clamp(1rem,1.5vw,1.5rem)] leading-8 text-white/55">
-                    {payload.product.note}
-                  </p>
-                )}
-                {typeof payload.product.price === "number" && (
-                  <p className="mt-7 text-[clamp(2rem,3vw,3.5rem)] font-black">
-                    ₪{payload.product.price}
-                  </p>
-                )}
+                <div className="text-center lg:col-span-2">
+                  {payload.client.clientName && (
+                    <p className="text-xl text-white/45">
+                      {payload.client.clientName}
+                    </p>
+                  )}
+                  <h1 className="mt-2 text-[clamp(2rem,4vw,4.5rem)] font-black">
+                    {payload.client.title}
+                  </h1>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+
+          {status === "paired" &&
+            effectiveMode === "product" &&
+            payload.product && (
+              <div className="grid w-full max-w-[1300px] items-center gap-[5vw] lg:grid-cols-[.8fr_1.2fr]">
+                <div className="overflow-hidden rounded-[2vw] border border-white/10 bg-white/[0.03] p-[2vw]">
+                  {payload.product.imageUrl ? (
+                    <img
+                      src={payload.product.imageUrl}
+                      alt={payload.product.name}
+                      className="mx-auto aspect-square max-h-[55vh] w-full object-contain"
+                    />
+                  ) : (
+                    <div className="flex aspect-square items-center justify-center text-[8vw]">
+                      🧴
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <p className="text-[clamp(1rem,1.5vw,1.4rem)] font-bold text-[var(--skin-accent)]">
+                    נמצא אצלנו במספרה
+                  </p>
+                  <h1 className="mt-4 text-[clamp(2.5rem,5vw,5.5rem)] font-black leading-[1.05]">
+                    {payload.product.name}
+                  </h1>
+                  {payload.product.note && (
+                    <p className="mt-5 max-w-2xl text-[clamp(1rem,1.5vw,1.5rem)] leading-8 text-white/55">
+                      {payload.product.note}
+                    </p>
+                  )}
+                  {typeof payload.product.price === "number" && (
+                    <p className="mt-7 text-[clamp(2rem,3vw,3.5rem)] font-black">
+                      ₪{payload.product.price}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
           {status === "paired" && effectiveMode === "idle" && (
             <div className="w-full max-w-[1500px] text-center">
