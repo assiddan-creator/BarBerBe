@@ -14,6 +14,7 @@ import { WOMEN_PRESETS, type WomenPreset } from "@/lib/women-presets";
 import {
   BARBER_BEARD_STORAGE_KEY,
   BARBER_FLOW_STORAGE_KEY,
+  BARBER_GENERATION_PERMIT_STORAGE_KEY,
   BARBER_HAIRSTYLE_STORAGE_KEY,
   BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
   BARBER_SELFIE_STORAGE_KEY,
@@ -68,6 +69,7 @@ export default function BarberResultPage() {
   const [beardId, setBeardId] = useState<string | null>(null);
   const [womenStyleId, setWomenStyleId] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [generationPermit, setGenerationPermit] = useState<string | null>(null);
 
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("after");
@@ -87,6 +89,9 @@ export default function BarberResultPage() {
       if (storedFlow === "men" || storedFlow === "women") setFlow(storedFlow);
       if (storedMode === "personal" || storedMode === "barber") setUserMode(storedMode);
 
+      setGenerationPermit(
+        sessionStorage.getItem(BARBER_GENERATION_PERMIT_STORAGE_KEY),
+      );
       setHairId(sessionStorage.getItem(BARBER_HAIRSTYLE_STORAGE_KEY));
       setBeardId(sessionStorage.getItem(BARBER_BEARD_STORAGE_KEY));
       setWomenStyleId(sessionStorage.getItem(BARBER_WOMEN_STYLE_STORAGE_KEY));
@@ -157,6 +162,7 @@ export default function BarberResultPage() {
               body: JSON.stringify({
                 imageUrl: selfieUrl,
                 styleId: womenPreset?.id,
+                generationPermit,
               }),
             })
           : await fetch("/api/barber/generate", {
@@ -166,6 +172,7 @@ export default function BarberResultPage() {
                 imageUrl: selfieUrl,
                 hairId: hairPreset?.id,
                 beardId: beardPreset?.id,
+                generationPermit,
               }),
             });
 
@@ -174,6 +181,10 @@ export default function BarberResultPage() {
         | null;
 
       if (!response.ok || !data?.imageUrl) {
+        if (response.status === 403) {
+          setError("האישור ליצירה פג. צריך להעלות את התמונה מחדש כדי להמשיך.");
+          return;
+        }
         throw new Error(data?.error || "generation_failed");
       }
 
