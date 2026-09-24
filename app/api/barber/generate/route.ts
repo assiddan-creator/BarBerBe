@@ -107,11 +107,11 @@ export async function POST(request: NextRequest) {
   let finalPrompt = "";
 
   if (type === "hairstyle") {
-    finalPrompt = `Modify ONLY the person's hair to be: ${prompt}. Do not touch, change, add, or remove the beard or facial hair. ${BASE_PROTECTION}`;
+    finalPrompt = `Edit only the hairstyle to match: ${prompt}. Keep the existing beard and facial hair exactly the same. ${BASE_PROTECTION}`;
   } else if (type === "beard") {
-    finalPrompt = `Modify ONLY the person's beard and facial hair to be: ${prompt}. Do not touch or change the hairstyle. ${BASE_PROTECTION}`;
+    finalPrompt = `Edit only the beard and facial hair to match: ${prompt}. Keep the existing hairstyle exactly the same. ${BASE_PROTECTION}`;
   } else if (type === "combo") {
-    finalPrompt = `Modify BOTH the person's hair and beard to be: ${prompt}. ${BASE_PROTECTION}`;
+    finalPrompt = `Edit the hairstyle and beard together to match: ${prompt}. ${BASE_PROTECTION}`;
   } else {
     finalPrompt = `${prompt}. ${BASE_PROTECTION}`;
   }
