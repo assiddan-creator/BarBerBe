@@ -39,6 +39,9 @@ async function persistResultImage(sourceUrl: string): Promise<{
 
 type BarberType = "hairstyle" | "beard" | "combo";
 
+const GENERATION_MODEL = "google/nano-banana-2";
+const MAX_PROMPT_LENGTH = 1800;
+
 function extractOutputUrl(output: unknown): string | undefined {
   if (!output) return undefined;
 
@@ -126,10 +129,36 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const model = modelOverride ?? "google/nano-banana-2";
-  const isFluxKontextPro =
-    model === "black-forest-labs/flux-kontext-pro" ||
-    model.startsWith("black-forest-labs/flux-kontext-pro:");
+  if (
+    modelOverride &&
+    modelOverride !== GENERATION_MODEL
+  ) {
+    return NextResponse.json(
+      { error: "Unsupported generation model" },
+      { status: 400 },
+    );
+  }
+
+  if (
+    typeof prompt !== "string" ||
+    prompt.trim().length === 0 ||
+    prompt.length > MAX_PROMPT_LENGTH
+  ) {
+    return NextResponse.json(
+      { error: "Invalid generation prompt" },
+      { status: 400 },
+    );
+  }
+
+  if (!["hairstyle", "beard", "combo"].includes(type)) {
+    return NextResponse.json(
+      { error: "Invalid generation type" },
+      { status: 400 },
+    );
+  }
+
+  const model = GENERATION_MODEL;
+  const isFluxKontextPro = false;
 
   const replicate = new Replicate({
     auth: token,
@@ -155,23 +184,17 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const input = isFluxKontextPro
-      ? {
-          prompt: finalPrompt,
-          input_image: imageUrl,
-          aspect_ratio: "match_input_image",
-        }
-      : {
-          prompt: finalPrompt,
-          image_input: [imageUrl],
-          aspect_ratio: "match_input_image",
-          resolution: "1K",
-          google_search: false,
-          image_search: false,
-          output_format: "jpg",
-        };
+    const input = {
+      prompt: finalPrompt,
+      image_input: [imageUrl],
+      aspect_ratio: "match_input_image",
+      resolution: "1K",
+      google_search: false,
+      image_search: false,
+      output_format: "jpg",
+    };
 
-    const output = (await replicate.run(model as `${string}/${string}`, {
+    const output = (await replicate.run(model, {
       input,
     })) as unknown;
 
