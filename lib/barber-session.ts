@@ -1,5 +1,6 @@
 export const BARBER_SELFIE_STORAGE_KEY = "barber_selfie";
 export const BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY = "barber_selfie_public_id";
+export const BARBER_GENERATION_PERMIT_STORAGE_KEY = "barber_generation_permit";
 export const BARBER_STYLE_STORAGE_KEY = "barber_style";
 export const BARBER_HAIRSTYLE_STORAGE_KEY = "barber_hairstyle";
 export const BARBER_BEARD_STORAGE_KEY = "barber_beard";
@@ -70,6 +71,7 @@ export function clearBarberWorkingSession(options?: { keepHistory?: boolean }) {
   const keys = [
     BARBER_SELFIE_STORAGE_KEY,
     BARBER_SELFIE_PUBLIC_ID_STORAGE_KEY,
+    BARBER_GENERATION_PERMIT_STORAGE_KEY,
     BARBER_STYLE_STORAGE_KEY,
     BARBER_HAIRSTYLE_STORAGE_KEY,
     BARBER_BEARD_STORAGE_KEY,
