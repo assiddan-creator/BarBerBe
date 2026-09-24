@@ -2,6 +2,8 @@
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { SkinBackdrop } from "@/components/barber/SkinBackdrop";
+import { getConfiguredBarberSkin } from "@/lib/barber-skins";
 import {
   BARBER_ANALYSIS_ENGINE_STORAGE_KEY,
   BARBER_FLOW_STORAGE_KEY,
@@ -15,6 +17,7 @@ type UserMode = "personal" | "barber";
 
 export default function BarberPage() {
   const router = useRouter();
+  const skin = getConfiguredBarberSkin();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [hostedSelfieUrl, setHostedSelfieUrl] = useState<string | null>(null);
@@ -150,7 +153,7 @@ export default function BarberPage() {
   return (
     <main
       dir="rtl"
-      className="min-h-screen overflow-hidden bg-[#0d0d0f] text-[#f7f3eb]"
+      className="relative min-h-screen overflow-hidden bg-[var(--skin-bg)] text-[var(--skin-text)]"
     >
       <input
         ref={fileInputRef}
@@ -160,15 +163,16 @@ export default function BarberPage() {
         className="hidden"
       />
 
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(255,117,76,0.16),transparent_30%),radial-gradient(circle_at_85%_18%,rgba(92,209,182,0.11),transparent_28%),linear-gradient(180deg,#121216_0%,#0d0d0f_58%,#09090a_100%)]" />
+      <SkinBackdrop media={skin.media.home} className="fixed" />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(255,255,255,0.05),transparent_30%),linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.28)_100%)]" />
 
       <section className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between gap-4">
           <div>
             <p className="text-xl font-black tracking-[-0.04em] sm:text-2xl">
-              BarBerBe
+              {skin.brand.name}
             </p>
-            <p className="mt-0.5 text-[11px] text-white/45">TRY IT BEFORE YOU CUT IT</p>
+            <p className="mt-0.5 text-[11px] text-white/45">{skin.brand.tagline}</p>
           </div>
 
           <div className="flex rounded-full border border-white/10 bg-white/[0.04] p-1 text-sm backdrop-blur">
@@ -177,7 +181,7 @@ export default function BarberPage() {
               onClick={() => chooseMode("personal")}
               className={`rounded-full px-3.5 py-2 transition sm:px-4 ${
                 userMode === "personal"
-                  ? "bg-[#f7f3eb] text-[#151518]"
+                  ? "bg-[var(--skin-text)] text-[var(--skin-bg)]"
                   : "text-white/60 hover:text-white"
               }`}
             >
@@ -188,7 +192,7 @@ export default function BarberPage() {
               onClick={() => chooseMode("barber")}
               className={`rounded-full px-3.5 py-2 transition sm:px-4 ${
                 userMode === "barber"
-                  ? "bg-[#f7f3eb] text-[#151518]"
+                  ? "bg-[var(--skin-text)] text-[var(--skin-bg)]"
                   : "text-white/60 hover:text-white"
               }`}
             >
@@ -200,20 +204,24 @@ export default function BarberPage() {
         <div className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:py-14">
           <div className="order-2 space-y-7 lg:order-1">
             <div className="space-y-4">
-              <span className="inline-flex items-center rounded-full border border-[#ff754c]/30 bg-[#ff754c]/10 px-3 py-1 text-xs font-semibold text-[#ff9b7c]">
-                {userMode === "barber" ? "ייעוץ ויזואלי מול הלקוח" : "סלפי אחד. כמה לוקים. בלי לנחש."}
+              <span className="inline-flex items-center rounded-full border border-[var(--skin-accent)]/30 bg-[var(--skin-accent)]/10 px-3 py-1 text-xs font-semibold text-[var(--skin-accent)]">
+                {userMode === "barber"
+                  ? skin.copy.heroEyebrowBarber
+                  : skin.copy.heroEyebrowPersonal}
               </span>
 
               <div className="space-y-3">
                 <h1 className="max-w-xl text-4xl font-black leading-[0.98] tracking-[-0.055em] sm:text-5xl lg:text-6xl">
-                  לראות את הלוק
+                  {skin.copy.heroTitle}
                   <br />
-                  <span className="text-[#ff754c]">לפני המספריים.</span>
+                  <span style={{ color: "var(--skin-accent)" }}>
+                    {skin.copy.heroTitleAccent}
+                  </span>
                 </h1>
                 <p className="max-w-lg text-base leading-7 text-white/58 sm:text-lg">
                   {userMode === "barber"
-                    ? "מעלים תמונה, בוחרים כיוון ומראים ללקוח איך הוא יכול להיראות לפני שמתחילים לעבוד."
-                    : "מעלים תמונה, בוחרים כיוון ורואים איך תספורת, זקן או עיצוב שיער נראים עליך באמת."}
+                    ? skin.copy.heroBodyBarber
+                    : skin.copy.heroBodyPersonal}
                 </p>
               </div>
             </div>
@@ -227,7 +235,7 @@ export default function BarberPage() {
                     onClick={() => chooseFlow("men")}
                     className={`rounded-2xl border p-4 text-right transition ${
                       selectedFlow === "men"
-                        ? "border-[#ff754c] bg-[#ff754c]/12 shadow-[0_0_0_1px_rgba(255,117,76,0.2)]"
+                        ? "border-[var(--skin-accent)] bg-[var(--skin-accent)]/12 shadow-[0_0_0_1px_rgba(255,117,76,0.2)]"
                         : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.055]"
                     }`}
                   >
@@ -243,7 +251,7 @@ export default function BarberPage() {
                     onClick={() => chooseFlow("women")}
                     className={`rounded-2xl border p-4 text-right transition ${
                       selectedFlow === "women"
-                        ? "border-[#5cd1b6] bg-[#5cd1b6]/10 shadow-[0_0_0_1px_rgba(92,209,182,0.18)]"
+                        ? "border-[var(--skin-accent-alt)] bg-[#5cd1b6]/10 shadow-[0_0_0_1px_rgba(92,209,182,0.18)]"
                         : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.055]"
                     }`}
                   >
@@ -321,7 +329,7 @@ export default function BarberPage() {
                     <p className="mt-2 max-w-xs text-sm leading-6 text-white/48">
                       פנים ברורות, תאורה טובה, והשיער בתוך הפריים. אנחנו נשמור את האדם ונחליף רק את הלוק.
                     </p>
-                    <span className="mt-5 rounded-full bg-[#ff754c] px-5 py-2.5 text-sm font-bold text-white">
+                    <span className="mt-5 rounded-full bg-[var(--skin-accent)] px-5 py-2.5 text-sm font-bold text-white">
                       בחר תמונה
                     </span>
                   </div>
